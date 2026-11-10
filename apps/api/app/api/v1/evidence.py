@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks, status
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import Optional, List
+import io
+import qrcode
 
 from apps.api.app.core.database import get_db
 from apps.api.app.core.config import settings
@@ -232,7 +235,31 @@ def review_evidence(
 
     return review
 
-@router.get("/detail/{evidence_id}", response_model=EvidenceDetailResponse)
+@router.get("/qr/{evidence_id}")
+def generate_verification_qr(evidence_id: str, db: Session = Depends(get_db)):
+    """
+    Generates a high-contrast PNG QR code linking directly to public verification.
+    """
+    evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+    if not evidence:
+        raise HTTPException(status_code=404, detail="Evidence not found")
+
+    verification_url = f"http://localhost:3000/#verify?id={evidence.id}"
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=3,
+    )
+    qr.add_data(verification_url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="#0f172a", back_color="#ffffff")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+
+    return Response(content=buf.getvalue(), media_type="image/png")
 def get_evidence_detail(
     evidence_id: str,
     db: Session = Depends(get_db)
