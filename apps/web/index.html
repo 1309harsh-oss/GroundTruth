@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GroundTruth — Intelligent Infrastructure Evidence Verification</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top Navigation & System Status Bar -->
+  <header class="bg-slate-900 text-white sticky top-0 z-50 border-b border-slate-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('landing')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white text-lg font-bold shadow-inner">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-extrabold text-lg tracking-tight text-white">GroundTruth</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">CONVENTIONAL CRYPTO</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Strictly Non-Blockchain • SHA-256 Byte Verification • Advisory AI</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <button onclick="switchTab('landing')" id="nav-landing" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-slate-800 transition">
+          <i class="fa-solid fa-house mr-1.5 text-slate-400"></i> Overview
+        </button>
+        <button onclick="switchTab('submit')" id="nav-submit" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-cloud-arrow-up mr-1.5 text-slate-400"></i> Submit Evidence
+        </button>
+        <button onclick="switchTab('review')" id="nav-review" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-clipboard-check mr-1.5 text-slate-400"></i> Review Queue
+        </button>
+        <button onclick="switchTab('verify')" id="nav-verify" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-fingerprint mr-1.5 text-slate-400"></i> Public Verifier
+        </button>
+        <button onclick="switchTab('audit')" id="nav-audit" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-clock-rotate-left mr-1.5 text-slate-400"></i> Audit Ledger
+        </button>
+      </nav>
+
+      <!-- Active User / Engine Status -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 text-xs bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <span class="text-slate-300 font-mono text-[11px]" id="engineStatusText">Backend Engine Active</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Main View Area -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+
+    <!-- 1. LANDING & SYSTEM ARCHITECTURE DASHBOARD -->
+    <div id="view-landing" class="space-y-10">
+      <!-- Hero -->
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-xl border border-slate-700/50">
+        <div class="max-w-2xl relative z-10 space-y-4">
+          <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-600/30 text-brand-300 border border-brand-500/30">
+            <i class="fa-solid fa-check-double text-xs"></i>
+            <span>Production Verification Baseline</span>
+          </span>
+          <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+            Cryptographic Integrity for Infrastructure Works.
+          </h1>
+          <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+            Eliminate ghost work, duplicate claims, and altered construction photographs. GroundTruth computes server-side SHA-256 byte digests, screens perceptual duplicates, verifies geofences, and keeps final authority strictly in the hands of authorized engineers.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="switchTab('submit')" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+              <i class="fa-solid fa-camera"></i>
+              <span>Submit Milestone Evidence</span>
+            </button>
+            <button onclick="switchTab('verify')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm px-6 py-3 rounded-xl border border-slate-600 transition flex items-center space-x-2">
+              <i class="fa-solid fa-fingerprint"></i>
+              <span>Verify SHA-256 Digest</span>
+            </button>
+          </div>
+        </div>
+        <!-- Architectural Badge Decor -->
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-9xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+      </div>
+
+      <!-- Live Engine Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-file-shield"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Evidence</span>
+            <h3 class="text-2xl font-extrabold text-slate-800" id="metric-total-evidence">0</h3>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Approved Milestones</span>
+            <h3 class="text-2xl font-extrabold text-slate-800" id="metric-approved">0</h3>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Attention Required</span>
+            <h3 class="text-2xl font-extrabold text-slate-800" id="metric-attention">0</h3>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-dna"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Perceptual Matches</span>
+            <h3 class="text-2xl font-extrabold text-slate-800" id="metric-duplicates">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Product Architecture Pillars -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Core Engineering Specifications</h2>
+          <p class="text-sm text-slate-500">How GroundTruth guarantees evidence authenticity without bloated or insecure distributed ledger infrastructure.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">1</div>
+            <h3 class="font-bold text-slate-800 text-sm">Server-Side SHA-256 Digest</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Every photograph is hashed immediately from raw byte stream on the server. Originals are immutably stored in private object storage under generated UUID keys.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">2</div>
+            <h3 class="font-bold text-slate-800 text-sm">Perceptual Near-Duplicate AI</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              pHash and dHash algorithms detect cropped, re-compressed, or transformed photos across projects, computing exact Hamming distances to alert engineers of fraud.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">3</div>
+            <h3 class="font-bold text-slate-800 text-sm">Human Approval Authority</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              AI screening is purely advisory. Final construction sign-offs and corrective action requests are legally attributed to authenticated engineers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SUBMIT EVIDENCE VIEW -->
+    <div id="view-submit" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm max-w-4xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+            <i class="fa-solid fa-camera text-brand-600"></i>
+            <span>Submit Infrastructure Milestone Evidence</span>
+          </h2>
+          <p class="text-sm text-slate-500">Server computes cryptographic SHA-256 hash, runs perceptual screening, and records client vs server timestamps.</p>
+        </div>
+
+        <form id="evidenceForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Target Project & Milestone</label>
+              <select id="inputMilestone" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                <option value="seed">NH-48-EXP: Subgrade Compaction & Reinforcement Binding</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Evidence Category</label>
+              <select id="inputCategory" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                <option value="REBAR_INSPECTION">Rebar Spacing & Concrete Reinforcement (MORTH-SEC-1600)</option>
+                <option value="DRAINAGE_WORKS">Culvert & Drainage Gradient (IRC-SP-42)</option>
+                <option value="EARTHWORK_COMPACTION">Subgrade Compaction Test</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- File Upload Box -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Field Capture Photograph</label>
+            <div id="dropZone" onclick="document.getElementById('inputFile').click()" class="border-2 border-dashed border-slate-300 hover:border-brand-500 bg-slate-50/60 rounded-2xl p-8 text-center cursor-pointer transition">
+              <i class="fa-solid fa-cloud-arrow-up text-4xl text-slate-400 mb-2"></i>
+              <p class="text-sm font-semibold text-slate-700" id="fileUploadPrompt">Click or drag & drop photograph to upload</p>
+              <p class="text-xs text-slate-400 mt-1">JPEG, PNG, or WebP up to 25MB. Server verifies magic bytes and computes digest.</p>
+              <input type="file" id="inputFile" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="onFileSelected(this)">
+            </div>
+          </div>
+
+          <!-- GPS & Metadata Provenance -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Device GPS Coordinates <span class="text-slate-400 font-normal lowercase">(untrusted metadata)</span>
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="number" step="any" id="inputLat" placeholder="Latitude (e.g. 28.6139)" value="28.6140" class="bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono">
+                <input type="number" step="any" id="inputLon" placeholder="Longitude (e.g. 77.2090)" value="77.2091" class="bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono">
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">Evaluated against project site geofence bounds via Haversine calculation.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Optional Corrective Resubmission ID</label>
+              <input type="text" id="inputSupersededId" placeholder="Superseded Evidence UUID (if correcting prior issue)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono">
+              <p class="text-[11px] text-slate-400 mt-1">Links new submission to prior rejected evidence in audit lineage.</p>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Inspector Observations / Field Notes</label>
+            <textarea id="inputNotes" rows="3" placeholder="Enter notes, batch numbers, or engineering observations..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none"></textarea>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" id="submitFormBtn" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg transition flex items-center space-x-2">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Submit & Calculate Server SHA-256</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. REVIEW QUEUE VIEW -->
+    <div id="view-review" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i class="fa-solid fa-clipboard-check text-brand-600"></i>
+              <span>Engineering Review & Quality Queue</span>
+            </h2>
+            <p class="text-sm text-slate-500">Authorized Human Reviewer. AI suggestions are purely advisory and cannot approve or reject evidence.</p>
+          </div>
+          <button onclick="refreshEvidenceQueue()" class="self-start md:self-auto bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-300 transition flex items-center space-x-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Refresh Queue</span>
+          </button>
+        </div>
+
+        <!-- Evidence List Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead class="bg-slate-50 text-slate-600 font-bold text-xs uppercase tracking-wider border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Evidence ID & Version</th>
+                <th class="py-3 px-4">Cryptographic SHA-256</th>
+                <th class="py-3 px-4">Geofence & Quality</th>
+                <th class="py-3 px-4">AI Advisory Status</th>
+                <th class="py-3 px-4">Decision</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="evidenceQueueBody" class="divide-y divide-slate-100 font-normal">
+              <tr>
+                <td colspan="6" class="py-8 text-center text-slate-400">Loading live queue from server...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PUBLIC CRYPTOGRAPHIC VERIFIER VIEW -->
+    <div id="view-verify" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm max-w-3xl mx-auto space-y-6">
+        <div class="text-center space-y-2">
+          <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl mx-auto shadow-inner">
+            <i class="fa-solid fa-fingerprint"></i>
+          </div>
+          <h2 class="text-2xl font-extrabold text-slate-900">Cryptographic Evidence Verification</h2>
+          <p class="text-xs md:text-sm text-slate-500 max-w-md mx-auto">
+            Recalculates original physical bytes from immutable server storage and verifies exact match against the recorded SHA-256 digest. No blockchain required.
+          </p>
+        </div>
+
+        <div class="flex space-x-2">
+          <input type="text" id="verifyInputId" placeholder="Enter Evidence UUID (e.g. c2095ded-ef47-4302-89a2-09ee27cfe2b2)" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono focus:ring-2 focus:ring-brand-600 focus:outline-none">
+          <button onclick="executeVerification()" class="bg-slate-900 hover:bg-black text-white font-bold text-sm px-6 py-3 rounded-xl transition">
+            Verify Hash
+          </button>
+        </div>
+
+        <div id="verifyResultCard" class="hidden rounded-2xl p-6 border space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. AUDIT & TRACEABILITY LEDGER VIEW -->
+    <div id="view-audit" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6">
+        <div class="border-b border-slate-100 pb-4">
+          <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+            <i class="fa-solid fa-clock-rotate-left text-brand-600"></i>
+            <span>Append-Only Evidence Audit Ledger</span>
+          </h2>
+          <p class="text-sm text-slate-500">Immutable trail of every file ingestion, hash verification, AI screening event, and human reviewer decision.</p>
+        </div>
+
+        <div class="space-y-3" id="auditLedgerTimeline">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900" id="modalTitle">Record Human Review Decision</h3>
+        <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-4">
+        <input type="hidden" id="modalEvidenceId">
+        <input type="hidden" id="modalDecision">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Reviewer Justification / Reason</label>
+          <textarea id="modalReason" rows="3" placeholder="Provide technical reason for this decision..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none"></textarea>
+        </div>
+
+        <div id="modalCorrectionBox" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Required Corrective Action Instructions</label>
+          <textarea id="modalCorrectiveActions" rows="2" placeholder="e.g. Adjust rebar spacing to 150mm and upload new photo..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+        <button onclick="closeReviewModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
+        <button onclick="confirmReviewDecision()" id="modalConfirmBtn" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-md">Submit Decision</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Dynamic Controller -->
+  <script>
+    const API_HOST = "http://localhost:8000";
+    let selectedFile = null;
+
+    // Switch between pages / tabs
+    function switchTab(tabId) {
+      ['landing', 'submit', 'review', 'verify', 'audit'].forEach(id => {
+        document.getElementById(`view-${id}`).classList.add('hidden');
+        const navBtn = document.getElementById(`nav-${id}`);
+        if (navBtn) {
+          navBtn.classList.remove('bg-slate-800', 'text-white');
+          navBtn.classList.add('text-slate-300');
+        }
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.add('bg-slate-800', 'text-white');
+        activeNav.classList.remove('text-slate-300');
+      }
+
+      if (tabId === 'review' || tabId === 'landing' || tabId === 'audit') {
+        refreshEvidenceQueue();
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `p-4 rounded-xl shadow-lg border text-xs font-semibold pointer-events-auto transition duration-300 ${
+        type === 'success' ? 'bg-emerald-900/90 border-emerald-700 text-emerald-100' : 'bg-rose-900/90 border-rose-700 text-rose-100'
+      }`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function onFileSelected(input) {
+      if (input.files && input.files[0]) {
+        selectedFile = input.files[0];
+        document.getElementById('fileUploadPrompt').innerText = `Selected: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
+      }
+    }
+
+    // Dynamic Form Submission to real API
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      if (!selectedFile) {
+        showToast('Please select a photo file to upload', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitFormBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Hashing & Uploading...`;
+
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('milestone_id', 'seed');
+        formData.append('category', document.getElementById('inputCategory').value);
+        formData.append('notes', document.getElementById('inputNotes').value);
+        formData.append('capture_latitude', document.getElementById('inputLat').value);
+        formData.append('capture_longitude', document.getElementById('inputLon').value);
+        const supersededId = document.getElementById('inputSupersededId').value.trim();
+        if (supersededId) formData.append('superseded_evidence_id', supersededId);
+
+        const res = await fetch(`${API_HOST}/api/v1/evidence/submit`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Upload failed');
+        }
+
+        const data = await res.json();
+        showToast(`Evidence ${data.id.substring(0,8)} submitted! Server SHA-256 generated.`);
+        document.getElementById('evidenceForm').reset();
+        selectedFile = null;
+        document.getElementById('fileUploadPrompt').innerText = 'Click or drag & drop photograph to upload';
+        switchTab('review');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> <span>Submit & Calculate Server SHA-256</span>`;
+      }
+    }
+
+    // Fetch and refresh live queue from database
+    async function refreshEvidenceQueue() {
+      try {
+        const res = await fetch(`${API_HOST}/api/v1/evidence/list`);
+        if (!res.ok) throw new Error("Could not fetch evidence list");
+        const list = await res.json();
+
+        // Update landing metrics
+        document.getElementById('metric-total-evidence').innerText = list.length;
+        document.getElementById('metric-approved').innerText = list.filter(e => e.review_status === 'APPROVED').length;
+        document.getElementById('metric-attention').innerText = list.filter(e => e.ai_recommendation === 'ATTENTION_REQUIRED').length;
+        document.getElementById('metric-duplicates').innerText = list.filter(e => e.ai_flags && e.ai_flags.some(f => f.includes('DUPLICATE'))).length;
+
+        // Render Review Table
+        const tbody = document.getElementById('evidenceQueueBody');
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No evidence records found in database.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map(ev => `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-4 px-4 font-mono text-xs">
+              <span class="font-bold text-slate-800">${ev.original_filename}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-indigo-50 text-indigo-700 font-bold ml-1">v${ev.version_number}</span><br>
+              <span class="text-slate-400 text-[11px]">${ev.id}</span>
+              ${ev.superseded_evidence_id ? `<div class="text-[10px] text-amber-600 mt-0.5">Supersedes: ${ev.superseded_evidence_id.substring(0,8)}...</div>` : ''}
+            </td>
+            <td class="py-4 px-4 font-mono text-[11px] text-slate-600 max-w-xs truncate" title="${ev.sha256_hash}">
+              ${ev.sha256_hash}
+            </td>
+            <td class="py-4 px-4 text-xs space-y-1">
+              <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${ev.location_status}
+              </span>
+              <div class="text-[11px] text-slate-500">Quality: ${(ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A')}</div>
+            </td>
+            <td class="py-4 px-4 text-xs">
+              <span class="inline-block px-2.5 py-1 rounded-lg text-xs font-bold ${ev.ai_recommendation === 'NORMAL_REVIEW' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                ${ev.ai_recommendation || 'PROCESSING'}
+              </span>
+              ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] text-rose-600 mt-1 max-w-xs font-semibold">${ev.ai_flags.join(', ')}</div>` : ''}
+            </td>
+            <td class="py-4 px-4 text-xs font-bold">
+              <span class="px-2 py-1 rounded-md ${ev.review_status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : ev.review_status === 'CORRECTION_REQUESTED' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}">
+                ${ev.review_status}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-right space-x-1">
+              <button onclick="openReviewModal('${ev.id}', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-2.5 py-1 rounded-lg">Approve</button>
+              <button onclick="openReviewModal('${ev.id}', 'CORRECTION_REQUESTED')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">Correct</button>
+              <button onclick="openReviewModal('${ev.id}', 'REJECTED')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-2.5 py-1 rounded-lg">Reject</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Populate Audit Ledger View
+        const auditList = document.getElementById('auditLedgerTimeline');
+        auditList.innerHTML = list.map(ev => `
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-start justify-between text-xs">
+            <div class="space-y-1">
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800">${ev.original_filename} (v${ev.version_number})</span>
+                <span class="text-slate-400 font-mono text-[11px]">${ev.id}</span>
+              </div>
+              <div class="font-mono text-slate-600 text-[11px]">SHA-256: ${ev.sha256_hash}</div>
+              <div class="text-slate-500 text-[11px]">Server Receipt: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
+            </div>
+            <span class="font-bold px-2 py-1 rounded ${ev.review_status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}">
+              ${ev.review_status}
+            </span>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Verification View
+    async function executeVerification() {
+      const id = document.getElementById('verifyInputId').value.trim();
+      if (!id) {
+        showToast('Please enter an Evidence UUID', 'error');
+        return;
+      }
+
+      const card = document.getElementById('verifyResultCard');
+      card.classList.remove('hidden');
+      card.innerHTML = `<div class="text-center py-4 text-xs font-mono"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Recalculating byte hash on server...</div>`;
+
+      try {
+        const res = await fetch(`${API_HOST}/api/v1/evidence/verify/${id}`);
+        if (!res.ok) throw new Error("Verification record not found");
+        const data = await res.json();
+
+        card.className = `rounded-2xl p-6 border space-y-3 ${data.is_valid ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}`;
+        card.innerHTML = `
+          <div class="flex items-center space-x-2 font-extrabold text-base ${data.is_valid ? 'text-emerald-700' : 'text-rose-700'}">
+            <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'} text-xl"></i>
+            <span>${data.status} — ${data.message}</span>
+          </div>
+          <p class="text-xs text-slate-600">Proof of byte integrity: Physical file stored on disk matches the SHA-256 digest calculated at upload time.</p>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 font-mono text-xs space-y-2">
+            <div><strong>Original File:</strong> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
+            <div><strong>Recorded SHA-256:</strong> ${data.recorded_sha256}</div>
+            <div><strong>Computed SHA-256:</strong> ${data.computed_sha256}</div>
+            <div><strong>Server Receipt:</strong> ${new Date(data.server_receipt_time).toLocaleString()}</div>
+            <div><strong>Review Decision:</strong> <span class="font-bold text-slate-800">${data.review_status}</span></div>
+          </div>
+        `;
+      } catch (err) {
+        card.className = "rounded-2xl p-6 border bg-rose-50 border-rose-200 text-rose-950";
+        card.innerHTML = `<div class="font-bold text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ${err.message}</div>`;
+      }
+    }
+
+    // Review Modal Functions
+    function openReviewModal(evidenceId, decision) {
+      document.getElementById('modalEvidenceId').value = evidenceId;
+      document.getElementById('modalDecision').value = decision;
+      document.getElementById('modalTitle').innerText = `Human Review: ${decision}`;
+      document.getElementById('modalReason').value = '';
+      document.getElementById('modalCorrectiveActions').value = '';
+
+      if (decision === 'CORRECTION_REQUESTED') {
+        document.getElementById('modalCorrectionBox').classList.remove('hidden');
+      } else {
+        document.getElementById('modalCorrectionBox').classList.add('hidden');
+      }
+
+      document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').classList.add('hidden');
+    }
+
+    async function confirmReviewDecision() {
+      const id = document.getElementById('modalEvidenceId').value;
+      const decision = document.getElementById('modalDecision').value;
+      const reason = document.getElementById('modalReason').value.trim();
+      const corrective = document.getElementById('modalCorrectiveActions').value.trim();
+
+      if (!reason) {
+        showToast('A reason is mandatory for reviewer auditability', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_HOST}/api/v1/evidence/review/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            decision: decision,
+            reason: reason,
+            corrective_actions: corrective || null
+          })
+        });
+
+        if (!res.ok) throw new Error("Failed to record decision");
+        showToast(`Review decision '${decision}' recorded!`);
+        closeReviewModal();
+        refreshEvidenceQueue();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Auto load on initial boot
+    window.addEventListener('DOMContentLoaded', () => {
+      refreshEvidenceQueue();
+    });
+  </script>
+</body>
+</html>

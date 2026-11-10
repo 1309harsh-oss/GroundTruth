@@ -1,0 +1,39 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://groundtruth:groundtruth_pass@db:5432/groundtruth
+      - STORAGE_LOCAL_ROOT=/app/data/storage
+      - ENVIRONMENT=production
+    volumes:
+      - evidence_storage:/app/data/storage
+    depends_on:
+      - db
+
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      - POSTGRES_USER=groundtruth
+      - POSTGRES_PASSWORD=groundtruth_pass
+      - POSTGRES_DB=groundtruth
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./apps/web:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  evidence_storage:

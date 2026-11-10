@@ -1,0 +1,26 @@
+{
+  "project": "GroundTruth",
+  "version": "0.1.0",
+  "blockchain": false,
+  "documents": [
+    "AI_SPEC.md",
+    "ANTIGRAVITY.md",
+    "API_SPEC.md",
+    "ARCHITECTURE.md",
+    "BRD.md",
+    "CS.md",
+    "DATABASE.md",
+    "DEPLOYMENT.md",
+    "GRD.md",
+    "OPEN_QUESTIONS.md",
+    "PRD.md",
+    "README.md",
+    "ROADMAP.md",
+    "SECURITY.md",
+    "SRS.md",
+    "TEST_PLAN.md",
+    "TRD.md",
+    "WORKFLOWS.md"
+  ],
+  "note": "Baseline specification pack; validate open questions with pilot stakeholders."
+}
