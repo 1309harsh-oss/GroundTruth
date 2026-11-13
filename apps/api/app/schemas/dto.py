@@ -24,6 +24,19 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+class SocialLoginRequest(BaseModel):
+    provider: str  # google, facebook
+    token: Optional[str] = None
+    email: str
+    display_name: str
+    role: Optional[str] = "SUBMITTER"
+
+class RegisterRequest(BaseModel):
+    email: str
+    display_name: str
+    password: str
+    role: Optional[str] = "SUBMITTER"
+
 # User & Org Schemas
 class UserCreate(BaseModel):
     organization_id: str
