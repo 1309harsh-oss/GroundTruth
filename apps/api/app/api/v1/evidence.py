@@ -5,6 +5,8 @@ from datetime import datetime
 from typing import Optional, List
 import io
 import qrcode
+import barcode
+from barcode.writer import ImageWriter
 
 from apps.api.app.core.database import get_db
 from apps.api.app.core.config import settings
@@ -120,6 +122,27 @@ async def submit_evidence(
 
     # 7. Asynchronous AI / quality screening task
     background_tasks.add_task(worker_service.process_evidence_async, evidence.id, db)
+
+    # 8. Sync to Firebase Cloud Database if connected
+    from apps.api.app.services.firebase_service import firebase_service
+    if firebase_service.is_connected:
+        background_tasks.add_task(firebase_service.sync_evidence, {
+            "id": evidence.id,
+            "milestone_id": evidence.milestone_id,
+            "category": evidence.category,
+            "original_filename": evidence.original_filename,
+            "sha256_hash": evidence.sha256_hash,
+            "server_receipt_time": evidence.server_receipt_time.isoformat() if evidence.server_receipt_time else None,
+            "review_status": evidence.review_status,
+            "version_number": evidence.version_number
+        })
+        background_tasks.add_task(firebase_service.sync_audit_log, {
+            "entity_type": "EVIDENCE",
+            "entity_id": evidence.id,
+            "action": audit.action,
+            "sha256": sha256_hash,
+            "timestamp": audit.timestamp.isoformat() if audit.timestamp else None
+        })
 
     return evidence
 
@@ -257,6 +280,25 @@ def generate_verification_qr(evidence_id: str, db: Session = Depends(get_db)):
     img = qr.make_image(fill_color="#0f172a", back_color="#ffffff")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
+    buf.seek(0)
+
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+@router.get("/barcode/{evidence_id}")
+def generate_asset_road_barcode(evidence_id: str, db: Session = Depends(get_db)):
+    """
+    Generates a Code-128 physical asset identification barcode for road milestone inspection.
+    """
+    evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+    if not evidence:
+        raise HTTPException(status_code=404, detail="Evidence not found")
+
+    # Generate standardized asset road identifier code
+    asset_code = f"RD-{evidence.milestone.project.project_code}-{str(evidence.id)[:8]}".upper()
+    
+    code = barcode.get('code128', asset_code, writer=ImageWriter())
+    buf = io.BytesIO()
+    code.write(buf, options={"write_text": True, "font_size": 10, "text_distance": 3.0})
     buf.seek(0)
 
     return Response(content=buf.getvalue(), media_type="image/png")

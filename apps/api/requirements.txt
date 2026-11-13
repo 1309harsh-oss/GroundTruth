@@ -14,3 +14,4 @@ passlib==1.7.4
 pyjwt==2.15.1
 psycopg2-binary==2.9.10
 pytest==9.2.0
+

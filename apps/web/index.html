@@ -1,46 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GroundTruth — Cryptographic Evidence Verification</title>
-  
-  <!-- Inter & JetBrains Mono Fonts -->
+  <title>GroundTruth — Infrastructure Evidence Verification Platform</title>
+  <meta name="description" content="Turn site photographs into authentic, traceable evidence. Verify infrastructure progress with AI analysis, location intelligence, and accountable human review.">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome 6 -->
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- HTML5 QR Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-            mono: ['Geist Mono', 'ui-monospace', 'monospace']
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
           },
           colors: {
-            // Vercel High Contrast Scale
-            black: '#000000',
-            vdark: '#080808',
-            vcard: '#0d0d0d',
-            vcardhover: '#121212',
-            vborder: '#222222',
-            vborderhover: '#333333',
-            vtext: '#ededed',
-            vmuted: '#888888',
-            // Refined Minor Crimson Accent
-            crimson: {
-              400: '#f87171',
-              500: '#ef4444',
-              600: '#dc2626',
-              900: '#450a0a',
-              glow: 'rgba(239, 68, 68, 0.16)'
+            gt: {
+              bg:       '#071C18',
+              bg2:      '#0B3028',
+              surface:  '#103D30',
+              emerald:  '#1A9A64',
+              green:    '#39DB91',
+              lime:     '#B5FF77',
+              white:    '#F4F8F4',
+              muted:    '#A4B9AE',
+              orange:   '#EBA65A',
             }
           }
         }
@@ -49,667 +45,2155 @@
   </script>
 
   <style>
-    /* Vercel Geometric Grid & Card Edge Tinting */
-    body {
-      background-color: #000000;
-      color: #ededed;
-      font-family: 'Geist', sans-serif;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.07) 0%, transparent 45%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 100% 100%, 48px 48px, 48px 48px;
+    :root {
+      --bg: #071C18;
+      --bg2: #0B3028;
+      --surface: #103D30;
+      --emerald: #1A9A64;
+      --green: #39DB91;
+      --lime: #B5FF77;
+      --white: #F4F8F4;
+      --muted: #A4B9AE;
+      --orange: #EBA65A;
+      --glass1: rgba(255,255,255,0.055);
+      --glass2: rgba(255,255,255,0.085);
+      --glass3: rgba(20,90,62,0.35);
+      --glass-border: rgba(190,255,215,0.16);
     }
 
-    /* Vercel Card with Subtle Crimson Edge Tint */
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── Topographic background ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(26,154,100,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 60%, rgba(57,219,145,0.07) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 30 Q15 10 30 30 Q45 50 60 30' fill='none' stroke='rgba(57,219,145,0.04)' stroke-width='1'/%3E%3Cpath d='M0 50 Q15 30 30 50 Q45 70 60 50' fill='none' stroke='rgba(57,219,145,0.03)' stroke-width='1'/%3E%3Cpath d='M0 10 Q15 -10 30 10 Q45 30 60 10' fill='none' stroke='rgba(57,219,145,0.03)' stroke-width='1'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Glass surface ─── */
+    .glass {
+      background: var(--glass1);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .glass-strong {
+      background: var(--glass2);
+      border: 1px solid rgba(190,255,215,0.22);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .glass-dark {
+      background: rgba(7,28,24,0.75);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .glass-surface {
+      background: var(--glass3);
+      border: 1px solid rgba(57,219,145,0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      transition: all 0.3s ease;
+    }
+    #main-nav.scrolled {
+      background: rgba(7,28,24,0.92);
+      box-shadow: 0 1px 40px rgba(0,0,0,0.5);
+    }
+
+    /* ─── Animated scanning line ─── */
+    .scan-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      animation: scanLine 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes scanLine {
+      0%   { top: 0; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* ─── Bounding box AI animation ─── */
+    .ai-bbox {
+      position: absolute;
+      border: 2px solid var(--lime);
+      border-radius: 4px;
+      animation: bboxPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes bboxPulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.01); }
+    }
+
+    /* ─── Progress ring ─── */
+    .ring-progress { transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+    /* ─── Evidence carousel ─── */
+    .evidence-carousel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+    .evidence-carousel::-webkit-scrollbar { display: none; }
+    .evidence-card {
+      scroll-snap-align: start;
+      flex: 0 0 320px;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .evidence-card:hover {
+      transform: translateY(-6px) rotateX(2deg);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(57,219,145,0.3);
+    }
+
+    /* ─── Workflow SVG path animation ─── */
+    .workflow-path {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 1.2s ease;
+    }
+    .workflow-path.animated { stroke-dashoffset: 0; }
+
+    /* ─── Map marker pulse ─── */
+    .map-pulse {
+      animation: mapPulse 2s ease-out infinite;
+    }
+    @keyframes mapPulse {
+      0%   { transform: scale(1);   opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    /* ─── Scroll fade-in ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Status dot pulse ─── */
+    .status-dot {
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ─── Ticker ─── */
+    .ticker-track {
+      display: flex;
+      animation: ticker 25s linear infinite;
+      width: max-content;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── Green glow button ─── */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--emerald), #12704a);
+      color: var(--white);
+      border: 1px solid rgba(57,219,145,0.4);
+      transition: all 0.25s ease;
+      box-shadow: 0 0 24px rgba(26,154,100,0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #22b574, var(--emerald));
+      box-shadow: 0 0 40px rgba(57,219,145,0.4);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: var(--glass1);
+      border: 1px solid var(--glass-border);
+      color: var(--white);
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+    .btn-ghost:hover {
+      background: var(--glass2);
+      border-color: rgba(57,219,145,0.3);
+    }
+
+    /* ─── App views ─── */
+    .app-view { display: none; }
+    .app-view.active { display: block; }
+
+    /* ─── Old v-card compat ─── */
     .v-card {
-      background: #0a0a0a;
-      border: 1px solid #1f1f1f;
-      border-radius: 12px;
+      background: rgba(11,48,40,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
       position: relative;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.05);
+      backdrop-filter: blur(12px);
     }
-
     .v-card:hover {
-      border-color: #381014;
-      box-shadow: 0 0 25px -4px rgba(220, 38, 38, 0.18), 0 0 0 1px rgba(239, 68, 68, 0.35);
-      background: #0d0d0d;
+      border-color: rgba(57,219,145,0.3);
+      box-shadow: 0 0 28px -4px rgba(57,219,145,0.15);
     }
-
     .v-badge {
       font-size: 11px;
-      font-family: 'Geist Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       padding: 3px 8px;
       border-radius: 9999px;
-      border: 1px solid #262626;
-      background: #111111;
-      color: #a1a1aa;
+      border: 1px solid rgba(190,255,215,0.2);
+      background: rgba(26,154,100,0.15);
+      color: var(--muted);
     }
-
-    .v-badge-crimson {
-      border-color: rgba(220, 38, 38, 0.35);
-      background: rgba(220, 38, 38, 0.08);
-      color: #fca5a5;
-    }
-
     .v-badge-green {
-      border-color: rgba(34, 197, 94, 0.3);
-      background: rgba(34, 197, 94, 0.06);
-      color: #86efac;
+      border-color: rgba(57,219,145,0.4);
+      background: rgba(57,219,145,0.1);
+      color: #39DB91;
+    }
+    .v-badge-crimson {
+      border-color: rgba(235,166,90,0.4);
+      background: rgba(235,166,90,0.1);
+      color: var(--orange);
     }
 
-    /* Custom Scrollbar */
+    /* ─── Form fields ─── */
+    .gt-input {
+      width: 100%;
+      background: rgba(7,28,24,0.8);
+      border: 1px solid rgba(190,255,215,0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .gt-input:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(26,154,100,0.15);
+    }
+    .gt-input::placeholder { color: var(--muted); }
+    select.gt-input option { background: #071C18; }
+
+    /* ─── Scrollbar ─── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #000000; }
-    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
+
+    /* ─── Print ─── */
+    @media print {
+      #main-nav, .no-print { display: none !important; }
+    }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    /* ─── Info-row in hero card ─── */
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      background: rgba(7,28,24,0.6);
+      border-radius: 8px;
+      border: 1px solid rgba(190,255,215,0.1);
+    }
+
+    /* ─── Animated gradient text ─── */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--green) 0%, var(--lime) 50%, var(--green) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradShift 4s linear infinite;
+    }
+    @keyframes gradShift {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* ─── Trust timeline ─── */
+    .trust-line {
+      width: 2px;
+      background: linear-gradient(to bottom, var(--emerald), transparent);
+      flex-shrink: 0;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-crimson-600 selection:text-white">
+<body>
 
-  <!-- Vercel Minimalist Header -->
-  <header class="border-b border-[#1b1b1b] bg-black/85 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      
-      <!-- Brand & Vercel-like Monogram -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('landing')">
-        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black font-black text-sm shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="12 2 22 20 2 20" />
+<!-- ══════════════════════════════════════════════════════
+     TOAST CONTAINER
+══════════════════════════════════════════════════════ -->
+<div id="toastContainer" class="fixed top-24 right-6 z-[200] space-y-2 pointer-events-none"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════ -->
+<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 glass-dark" style="border-bottom:1px solid var(--glass-border);">
+  <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
+
+    <!-- Logo -->
+    <button onclick="switchTab('landing')" class="flex items-center gap-2.5 flex-shrink-0 cursor-pointer" aria-label="Go to home">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#1A9A64,#0B3028);border:1px solid rgba(57,219,145,0.4);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39DB91" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        </svg>
+      </div>
+      <span class="font-bold text-gt-white text-base tracking-tight" style="color:var(--white)">GroundTruth</span>
+    </button>
+
+    <!-- Desktop Nav links -->
+    <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
+      <button onclick="smoothScrollTo('section-how')" class="px-3 py-2 rounded-lg text-gt-muted hover:text-white transition" style="color:var(--muted)">How It Works</button>
+      <button onclick="smoothScrollTo('section-feed')" class="px-3 py-2 rounded-lg text-gt-muted hover:text-white transition" style="color:var(--muted)">Evidence Feed</button>
+      <button onclick="smoothScrollTo('section-ai')" class="px-3 py-2 rounded-lg text-gt-muted hover:text-white transition" style="color:var(--muted)">AI Intelligence</button>
+      <button onclick="smoothScrollTo('section-geo')" class="px-3 py-2 rounded-lg text-gt-muted hover:text-white transition" style="color:var(--muted)">Geospatial</button>
+      <button onclick="smoothScrollTo('section-trust')" class="px-3 py-2 rounded-lg text-gt-muted hover:text-white transition" style="color:var(--muted)">For Agencies</button>
+    </nav>
+
+    <!-- App tabs (desktop) -->
+    <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
+      <button onclick="switchTab('submit')" id="nav-submit" class="px-3 py-1.5 rounded-lg transition" style="color:var(--muted);border:1px solid transparent;">
+        Submit Evidence
+      </button>
+      <button onclick="switchTab('review')" id="nav-review" class="px-3 py-1.5 rounded-lg transition" style="color:var(--muted);border:1px solid transparent;">
+        Review Queue
+      </button>
+      <button onclick="switchTab('verify')" id="nav-verify" class="px-3 py-1.5 rounded-lg transition" style="color:var(--muted);border:1px solid transparent;">
+        Bar &amp; QR Scanner
+      </button>
+      <button onclick="switchTab('audit')" id="nav-audit" class="px-3 py-1.5 rounded-lg transition" style="color:var(--muted);border:1px solid transparent;">
+        Audit Ledger
+      </button>
+    </nav>
+
+    <!-- Right CTA + engine pill -->
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <!-- Engine status -->
+      <div class="hidden sm:flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-lg" style="background:rgba(7,28,24,0.8);border:1px solid rgba(190,255,215,0.12);">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full" style="background:var(--green);opacity:0.6;"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2" style="background:var(--green);"></span>
+        </span>
+        <span id="engineStatusText" style="color:var(--muted);">ENGINE ONLINE</span>
+      </div>
+      <button onclick="switchTab('submit')" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+        <i class="fa-solid fa-camera text-xs"></i>
+        <span>Submit Evidence</span>
+      </button>
+      <!-- Mobile menu -->
+      <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg glass" aria-label="Menu">
+        <i class="fa-solid fa-bars" style="color:var(--muted);"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden lg:hidden border-t px-5 py-4 space-y-2" style="border-color:var(--glass-border);">
+    <button onclick="switchTab('submit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Submit Evidence</button>
+    <button onclick="switchTab('review');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Review Queue</button>
+    <button onclick="switchTab('verify');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Bar &amp; QR Scanner</button>
+    <button onclick="switchTab('audit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Audit Ledger</button>
+    <div class="border-t pt-2" style="border-color:var(--glass-border);">
+      <button onclick="smoothScrollTo('section-how');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">How It Works</button>
+      <button onclick="smoothScrollTo('section-feed');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Evidence Feed</button>
+      <button onclick="smoothScrollTo('section-geo');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--muted);">Geospatial</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════════════════ -->
+<div id="view-landing" class="app-view active">
+
+<!-- ───────────────────────────── HERO ───────────────────────────── -->
+<section class="relative min-h-screen flex items-center pt-16 overflow-hidden">
+  <!-- Ambient orbs -->
+  <div class="absolute top-20 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(26,154,100,0.15),transparent);"></div>
+  <div class="absolute bottom-20 right-1/4 w-72 h-72 rounded-full blur-3xl pointer-events-none" style="background:radial-gradient(circle,rgba(57,219,145,0.08),transparent);"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+      <!-- Left: Text -->
+      <div class="space-y-7">
+        <!-- Label -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono tracking-wider glass-surface">
+          <span class="w-1.5 h-1.5 rounded-full status-dot" style="background:var(--green);"></span>
+          <span style="color:var(--green);">AI-Powered Infrastructure Verification</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl xl:text-6xl font-black leading-tight tracking-tight" style="color:var(--white);">
+          From Field Evidence to<br>
+          <span class="gradient-text">Verified Infrastructure.</span>
+        </h1>
+
+        <!-- Sub -->
+        <p class="text-base leading-relaxed max-w-lg" style="color:var(--muted);">
+          Turn site photographs into authentic, traceable evidence. Verify infrastructure progress with AI analysis, location intelligence, and accountable human review.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 pt-2">
+          <button onclick="switchTab('submit')" class="btn-primary px-6 py-3 rounded-xl font-semibold flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+            Explore the Platform
+          </button>
+          <button onclick="smoothScrollTo('section-how')" class="btn-ghost px-6 py-3 rounded-xl font-semibold flex items-center gap-2 text-sm">
+            See How It Works
+            <i class="fa-solid fa-chevron-down text-xs" style="color:var(--green);"></i>
+          </button>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="flex flex-wrap gap-3 pt-1">
+          <div class="flex items-center gap-2 px-3 py-2 rounded-lg glass text-xs" style="color:var(--muted);">
+            <i class="fa-solid fa-shield-halved" style="color:var(--green);"></i>
+            Authentic Evidence
+          </div>
+          <div class="flex items-center gap-2 px-3 py-2 rounded-lg glass text-xs" style="color:var(--muted);">
+            <i class="fa-solid fa-robot" style="color:var(--green);"></i>
+            AI Analysis
+          </div>
+          <div class="flex items-center gap-2 px-3 py-2 rounded-lg glass text-xs" style="color:var(--muted);">
+            <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
+            Geo-Verified
+          </div>
+          <div class="flex items-center gap-2 px-3 py-2 rounded-lg glass text-xs" style="color:var(--muted);">
+            <i class="fa-solid fa-user-check" style="color:var(--green);"></i>
+            Human Review
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Floating Dashboard Card -->
+      <div class="relative flex justify-center lg:justify-end">
+        <div class="relative w-full max-w-[520px]">
+          <!-- Glow behind card -->
+          <div class="absolute inset-0 rounded-2xl blur-2xl" style="background:radial-gradient(ellipse,rgba(26,154,100,0.25),transparent);transform:scale(1.1);"></div>
+
+          <!-- Main glass card -->
+          <div class="glass-strong rounded-2xl overflow-hidden relative" style="box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(57,219,145,0.15);">
+
+            <!-- Card header -->
+            <div class="px-5 py-3 flex items-center justify-between" style="border-bottom:1px solid var(--glass-border);background:rgba(7,28,24,0.4);">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded flex items-center justify-center" style="background:var(--emerald);">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                </div>
+                <span class="text-xs font-semibold" style="color:var(--white);">GroundTruth</span>
+                <span class="text-xs" style="color:var(--muted);">/</span>
+                <span class="text-xs" style="color:var(--muted);">Projects / NH-47 Road Improvement</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:rgba(235,166,90,0.15);border:1px solid rgba(235,166,90,0.3);color:var(--orange);">
+                <i class="fa-solid fa-clock text-[10px] mr-1"></i>In Review
+              </span>
+            </div>
+
+            <!-- Project title row -->
+            <div class="px-5 py-4 flex items-start justify-between" style="border-bottom:1px solid var(--glass-border);">
+              <div>
+                <div class="text-xs font-mono mb-1" style="color:var(--muted);">Roads &amp; Highways • Progress Review</div>
+                <h3 class="text-xl font-bold" style="color:var(--white);">NH-47 Road Improvement</h3>
+                <div class="text-xs font-mono mt-1" style="color:var(--muted);">ID: GT-78452</div>
+              </div>
+            </div>
+
+            <!-- Evidence image + map -->
+            <div class="px-5 py-4 grid grid-cols-2 gap-3">
+              <!-- Road photo with AI scan overlay -->
+              <div class="relative rounded-xl overflow-hidden" style="height:140px;background:linear-gradient(135deg,#1a3a2a,#0a2018);">
+                <!-- Simulated road image -->
+                <div class="absolute inset-0 flex items-end justify-start">
+                  <div class="absolute inset-0 opacity-50" style="background:linear-gradient(180deg,transparent 30%,rgba(0,30,15,0.8));"></div>
+                  <!-- Road lanes SVG representation -->
+                  <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice">
+                    <defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a4a2a"/><stop offset="100%" stop-color="#0a1f10"/></linearGradient></defs>
+                    <rect fill="url(#skyGrad)" width="200" height="140"/>
+                    <!-- Road -->
+                    <polygon points="40,140 70,80 130,80 160,140" fill="#2a2a2a"/>
+                    <line x1="100" y1="80" x2="100" y2="140" stroke="white" stroke-width="2" stroke-dasharray="6,6" opacity="0.6"/>
+                    <!-- Trees -->
+                    <rect x="10" y="60" width="8" height="30" fill="#1a5a2a"/>
+                    <ellipse cx="14" cy="58" rx="12" ry="14" fill="#2a8a3a"/>
+                    <rect x="175" y="55" width="8" height="35" fill="#1a5a2a"/>
+                    <ellipse cx="179" cy="53" rx="12" ry="14" fill="#2a8a3a"/>
+                  </svg>
+                </div>
+                <!-- Scanning overlay -->
+                <div class="scan-line"></div>
+                <!-- AI bounding box -->
+                <div class="ai-bbox" style="top:35%;left:15%;width:70%;height:50%;border-color:var(--lime);"></div>
+                <!-- Label -->
+                <div class="absolute bottom-2 left-2 text-[9px] font-mono px-1.5 py-0.5 rounded" style="background:rgba(0,0,0,0.7);color:var(--muted);">Evidence_0467.jpg</div>
+                <!-- AI scan indicator -->
+                <div class="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono" style="background:rgba(181,255,119,0.15);border:1px solid rgba(181,255,119,0.3);color:var(--lime);">
+                  <i class="fa-solid fa-wand-magic-sparkles text-[8px]"></i> AI Scan
+                </div>
+              </div>
+
+              <!-- Satellite map thumbnail -->
+              <div class="relative rounded-xl overflow-hidden" style="height:140px;background:#0a1f10;">
+                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 160 140" preserveAspectRatio="xMidYMid slice">
+                  <defs>
+                    <linearGradient id="mapGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2518"/><stop offset="100%" stop-color="#061510"/></linearGradient>
+                  </defs>
+                  <rect fill="url(#mapGrad)" width="160" height="140"/>
+                  <!-- Grid lines -->
+                  <line x1="0" y1="35" x2="160" y2="35" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <line x1="0" y1="70" x2="160" y2="70" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <line x1="0" y1="105" x2="160" y2="105" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <line x1="40" y1="0" x2="40" y2="140" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <line x1="80" y1="0" x2="80" y2="140" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <line x1="120" y1="0" x2="120" y2="140" stroke="rgba(57,219,145,0.1)" stroke-width="0.5"/>
+                  <!-- Road lines -->
+                  <path d="M0,70 Q40,65 80,70 Q120,75 160,70" stroke="rgba(255,255,255,0.3)" stroke-width="3" fill="none"/>
+                  <path d="M80,0 L80,140" stroke="rgba(255,255,255,0.15)" stroke-width="2" fill="none"/>
+                  <!-- Terrain patches -->
+                  <ellipse cx="30" cy="40" rx="20" ry="15" fill="rgba(26,154,100,0.15)"/>
+                  <ellipse cx="130" cy="100" rx="18" ry="12" fill="rgba(26,154,100,0.12)"/>
+                  <!-- Location pin -->
+                  <circle cx="80" cy="70" r="6" fill="var(--green)" opacity="0.9"/>
+                  <circle cx="80" cy="70" r="10" fill="none" stroke="var(--green)" stroke-width="1.5" opacity="0.4"/>
+                  <circle cx="80" cy="70" r="14" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.2"/>
+                </svg>
+                <div class="absolute bottom-2 right-2 text-[9px] font-mono px-1.5 py-0.5 rounded" style="background:rgba(0,0,0,0.7);color:var(--muted);">Satellite View</div>
+              </div>
+            </div>
+
+            <!-- Evidence details row -->
+            <div class="px-5 pb-4 grid grid-cols-2 gap-2">
+              <div class="info-row">
+                <i class="fa-solid fa-location-dot text-xs" style="color:var(--green);"></i>
+                <div>
+                  <div class="text-[9px] font-mono" style="color:var(--muted);">GPS Coordinate</div>
+                  <div class="text-[11px] font-mono" style="color:var(--white);">26.812°N, 80.943°E</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <i class="fa-solid fa-calendar text-xs" style="color:var(--green);"></i>
+                <div>
+                  <div class="text-[9px] font-mono" style="color:var(--muted);">Captured At</div>
+                  <div class="text-[11px] font-mono" style="color:var(--white);">Mar 10, 2025, 10:24 AM</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <i class="fa-solid fa-fingerprint text-xs" style="color:var(--green);"></i>
+                <div>
+                  <div class="text-[9px] font-mono" style="color:var(--muted);">SHA-256</div>
+                  <div class="text-[11px] font-mono flex items-center gap-1" style="color:var(--green);">
+                    <i class="fa-solid fa-circle-check text-[9px]"></i> Verified
+                  </div>
+                </div>
+              </div>
+              <div class="info-row">
+                <i class="fa-solid fa-eye text-xs" style="color:var(--green);"></i>
+                <div>
+                  <div class="text-[9px] font-mono" style="color:var(--muted);">OCR (Extracted)</div>
+                  <div class="text-[11px] font-mono" style="color:var(--white);">NH-47, Pkg-2, Ch-500</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Summary + Progress -->
+            <div class="px-5 pb-5 flex items-start justify-between gap-4">
+              <div class="flex-1 rounded-xl p-3" style="background:rgba(7,28,24,0.6);border:1px solid rgba(57,219,145,0.12);">
+                <div class="flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-wand-magic-sparkles text-xs" style="color:var(--lime);"></i>
+                  <span class="text-xs font-semibold" style="color:var(--lime);">AI Analysis Summary</span>
+                </div>
+                <ul class="space-y-1">
+                  <li class="flex items-start gap-1.5 text-[11px]" style="color:var(--muted);">
+                    <i class="fa-solid fa-circle-check text-[9px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
+                    Road surface and alignment match project specifications.
+                  </li>
+                  <li class="flex items-start gap-1.5 text-[11px]" style="color:var(--muted);">
+                    <i class="fa-solid fa-circle-check text-[9px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
+                    No major visual inconsistencies detected.
+                  </li>
+                  <li class="flex items-start gap-1.5 text-[11px]" style="color:var(--muted);">
+                    <i class="fa-solid fa-circle-check text-[9px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
+                    Progress is consistent with the planned phase.
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Progress ring -->
+              <div class="flex-shrink-0 flex flex-col items-center gap-1">
+                <svg width="72" height="72" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(57,219,145,0.1)" stroke-width="6"/>
+                  <circle class="ring-progress" cx="36" cy="36" r="28" fill="none" stroke="url(#ringGrad)" stroke-width="6"
+                    stroke-dasharray="175.9" stroke-dashoffset="47" stroke-linecap="round"/>
+                  <defs>
+                    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#39DB91"/>
+                      <stop offset="100%" stop-color="#B5FF77"/>
+                    </linearGradient>
+                  </defs>
+                  <text x="36" y="40" text-anchor="middle" font-size="14" font-weight="800" fill="white" font-family="Inter">72%</text>
+                </svg>
+                <div class="text-[10px] font-mono text-center" style="color:var(--muted);">Project Progress<br>Phase 2 of 3</div>
+              </div>
+            </div>
+
+          </div><!-- /glass card -->
+
+          <!-- Floating badge: SHA verified -->
+          <div class="absolute -left-4 top-1/3 glass-surface rounded-xl px-3 py-2 flex items-center gap-2 shadow-xl">
+            <i class="fa-solid fa-lock text-xs" style="color:var(--green);"></i>
+            <span class="text-xs font-mono" style="color:var(--white);">SHA-256 Verified</span>
+          </div>
+        </div>
+      </div><!-- /right col -->
+    </div><!-- /grid -->
+  </div>
+</section>
+
+<!-- ───────────────────────────── TICKER ───────────────────────────── -->
+<div class="relative overflow-hidden py-4" style="border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);background:rgba(11,48,40,0.3);">
+  <div class="flex items-center gap-6 text-xs font-mono" style="color:var(--muted);">
+    <span class="flex-shrink-0 px-6 font-semibold" style="color:var(--green);">Trusted for Public Infrastructure</span>
+    <div class="ticker-track">
+      <!-- Items duplicated for seamless loop -->
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-road" style="color:var(--green);"></i> Roads &amp; Highways</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-building" style="color:var(--green);"></i> Buildings &amp; Facilities</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-droplet" style="color:var(--green);"></i> Water Infrastructure</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-bridge" style="color:var(--green);"></i> Bridges &amp; Structures</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-water" style="color:var(--green);"></i> Drainage Systems</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-solar-panel" style="color:var(--green);"></i> Public Utilities</span>
+      <!-- Duplicate -->
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-road" style="color:var(--green);"></i> Roads &amp; Highways</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-building" style="color:var(--green);"></i> Buildings &amp; Facilities</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-droplet" style="color:var(--green);"></i> Water Infrastructure</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-bridge" style="color:var(--green);"></i> Bridges &amp; Structures</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-water" style="color:var(--green);"></i> Drainage Systems</span>
+      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-solar-panel" style="color:var(--green);"></i> Public Utilities</span>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── HOW IT WORKS ───────────────────────────── -->
+<section id="section-how" class="relative py-20 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="text-center mb-14 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono glass-surface mb-4" style="color:var(--green);">HOW IT WORKS</div>
+      <h2 class="text-3xl sm:text-4xl font-black" style="color:var(--white);">
+        Evidence in. <span class="gradient-text">Accountability out.</span>
+      </h2>
+      <p class="mt-3 text-base max-w-xl mx-auto" style="color:var(--muted);">Four clear stages transform raw field photos into verified, traceable infrastructure records.</p>
+    </div>
+
+    <!-- Workflow steps -->
+    <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="workflowGrid">
+
+      <!-- SVG connector (desktop only) -->
+      <svg class="absolute top-10 left-0 right-0 w-full h-4 hidden lg:block pointer-events-none" viewBox="0 0 1200 20" preserveAspectRatio="none" style="z-index:1;">
+        <path id="wfPath1" class="workflow-path" d="M150,10 L380,10" stroke="url(#wfGrad)" stroke-width="1.5" fill="none"/>
+        <path id="wfPath2" class="workflow-path" d="M430,10 L660,10" stroke="url(#wfGrad)" stroke-width="1.5" fill="none"/>
+        <path id="wfPath3" class="workflow-path" d="M710,10 L940,10" stroke="url(#wfGrad)" stroke-width="1.5" fill="none"/>
+        <defs><linearGradient id="wfGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(57,219,145,0.8)"/><stop offset="100%" stop-color="rgba(181,255,119,0.6)"/></linearGradient></defs>
+      </svg>
+
+      <!-- Step 1 -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4 reveal relative z-10" style="border-color:rgba(57,219,145,0.25);">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.5));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-camera" style="color:var(--green);"></i>
+        </div>
+        <div class="text-xs font-mono" style="color:var(--emerald);">01</div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Capture Evidence</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Field officers photograph infrastructure with GPS coordinates and timestamp automatically captured.</p>
+        <div class="flex items-center gap-2 text-xs font-mono" style="color:var(--muted);">
+          <i class="fa-solid fa-location-dot" style="color:var(--green);"></i> Site photo + GPS + timestamp
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4 reveal relative z-10" style="border-color:rgba(57,219,145,0.25);">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.5));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--lime);"></i>
+        </div>
+        <div class="text-xs font-mono" style="color:var(--emerald);">02</div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Analyze &amp; Validate</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">AI pipeline runs quality scoring, OCR extraction, pHash duplicate detection and geofence checks.</p>
+        <div class="flex items-center gap-2 text-xs font-mono" style="color:var(--muted);">
+          <i class="fa-solid fa-robot" style="color:var(--lime);"></i> AI analysis, OCR &amp; integrity checks
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4 reveal relative z-10" style="border-color:rgba(57,219,145,0.25);">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.5));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-clipboard-check" style="color:var(--green);"></i>
+        </div>
+        <div class="text-xs font-mono" style="color:var(--emerald);">03</div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Review &amp; Verify</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Authorized engineers review AI findings and make final approval decisions with full audit trail.</p>
+        <div class="flex items-center gap-2 text-xs font-mono" style="color:var(--muted);">
+          <i class="fa-solid fa-user-shield" style="color:var(--green);"></i> Human verification and approval
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4 reveal relative z-10" style="border-color:rgba(57,219,145,0.25);">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.5));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-chart-line" style="color:var(--orange);"></i>
+        </div>
+        <div class="text-xs font-mono" style="color:var(--emerald);">04</div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Track &amp; Report</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Traceable progress records, barcodes, QR codes and audit history permanently recorded.</p>
+        <div class="flex items-center gap-2 text-xs font-mono" style="color:var(--muted);">
+          <i class="fa-solid fa-chart-line" style="color:var(--orange);"></i> Traceable progress &amp; audit history
+        </div>
+      </div>
+    </div>
+
+    <!-- Live metrics strip -->
+    <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+      <div class="glass rounded-xl p-5 cursor-pointer" onclick="switchTab('review')">
+        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
+          <span>Total Evidence</span>
+          <i class="fa-solid fa-folder-closed" style="color:rgba(190,255,215,0.3);"></i>
+        </div>
+        <div class="text-3xl font-black" style="color:var(--white);" id="metric-total-evidence">—</div>
+        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Server-verified records</div>
+      </div>
+      <div class="glass rounded-xl p-5 cursor-pointer" onclick="switchTab('review')">
+        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
+          <span>Approved</span>
+          <i class="fa-solid fa-check-circle" style="color:var(--green);"></i>
+        </div>
+        <div class="text-3xl font-black" style="color:var(--green);" id="metric-approved">—</div>
+        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Engineer sign-offs</div>
+      </div>
+      <div class="glass rounded-xl p-5 cursor-pointer" onclick="switchTab('review')">
+        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
+          <span>AI Flags</span>
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange);"></i>
+        </div>
+        <div class="text-3xl font-black" style="color:var(--orange);" id="metric-attention">—</div>
+        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Flagged by AI advisory</div>
+      </div>
+      <div class="glass rounded-xl p-5 cursor-pointer" onclick="switchTab('review')">
+        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
+          <span>Corrected Lineage</span>
+          <i class="fa-solid fa-code-branch" style="color:#a78bfa;"></i>
+        </div>
+        <div class="text-3xl font-black" style="color:#a78bfa;" id="metric-duplicates">—</div>
+        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Traceable resubmissions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── EVIDENCE FEED ───────────────────────────── -->
+<section id="section-feed" class="py-20" style="border-top:1px solid var(--glass-border);">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="flex items-end justify-between mb-10 reveal">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono glass-surface mb-3" style="color:var(--green);">EVIDENCE INTELLIGENCE FEED</div>
+        <h2 class="text-3xl sm:text-4xl font-black" style="color:var(--white);">Live Evidence Stream</h2>
+        <p class="mt-2 text-sm" style="color:var(--muted);">Sample demonstration data — illustrative only, not live verified infrastructure</p>
+      </div>
+      <div class="hidden sm:flex items-center gap-2">
+        <button onclick="carouselScroll(-1)" class="btn-ghost w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scroll left">
+          <i class="fa-solid fa-chevron-left text-xs" style="color:var(--green);"></i>
+        </button>
+        <button onclick="carouselScroll(1)" class="btn-ghost w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scroll right">
+          <i class="fa-solid fa-chevron-right text-xs" style="color:var(--green);"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="evidence-carousel" id="evidenceCarousel">
+
+      <!-- Card 1: Road construction -->
+      <div class="evidence-card glass-strong rounded-2xl overflow-hidden">
+        <div class="relative h-48 overflow-hidden" style="background:linear-gradient(135deg,#1a3a2a,#0a2018);">
+          <svg class="w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="c1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a4a2a"/><stop offset="100%" stop-color="#061510"/></linearGradient></defs>
+            <rect fill="url(#c1g)" width="320" height="200"/>
+            <polygon points="60,200 110,100 210,100 260,200" fill="#222"/>
+            <line x1="160" y1="100" x2="160" y2="200" stroke="white" stroke-width="3" stroke-dasharray="8,8" opacity="0.5"/>
+            <rect x="20" y="80" width="10" height="50" fill="#1a5a2a"/>
+            <ellipse cx="25" cy="78" rx="15" ry="18" fill="#2a8a3a"/>
+            <rect x="288" y="70" width="10" height="60" fill="#1a5a2a"/>
+            <ellipse cx="293" cy="68" rx="15" ry="18" fill="#2a8a3a"/>
           </svg>
+          <div class="scan-line"></div>
+          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.15);border:1px solid rgba(57,219,145,0.3);color:var(--green);">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Analyzed
+          </div>
+          <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-mono" style="background:rgba(57,219,145,0.9);color:#071C18;font-weight:700;">APPROVED</div>
         </div>
-        <div class="flex items-center space-x-2">
-          <span class="font-bold text-white text-base tracking-tight">GroundTruth</span>
-          <span class="text-xs text-[#555] font-mono">/</span>
-          <span class="text-xs text-[#888] font-mono tracking-wide">VERIFIED ENGINE</span>
+        <div class="p-4 space-y-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <h4 class="font-bold text-sm" style="color:var(--white);">NH-48 Expressway Upgrade</h4>
+              <div class="text-xs font-mono mt-0.5" style="color:var(--muted);">Roads &amp; Highways</div>
+            </div>
+          </div>
+          <div class="text-xs font-mono space-y-1.5">
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Pune, Maharashtra</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>14 Mar 2025, 09:42 AM</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00218</div>
+          </div>
+          <div class="rounded-lg p-2.5 text-xs" style="background:rgba(7,28,24,0.6);border:1px solid rgba(57,219,145,0.1);color:var(--muted);">
+            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Surface quality meets specification. No inconsistencies.
+          </div>
+          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2 rounded-lg btn-ghost flex items-center justify-center gap-2">
+            <i class="fa-solid fa-barcode" style="color:var(--green);"></i> View Barcode &amp; QR
+          </button>
         </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center space-x-1 text-xs font-medium">
-        <button onclick="switchTab('landing')" id="nav-landing" class="px-3.5 py-1.5 rounded-md text-white bg-[#171717] transition border border-[#262626]">
-          Overview
-        </button>
-        <button onclick="switchTab('submit')" id="nav-submit" class="px-3.5 py-1.5 rounded-md text-[#888] hover:text-white hover:bg-[#141414] transition border border-transparent">
-          Submit Evidence
-        </button>
-        <button onclick="switchTab('review')" id="nav-review" class="px-3.5 py-1.5 rounded-md text-[#888] hover:text-white hover:bg-[#141414] transition border border-transparent">
-          Review Queue
-        </button>
-        <button onclick="switchTab('verify')" id="nav-verify" class="px-3.5 py-1.5 rounded-md text-[#888] hover:text-white hover:bg-[#141414] transition border border-transparent">
-          Public Verifier
-        </button>
-        <button onclick="switchTab('audit')" id="nav-audit" class="px-3.5 py-1.5 rounded-md text-[#888] hover:text-white hover:bg-[#141414] transition border border-transparent">
-          Audit Ledger
-        </button>
-      </nav>
+      <!-- Card 2: Bridge -->
+      <div class="evidence-card glass-strong rounded-2xl overflow-hidden">
+        <div class="relative h-48 overflow-hidden" style="background:#0a1f10;">
+          <svg class="w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="c2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132a1e"/><stop offset="100%" stop-color="#061510"/></linearGradient></defs>
+            <rect fill="url(#c2g)" width="320" height="200"/>
+            <!-- River -->
+            <rect x="0" y="130" width="320" height="70" fill="rgba(26,154,100,0.2)"/>
+            <!-- Bridge deck -->
+            <rect x="20" y="110" width="280" height="20" fill="#333" rx="2"/>
+            <!-- Pillars -->
+            <rect x="90" y="110" width="16" height="60" fill="#2a2a2a"/>
+            <rect x="210" y="110" width="16" height="60" fill="#2a2a2a"/>
+            <!-- Cables -->
+            <line x1="160" y1="40" x2="90" y2="110" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+            <line x1="160" y1="40" x2="210" y2="110" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+            <line x1="160" y1="40" x2="30" y2="120" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <line x1="160" y1="40" x2="290" y2="120" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <!-- Tower -->
+            <rect x="154" y="30" width="12" height="85" fill="#444"/>
+          </svg>
+          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(235,166,90,0.15);border:1px solid rgba(235,166,90,0.3);color:var(--orange);">
+            <i class="fa-solid fa-clock mr-1"></i>In Review
+          </div>
+          <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-mono" style="background:rgba(235,166,90,0.2);border:1px solid rgba(235,166,90,0.4);color:var(--orange);">PENDING</div>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <h4 class="font-bold text-sm" style="color:var(--white);">Brahmaputra River Bridge</h4>
+            <div class="text-xs font-mono mt-0.5" style="color:var(--muted);">Bridges &amp; Structures</div>
+          </div>
+          <div class="text-xs font-mono space-y-1.5">
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Guwahati, Assam</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>22 Feb 2025, 11:15 AM</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00341</div>
+          </div>
+          <div class="rounded-lg p-2.5 text-xs" style="background:rgba(7,28,24,0.6);border:1px solid rgba(235,166,90,0.12);color:var(--muted);">
+            <i class="fa-solid fa-triangle-exclamation mr-1" style="color:var(--orange);"></i>Structural element requires secondary verification.
+          </div>
+          <button onclick="switchTab('review')" class="w-full text-xs font-mono py-2 rounded-lg btn-ghost flex items-center justify-center gap-2">
+            <i class="fa-solid fa-clipboard-check" style="color:var(--green);"></i> Review Evidence
+          </button>
+        </div>
+      </div>
 
-      <!-- Engine Live Status -->
-      <div class="flex items-center space-x-3">
-        <div class="flex items-center space-x-2 text-xs font-mono px-3 py-1.5 rounded-md bg-[#0a0a0a] border border-[#222]">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-crimson-500 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-crimson-600"></span>
-          </span>
-          <span class="text-[#bbb] text-[11px]">8000:LIVE</span>
+      <!-- Card 3: Drainage -->
+      <div class="evidence-card glass-strong rounded-2xl overflow-hidden">
+        <div class="relative h-48 overflow-hidden" style="background:#061510;">
+          <svg class="w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="c3g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d2a1a"/><stop offset="100%" stop-color="#061510"/></linearGradient></defs>
+            <rect fill="url(#c3g)" width="320" height="200"/>
+            <!-- Drain channels -->
+            <rect x="0" y="90" width="320" height="30" fill="#1a1a1a"/>
+            <line x1="0" y1="105" x2="320" y2="105" stroke="rgba(57,219,145,0.3)" stroke-width="1"/>
+            <!-- Side walls -->
+            <rect x="0" y="80" width="10" height="50" fill="#2a2a2a"/>
+            <rect x="310" y="80" width="10" height="50" fill="#2a2a2a"/>
+            <!-- Flow indicators -->
+            <circle cx="60" cy="105" r="3" fill="rgba(57,219,145,0.4)"/>
+            <circle cx="120" cy="105" r="3" fill="rgba(57,219,145,0.4)"/>
+            <circle cx="180" cy="105" r="3" fill="rgba(57,219,145,0.4)"/>
+            <circle cx="240" cy="105" r="3" fill="rgba(57,219,145,0.4)"/>
+            <!-- Ground -->
+            <rect x="0" y="140" width="320" height="60" fill="#112a1a"/>
+          </svg>
+          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.15);border:1px solid rgba(57,219,145,0.3);color:var(--green);">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Analyzed
+          </div>
+          <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-mono" style="background:rgba(57,219,145,0.9);color:#071C18;font-weight:700;">APPROVED</div>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <h4 class="font-bold text-sm" style="color:var(--white);">NH-44 Stormwater Drainage</h4>
+            <div class="text-xs font-mono mt-0.5" style="color:var(--muted);">Drainage Systems</div>
+          </div>
+          <div class="text-xs font-mono space-y-1.5">
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Nagpur, Maharashtra</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>5 Mar 2025, 14:30 PM</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00189</div>
+          </div>
+          <div class="rounded-lg p-2.5 text-xs" style="background:rgba(7,28,24,0.6);border:1px solid rgba(57,219,145,0.1);color:var(--muted);">
+            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Drainage gradient verified. Flow capacity within specs.
+          </div>
+          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2 rounded-lg btn-ghost flex items-center justify-center gap-2">
+            <i class="fa-solid fa-barcode" style="color:var(--green);"></i> View Barcode &amp; QR
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 4: Public Building -->
+      <div class="evidence-card glass-strong rounded-2xl overflow-hidden">
+        <div class="relative h-48 overflow-hidden" style="background:#0a1a0e;">
+          <svg class="w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="c4g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132a18"/><stop offset="100%" stop-color="#061510"/></linearGradient></defs>
+            <rect fill="url(#c4g)" width="320" height="200"/>
+            <!-- Building -->
+            <rect x="80" y="50" width="160" height="150" fill="#1e1e1e"/>
+            <!-- Windows -->
+            <rect x="100" y="70" width="30" height="25" rx="2" fill="rgba(57,219,145,0.15)" stroke="rgba(57,219,145,0.2)" stroke-width="1"/>
+            <rect x="145" y="70" width="30" height="25" rx="2" fill="rgba(57,219,145,0.15)" stroke="rgba(57,219,145,0.2)" stroke-width="1"/>
+            <rect x="190" y="70" width="30" height="25" rx="2" fill="rgba(57,219,145,0.15)" stroke="rgba(57,219,145,0.2)" stroke-width="1"/>
+            <rect x="100" y="110" width="30" height="25" rx="2" fill="rgba(57,219,145,0.1)" stroke="rgba(57,219,145,0.15)" stroke-width="1"/>
+            <rect x="145" y="110" width="30" height="25" rx="2" fill="rgba(57,219,145,0.1)" stroke="rgba(57,219,145,0.15)" stroke-width="1"/>
+            <rect x="190" y="110" width="30" height="25" rx="2" fill="rgba(57,219,145,0.1)" stroke="rgba(57,219,145,0.15)" stroke-width="1"/>
+            <!-- Door -->
+            <rect x="145" y="150" width="30" height="50" fill="#111" rx="2"/>
+          </svg>
+          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.15);border:1px solid rgba(57,219,145,0.3);color:var(--green);">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Analyzed
+          </div>
+          <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-mono" style="background:rgba(57,219,145,0.9);color:#071C18;font-weight:700;">APPROVED</div>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <h4 class="font-bold text-sm" style="color:var(--white);">District Collectorate Complex</h4>
+            <div class="text-xs font-mono mt-0.5" style="color:var(--muted);">Public Buildings</div>
+          </div>
+          <div class="text-xs font-mono space-y-1.5">
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Lucknow, Uttar Pradesh</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>18 Feb 2025, 10:00 AM</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00276</div>
+          </div>
+          <div class="rounded-lg p-2.5 text-xs" style="background:rgba(7,28,24,0.6);border:1px solid rgba(57,219,145,0.1);color:var(--muted);">
+            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Construction phase matches approved blueprint.
+          </div>
+          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2 rounded-lg btn-ghost flex items-center justify-center gap-2">
+            <i class="fa-solid fa-barcode" style="color:var(--green);"></i> View Barcode &amp; QR
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 5: Water -->
+      <div class="evidence-card glass-strong rounded-2xl overflow-hidden">
+        <div class="relative h-48 overflow-hidden" style="background:#061510;">
+          <svg class="w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="c5g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d2a2a"/><stop offset="100%" stop-color="#061510"/></linearGradient>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(26,154,100,0.4)"/><stop offset="100%" stop-color="rgba(7,28,24,0.9)"/></linearGradient>
+            </defs>
+            <rect fill="url(#c5g)" width="320" height="200"/>
+            <!-- Tank -->
+            <rect x="90" y="40" width="140" height="120" rx="8" fill="#1a1a1a"/>
+            <rect x="90" y="100" width="140" height="60" rx="4" fill="url(#waterGrad)"/>
+            <!-- Pipes -->
+            <rect x="150" y="10" width="20" height="40" fill="#333"/>
+            <rect x="90" y="150" width="40" height="12" fill="#333"/>
+            <!-- Level indicator -->
+            <line x1="240" y1="50" x2="240" y2="160" stroke="rgba(57,219,145,0.3)" stroke-width="2"/>
+            <line x1="235" y1="100" x2="245" y2="100" stroke="var(--green)" stroke-width="2"/>
+            <text x="248" y="104" fill="#39DB91" font-size="8" font-family="monospace">60%</text>
+          </svg>
+          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(235,166,90,0.15);border:1px solid rgba(235,166,90,0.3);color:var(--orange);">
+            <i class="fa-solid fa-clock mr-1"></i>In Review
+          </div>
+          <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-mono" style="background:rgba(235,166,90,0.2);border:1px solid rgba(235,166,90,0.4);color:var(--orange);">PENDING</div>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <h4 class="font-bold text-sm" style="color:var(--white);">Rural Water Supply Tank</h4>
+            <div class="text-xs font-mono mt-0.5" style="color:var(--muted);">Water Infrastructure</div>
+          </div>
+          <div class="text-xs font-mono space-y-1.5">
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Jaipur, Rajasthan</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>1 Mar 2025, 08:50 AM</div>
+            <div class="flex items-center gap-2" style="color:var(--muted);"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00310</div>
+          </div>
+          <div class="rounded-lg p-2.5 text-xs" style="background:rgba(7,28,24,0.6);border:1px solid rgba(235,166,90,0.12);color:var(--muted);">
+            <i class="fa-solid fa-triangle-exclamation mr-1" style="color:var(--orange);"></i>Capacity measurement needs field re-inspection.
+          </div>
+          <button onclick="switchTab('review')" class="w-full text-xs font-mono py-2 rounded-lg btn-ghost flex items-center justify-center gap-2">
+            <i class="fa-solid fa-clipboard-check" style="color:var(--green);"></i> Review Evidence
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── AI INTELLIGENCE ───────────────────────────── -->
+<section id="section-ai" class="py-20" style="border-top:1px solid var(--glass-border);">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Left: description -->
+      <div class="space-y-6 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono glass-surface" style="color:var(--green);">AI INTELLIGENCE</div>
+        <h2 class="text-3xl sm:text-4xl font-black" style="color:var(--white);">
+          How GroundTruth reads<br>
+          <span class="gradient-text">field evidence.</span>
+        </h2>
+        <p class="text-base leading-relaxed" style="color:var(--muted);">
+          Every submitted photograph undergoes a multi-stage AI pipeline — quality scoring, perceptual hash deduplication, OCR text extraction, geofence validation, and specification consistency checks.
+        </p>
+
+        <div class="space-y-4">
+          <div class="flex items-start gap-4 p-4 glass rounded-xl">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.2);border:1px solid rgba(57,219,145,0.3);">
+              <i class="fa-solid fa-eye text-sm" style="color:var(--green);"></i>
+            </div>
+            <div>
+              <div class="text-sm font-semibold" style="color:var(--white);">Image Quality Scoring</div>
+              <div class="text-xs mt-1" style="color:var(--muted);">AI assesses sharpness, brightness, and subject clarity to ensure evidence is usable.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 p-4 glass rounded-xl">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.2);border:1px solid rgba(57,219,145,0.3);">
+              <i class="fa-solid fa-clone text-sm" style="color:var(--lime);"></i>
+            </div>
+            <div>
+              <div class="text-sm font-semibold" style="color:var(--white);">Duplicate Detection (pHash)</div>
+              <div class="text-xs mt-1" style="color:var(--muted);">Perceptual hash comparison flags visually identical submissions across the evidence corpus.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 p-4 glass rounded-xl">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.2);border:1px solid rgba(57,219,145,0.3);">
+              <i class="fa-solid fa-font text-sm" style="color:var(--green);"></i>
+            </div>
+            <div>
+              <div class="text-sm font-semibold" style="color:var(--white);">OCR Text Extraction</div>
+              <div class="text-xs mt-1" style="color:var(--muted);">Automatically reads chainage markers, project codes, and signboards from photographs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: AI scan visualization -->
+      <div class="reveal">
+        <div class="glass-strong rounded-2xl overflow-hidden" style="border-color:rgba(57,219,145,0.2);">
+          <!-- Scan window -->
+          <div class="relative" style="height:260px;background:linear-gradient(135deg,#0a2018,#061510);">
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 260" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="aiGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#1a4a2a"/>
+                  <stop offset="100%" stop-color="#061510"/>
+                </linearGradient>
+              </defs>
+              <rect fill="url(#aiGrad)" width="500" height="260"/>
+              <!-- Road scene -->
+              <polygon points="100,260 180,120 320,120 400,260" fill="#222"/>
+              <line x1="250" y1="120" x2="250" y2="260" stroke="white" stroke-width="3" stroke-dasharray="10,10" opacity="0.4"/>
+              <rect x="0" y="200" width="500" height="60" fill="#1a1a1a"/>
+              <!-- Trees -->
+              <rect x="40" y="100" width="12" height="70" fill="#1a5a2a"/>
+              <ellipse cx="46" cy="96" rx="20" ry="22" fill="#2a8a3a"/>
+              <rect x="440" y="90" width="12" height="80" fill="#1a5a2a"/>
+              <ellipse cx="446" cy="86" rx="20" ry="22" fill="#2a8a3a"/>
+              <!-- AI bounding box on road -->
+              <rect x="140" y="110" width="220" height="130" fill="none" stroke="#B5FF77" stroke-width="2" stroke-dasharray="6,3" rx="4" opacity="0.8"/>
+              <!-- Corner accents -->
+              <polyline points="140,130 140,110 160,110" stroke="#B5FF77" stroke-width="3" fill="none"/>
+              <polyline points="340,130 340,110 320,110" stroke="#B5FF77" stroke-width="3" fill="none"/>
+              <polyline points="140,220 140,240 160,240" stroke="#B5FF77" stroke-width="3" fill="none"/>
+              <polyline points="340,220 340,240 320,240" stroke="#B5FF77" stroke-width="3" fill="none"/>
+              <!-- Sign marker -->
+              <rect x="230" y="150" width="40" height="28" rx="3" fill="rgba(181,255,119,0.15)" stroke="#B5FF77" stroke-width="1"/>
+              <text x="250" y="168" text-anchor="middle" fill="#B5FF77" font-size="8" font-family="monospace">NH-47</text>
+            </svg>
+            <!-- Animated scan line -->
+            <div class="scan-line"></div>
+            <!-- AI label overlay -->
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+              <div class="px-2 py-1 rounded text-xs font-mono" style="background:rgba(0,0,0,0.7);color:var(--lime);">
+                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> ANALYZING...
+              </div>
+              <div class="px-2 py-1 rounded text-xs font-mono" style="background:rgba(0,0,0,0.7);color:var(--muted);">
+                Confidence: 94.2%
+              </div>
+            </div>
+          </div>
+
+          <!-- Extracted info -->
+          <div class="p-5 space-y-3">
+            <div class="text-xs font-mono font-semibold" style="color:var(--green);">EXTRACTED INTELLIGENCE</div>
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+              <div class="p-2 rounded-lg" style="background:rgba(7,28,24,0.6);border:1px solid rgba(190,255,215,0.1);">
+                <div style="color:var(--muted);">OCR Detected</div>
+                <div style="color:var(--white);">NH-47, Pkg-2</div>
+              </div>
+              <div class="p-2 rounded-lg" style="background:rgba(7,28,24,0.6);border:1px solid rgba(190,255,215,0.1);">
+                <div style="color:var(--muted);">Quality Score</div>
+                <div style="color:var(--green);">87.4%</div>
+              </div>
+              <div class="p-2 rounded-lg" style="background:rgba(7,28,24,0.6);border:1px solid rgba(190,255,215,0.1);">
+                <div style="color:var(--muted);">Duplicate</div>
+                <div style="color:var(--green);">Not Detected</div>
+              </div>
+              <div class="p-2 rounded-lg" style="background:rgba(7,28,24,0.6);border:1px solid rgba(190,255,215,0.1);">
+                <div style="color:var(--muted);">Geofence</div>
+                <div style="color:var(--green);">IN ZONE ✓</div>
+              </div>
+            </div>
+            <div class="text-xs p-3 rounded-lg" style="background:rgba(57,219,145,0.05);border:1px solid rgba(57,219,145,0.15);color:var(--muted);">
+              <i class="fa-solid fa-info-circle mr-1" style="color:var(--green);"></i>
+              AI findings are advisory only. Authorized human engineers retain final verification authority.
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </header>
+  </div>
+</section>
 
-  <!-- Notification Toast Area -->
-  <div id="toastContainer" class="fixed top-20 right-6 z-50 space-y-2 pointer-events-none"></div>
+<!-- ───────────────────────────── GEOSPATIAL ───────────────────────────── -->
+<section id="section-geo" class="py-20" style="border-top:1px solid var(--glass-border);">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="text-center mb-12 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono glass-surface mb-4" style="color:var(--green);">GEOSPATIAL INTELLIGENCE</div>
+      <h2 class="text-3xl sm:text-4xl font-black" style="color:var(--white);">
+        Infrastructure, <span class="gradient-text">mapped and verified.</span>
+      </h2>
+      <p class="mt-3 text-base max-w-xl mx-auto" style="color:var(--muted);">Every evidence record carries GPS coordinates. Projects are geofenced — submissions outside boundaries are automatically flagged.</p>
+    </div>
 
-  <!-- Primary Dynamic Content Container -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
+    <div class="glass-strong rounded-2xl overflow-hidden reveal" style="height:420px;position:relative;">
+      <!-- Map background -->
+      <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="mapBg" cx="50%" cy="50%"><stop offset="0%" stop-color="#0d2a1e"/><stop offset="100%" stop-color="#071C18"/></radialGradient>
+        </defs>
+        <rect fill="url(#mapBg)" width="1200" height="420"/>
+        <!-- Terrain grid -->
+        <g opacity="0.08" stroke="rgba(57,219,145,1)" stroke-width="0.5">
+          <line x1="0" y1="60" x2="1200" y2="60"/><line x1="0" y1="120" x2="1200" y2="120"/>
+          <line x1="0" y1="180" x2="1200" y2="180"/><line x1="0" y1="240" x2="1200" y2="240"/>
+          <line x1="0" y1="300" x2="1200" y2="300"/><line x1="0" y1="360" x2="1200" y2="360"/>
+          <line x1="120" y1="0" x2="120" y2="420"/><line x1="240" y1="0" x2="240" y2="420"/>
+          <line x1="360" y1="0" x2="360" y2="420"/><line x1="480" y1="0" x2="480" y2="420"/>
+          <line x1="600" y1="0" x2="600" y2="420"/><line x1="720" y1="0" x2="720" y2="420"/>
+          <line x1="840" y1="0" x2="840" y2="420"/><line x1="960" y1="0" x2="960" y2="420"/>
+          <line x1="1080" y1="0" x2="1080" y2="420"/>
+        </g>
+        <!-- Contour lines -->
+        <path d="M0,200 Q200,160 400,180 Q600,200 800,170 Q1000,145 1200,160" fill="none" stroke="rgba(57,219,145,0.07)" stroke-width="1"/>
+        <path d="M0,250 Q200,220 400,230 Q600,240 800,220 Q1000,200 1200,210" fill="none" stroke="rgba(57,219,145,0.05)" stroke-width="1"/>
+        <!-- Road network -->
+        <path d="M0,210 Q300,195 600,210 Q900,225 1200,210" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="4"/>
+        <path d="M600,0 Q590,210 600,420" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+        <path d="M0,350 Q400,340 700,320 Q900,310 1200,330" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+        <!-- Project zone polygon 1 -->
+        <polygon points="250,120 420,100 480,180 380,230 240,200" fill="rgba(57,219,145,0.06)" stroke="rgba(57,219,145,0.3)" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <!-- Project zone polygon 2 -->
+        <polygon points="650,160 820,140 870,250 760,280 640,250" fill="rgba(181,255,119,0.04)" stroke="rgba(181,255,119,0.2)" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <!-- Map markers with pulse rings -->
+        <!-- Marker 1 -->
+        <circle cx="350" cy="165" r="20" fill="none" stroke="rgba(57,219,145,0.15)" stroke-width="1">
+          <animate attributeName="r" from="8" to="24" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.6" to="0" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="350" cy="165" r="8" fill="rgba(57,219,145,0.9)"/>
+        <circle cx="350" cy="165" r="4" fill="white"/>
+        <!-- Marker 2 -->
+        <circle cx="740" cy="210" r="20" fill="none" stroke="rgba(181,255,119,0.15)" stroke-width="1">
+          <animate attributeName="r" from="8" to="24" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="740" cy="210" r="8" fill="rgba(181,255,119,0.9)"/>
+        <circle cx="740" cy="210" r="4" fill="white"/>
+        <!-- Marker 3 -->
+        <circle cx="500" cy="300" r="6" fill="rgba(235,166,90,0.9)"/>
+        <circle cx="500" cy="300" r="12" fill="none" stroke="rgba(235,166,90,0.3)" stroke-width="1">
+          <animate attributeName="r" from="6" to="18" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.5" to="0" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Marker 4 -->
+        <circle cx="900" cy="130" r="6" fill="rgba(57,219,145,0.9)"/>
+        <circle cx="900" cy="130" r="12" fill="none" stroke="rgba(57,219,145,0.3)" stroke-width="1">
+          <animate attributeName="r" from="6" to="18" dur="2.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.5" to="0" dur="2.2s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Compass rose -->
+        <g transform="translate(1130,50)">
+          <circle r="22" fill="rgba(7,28,24,0.8)" stroke="rgba(57,219,145,0.3)" stroke-width="1"/>
+          <text y="-8" text-anchor="middle" fill="#39DB91" font-size="8" font-family="monospace">N</text>
+          <line y1="-5" y2="-14" stroke="#39DB91" stroke-width="1.5"/>
+          <line y1="5" y2="14" stroke="rgba(57,219,145,0.4)" stroke-width="1"/>
+          <line x1="-14" x2="14" stroke="rgba(57,219,145,0.4)" stroke-width="1"/>
+        </g>
+        <!-- Scale bar -->
+        <g transform="translate(50,380)">
+          <rect width="80" height="4" fill="rgba(57,219,145,0.4)" rx="2"/>
+          <text x="0" y="16" fill="rgba(164,185,174,0.6)" font-size="7" font-family="monospace">0</text>
+          <text x="70" y="16" fill="rgba(164,185,174,0.6)" font-size="7" font-family="monospace">50 km</text>
+        </g>
+      </svg>
 
-    <!-- TAB 1: LANDING OVERVIEW -->
-    <section id="view-landing" class="space-y-12">
-      
-      <!-- Hero Banner -->
-      <div class="v-card p-10 md:p-14 relative overflow-hidden">
-        <div class="max-w-3xl space-y-5 relative z-10">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono tracking-wide bg-crimson-900/30 text-crimson-400 border border-crimson-600/30">
-            <span class="w-1.5 h-1.5 rounded-full bg-crimson-500"></span>
-            <span>STRICTLY NON-BLOCKCHAIN • ZERO ON-CHAIN OVERHEAD</span>
+      <!-- Overlay: project cards -->
+      <div class="absolute top-4 left-4 space-y-2">
+        <div class="glass-dark rounded-xl px-4 py-3 text-xs font-mono" style="min-width:200px;">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full" style="background:var(--green);"></span>
+            <span style="color:var(--white);">NH-48 Expressway</span>
           </div>
-          <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white leading-none">
-            Infrastructure evidence.<br>
-            <span class="text-[#888]">Provably verified at byte-level.</span>
-          </h1>
-          <p class="text-sm md:text-base text-[#a1a1aa] leading-relaxed max-w-2xl font-normal">
-            Eliminate ghost work and altered construction photos. GroundTruth computes server-side SHA-256 byte digests, assesses image quality, screens for perceptual duplicates, and keeps final sign-off authority strictly with authorized civil engineers.
-          </p>
-
-          <div class="pt-4 flex flex-wrap gap-3">
-            <button onclick="switchTab('submit')" class="bg-white hover:bg-[#e4e4e7] text-black font-semibold text-xs px-5 py-3 rounded-lg shadow-sm transition flex items-center space-x-2">
-              <i class="fa-solid fa-camera text-xs"></i>
-              <span>Submit Milestone Evidence</span>
-            </button>
-            <button onclick="switchTab('verify')" class="bg-[#121212] hover:bg-[#1a1a1a] text-[#ddd] font-semibold text-xs px-5 py-3 rounded-lg border border-[#2a2a2a] transition flex items-center space-x-2">
-              <i class="fa-solid fa-fingerprint text-xs text-crimson-500"></i>
-              <span>Verify Raw SHA-256 Digest</span>
-            </button>
-          </div>
+          <div style="color:var(--muted);">Pune, Maharashtra</div>
+          <div class="mt-1" style="color:var(--green);">14 evidence records</div>
         </div>
-
-        <!-- Subtle Vercel Triangular Glow in Corner -->
-        <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-crimson-600/10 blur-3xl pointer-events-none"></div>
+        <div class="glass-dark rounded-xl px-4 py-3 text-xs font-mono">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full" style="background:var(--lime);"></span>
+            <span style="color:var(--white);">Brahmaputra Bridge</span>
+          </div>
+          <div style="color:var(--muted);">Guwahati, Assam</div>
+          <div class="mt-1" style="color:var(--orange);">3 pending review</div>
+        </div>
       </div>
 
-      <!-- Real-Time Metrics Strip -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="v-card p-5">
-          <div class="text-[11px] font-mono text-[#71717a] uppercase tracking-wider mb-1">Total Submissions</div>
-          <div class="text-3xl font-extrabold text-white tracking-tight" id="metric-total-evidence">0</div>
-          <div class="text-[10px] text-[#52525b] mt-1 font-mono">Server-verified byte vault</div>
+      <!-- Overlay: legend -->
+      <div class="absolute bottom-4 right-4 glass-dark rounded-xl px-4 py-3 text-xs font-mono space-y-1.5">
+        <div class="text-xs font-semibold mb-2" style="color:var(--green);">MAP LEGEND</div>
+        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:var(--green);"></span><span style="color:var(--muted);">Approved Evidence</span></div>
+        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:var(--orange);"></span><span style="color:var(--muted);">Pending Review</span></div>
+        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full border" style="background:transparent;border-color:rgba(57,219,145,0.4);"></span><span style="color:var(--muted);">Project Boundary</span></div>
+      </div>
+
+      <!-- Overlay: scan label -->
+      <div class="absolute top-4 right-4 flex items-center gap-2 px-3 py-2 rounded-xl" style="background:rgba(7,28,24,0.8);border:1px solid rgba(57,219,145,0.2);">
+        <span class="w-1.5 h-1.5 rounded-full status-dot" style="background:var(--green);"></span>
+        <span class="text-xs font-mono" style="color:var(--green);">LIVE GEOFENCE MONITORING</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── TRUST & ACCOUNTABILITY ───────────────────────────── -->
+<section id="section-trust" class="py-20" style="border-top:1px solid var(--glass-border);">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="text-center mb-14 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono glass-surface mb-4" style="color:var(--green);">TRUST &amp; ACCOUNTABILITY</div>
+      <h2 class="text-4xl sm:text-5xl font-black" style="color:var(--white);">
+        Every claim deserves <span class="gradient-text">evidence.</span>
+      </h2>
+      <p class="mt-4 text-base max-w-2xl mx-auto" style="color:var(--muted);">GroundTruth builds an irrefutable evidence chain: tamper-evident cryptographic hashes, GPS context, AI analysis, and human authorization — all recorded and auditable.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+      <!-- SHA-256 -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-fingerprint text-xl" style="color:var(--green);"></i>
         </div>
-        <div class="v-card p-5">
-          <div class="text-[11px] font-mono text-[#71717a] uppercase tracking-wider mb-1">Approved Milestones</div>
-          <div class="text-3xl font-extrabold text-white tracking-tight" id="metric-approved">0</div>
-          <div class="text-[10px] text-emerald-400 mt-1 font-mono">Legally signed off by engineers</div>
-        </div>
-        <div class="v-card p-5">
-          <div class="text-[11px] font-mono text-[#71717a] uppercase tracking-wider mb-1">Reviewer Attention</div>
-          <div class="text-3xl font-extrabold text-white tracking-tight" id="metric-attention">0</div>
-          <div class="text-[10px] text-crimson-400 mt-1 font-mono">Flagged by advisory AI</div>
-        </div>
-        <div class="v-card p-5">
-          <div class="text-[11px] font-mono text-[#71717a] uppercase tracking-wider mb-1">Perceptual Matches</div>
-          <div class="text-3xl font-extrabold text-white tracking-tight" id="metric-duplicates">0</div>
-          <div class="text-[10px] text-[#71717a] mt-1 font-mono">pHash / dHash candidate flags</div>
+        <h3 class="text-base font-bold" style="color:var(--white);">SHA-256 File Integrity</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Every submitted file is hashed server-side. The recorded digest is recomputed on demand to detect any unauthorized byte-level alteration.</p>
+        <div class="rounded-lg p-3 font-mono text-xs" style="background:rgba(7,28,24,0.7);border:1px solid rgba(57,219,145,0.1);color:var(--green);word-break:break-all;">
+          SHA256: a3f4e1d2...c9b7a865
         </div>
       </div>
 
-      <!-- Vercel Architectural Grid Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="v-card p-6 space-y-3">
-          <div class="w-8 h-8 rounded-md bg-[#161616] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-mono">01</div>
-          <h3 class="font-semibold text-white text-sm">Server-Side SHA-256 Digest</h3>
-          <p class="text-xs text-[#888] leading-relaxed">
-            Every field photo is hashed directly from the incoming byte stream on the server. Original files are immutably preserved in private object storage under generated UUID keys.
-          </p>
+      <!-- GPS Context -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-location-crosshairs text-xl" style="color:var(--lime);"></i>
         </div>
-
-        <div class="v-card p-6 space-y-3">
-          <div class="w-8 h-8 rounded-md bg-[#161616] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-mono">02</div>
-          <h3 class="font-semibold text-white text-sm">Perceptual Near-Duplicate AI</h3>
-          <p class="text-xs text-[#888] leading-relaxed">
-            pHash and dHash algorithms compare Hamming distances across submitted photos to detect re-compressed, cropped, or recycled photos across milestones.
-          </p>
-        </div>
-
-        <div class="v-card p-6 space-y-3">
-          <div class="w-8 h-8 rounded-md bg-[#161616] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-mono">03</div>
-          <h3 class="font-semibold text-white text-sm">Human Approval Primacy</h3>
-          <p class="text-xs text-[#888] leading-relaxed">
-            AI findings are strictly advisory. Final construction acceptance, rejection, and corrective action workflows are authorized exclusively by authenticated engineers.
-          </p>
+        <h3 class="text-base font-bold" style="color:var(--white);">Location &amp; Time Context</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">GPS coordinates and capture timestamp are recorded with every submission. Geofence rules verify that evidence was collected within the declared project boundary.</p>
+        <div class="rounded-lg p-3 font-mono text-xs space-y-1" style="background:rgba(7,28,24,0.7);border:1px solid rgba(57,219,145,0.1);">
+          <div style="color:var(--muted);">Lat: <span style="color:var(--white);">26.812°N</span></div>
+          <div style="color:var(--muted);">Lon: <span style="color:var(--white);">80.943°E</span></div>
+          <div style="color:var(--muted);">Status: <span style="color:var(--green);">IN GEOFENCE ✓</span></div>
         </div>
       </div>
 
-    </section>
-
-    <!-- TAB 2: SUBMIT EVIDENCE -->
-    <section id="view-submit" class="hidden space-y-6 max-w-3xl mx-auto">
-      <div class="v-card p-8 space-y-6">
-        <div class="border-b border-[#1f1f1f] pb-4">
-          <h2 class="text-xl font-bold text-white tracking-tight">Submit Milestone Evidence</h2>
-          <p class="text-xs text-[#888] mt-1">Upload authentic field photographs. Original bytes are immutably hashed on receipt.</p>
+      <!-- Human Authorization -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-user-shield text-xl" style="color:var(--orange);"></i>
         </div>
-
-        <form id="evidenceForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Project Milestone</label>
-              <select id="inputMilestone" class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs text-[#ddd] focus:border-crimson-600 focus:outline-none">
-                <option value="seed">NH-48-EXP: Reinforcement Binding & Deck Slab</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Category (RAG Specification)</label>
-              <select id="inputCategory" class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs text-[#ddd] focus:border-crimson-600 focus:outline-none">
-                <option value="REBAR_INSPECTION">Rebar Spacing (MORTH Section 1600)</option>
-                <option value="DRAINAGE_WORKS">Culvert Bedding & Gradient (IRC-SP-42)</option>
-                <option value="EARTHWORK_COMPACTION">Subgrade Compaction Test</option>
-              </select>
-            </div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Human Authorization</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">AI findings are advisory. Only authorized engineers with the REVIEWER role can approve, reject, or flag evidence. Every decision is logged with a reason and timestamp.</p>
+        <!-- Mini timeline -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-3 text-xs font-mono">
+            <div class="w-2 h-2 rounded-full" style="background:var(--green);flex-shrink:0;"></div>
+            <span style="color:var(--muted);">AI pipeline completed</span>
+            <span class="ml-auto" style="color:var(--muted);">10:24 AM</span>
           </div>
-
-          <!-- File Drop Zone -->
-          <div>
-            <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Field Capture Photograph</label>
-            <div id="dropZone" onclick="document.getElementById('inputFile').click()" class="border border-dashed border-[#333] hover:border-crimson-600/70 bg-[#0d0d0d] rounded-xl p-8 text-center cursor-pointer transition">
-              <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#666] mb-2"></i>
-              <p class="text-xs font-medium text-[#ccc]" id="fileUploadPrompt">Click or drag & drop photograph to upload</p>
-              <p class="text-[11px] text-[#666] mt-1 font-mono">JPEG, PNG or WebP up to 25MB • Server calculates SHA-256</p>
-              <input type="file" id="inputFile" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="onFileSelected(this)">
-            </div>
+          <div class="flex items-center gap-3 text-xs font-mono">
+            <div class="w-2 h-2 rounded-full" style="background:var(--orange);flex-shrink:0;"></div>
+            <span style="color:var(--muted);">Assigned to reviewer</span>
+            <span class="ml-auto" style="color:var(--muted);">10:26 AM</span>
           </div>
-
-          <!-- Coordinates -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Device GPS (Untrusted Metadata)</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="number" step="any" id="inputLat" placeholder="Latitude" value="28.6140" class="bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs font-mono text-[#ddd]">
-                <input type="number" step="any" id="inputLon" placeholder="Longitude" value="77.2091" class="bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs font-mono text-[#ddd]">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Optional Resubmission UUID</label>
-              <input type="text" id="inputSupersededId" placeholder="Superseded ID (if correcting prior rejection)" class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs font-mono text-[#ddd]">
-            </div>
+          <div class="flex items-center gap-3 text-xs font-mono">
+            <div class="w-2 h-2 rounded-full" style="background:var(--green);flex-shrink:0;"></div>
+            <span style="color:var(--green);font-weight:600;">Engineer APPROVED</span>
+            <span class="ml-auto" style="color:var(--muted);">11:03 AM</span>
           </div>
-
-          <div>
-            <label class="block text-xs font-mono text-[#888] uppercase mb-1.5">Field Observations & Notes</label>
-            <textarea id="inputNotes" rows="2" placeholder="e.g. Measured 150mm c/c spacing with 50mm cover block clearance..." class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs text-[#ddd] focus:border-crimson-600 focus:outline-none"></textarea>
-          </div>
-
-          <div class="flex justify-end pt-2">
-            <button type="submit" id="submitFormBtn" class="bg-white hover:bg-[#e4e4e7] text-black font-semibold text-xs px-6 py-2.5 rounded-lg shadow-sm transition flex items-center space-x-2">
-              <i class="fa-solid fa-lock text-xs"></i>
-              <span>Submit & Generate SHA-256 Digest</span>
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-    </section>
 
-    <!-- TAB 3: REVIEW QUEUE -->
-    <section id="view-review" class="hidden space-y-6">
-      <div class="v-card p-6 space-y-5">
-        <div class="flex items-center justify-between border-b border-[#1f1f1f] pb-4">
-          <div>
-            <h2 class="text-lg font-bold text-white tracking-tight">Engineering Review Queue</h2>
-            <p class="text-xs text-[#888]">Human review authority. AI findings are non-binding advisory indicators.</p>
-          </div>
-          <button onclick="refreshEvidenceQueue()" class="bg-[#141414] hover:bg-[#1a1a1a] text-xs font-mono text-[#aaa] hover:text-white px-3 py-1.5 rounded-md border border-[#2a2a2a] transition flex items-center space-x-2">
-            <i class="fa-solid fa-rotate-right text-[10px]"></i>
-            <span>Refresh</span>
+      <!-- Barcode + QR -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-barcode text-xl" style="color:var(--green);"></i>
+        </div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Physical Asset Barcodes</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Each approved evidence record generates a Code-128 barcode and QR code. Print and affix to physical structures for instant on-site verification.</p>
+        <div class="flex gap-2">
+          <button onclick="switchTab('verify')" class="flex-1 py-2 rounded-lg btn-ghost text-xs font-mono flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-barcode" style="color:var(--green);"></i> Scan Barcode
+          </button>
+          <button onclick="switchTab('verify')" class="flex-1 py-2 rounded-lg btn-ghost text-xs font-mono flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-qrcode" style="color:var(--green);"></i> Scan QR
           </button>
         </div>
+      </div>
 
-        <!-- Evidence List Table -->
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead class="border-b border-[#222] text-[#71717a] font-mono uppercase text-[11px]">
-              <tr>
-                <th class="py-3 px-3">Evidence ID / File</th>
-                <th class="py-3 px-3">SHA-256 Hash</th>
-                <th class="py-3 px-3">Geofence & Quality</th>
-                <th class="py-3 px-3">AI Advisory Status</th>
-                <th class="py-3 px-3">Decision</th>
-                <th class="py-3 px-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="evidenceQueueBody" class="divide-y divide-[#181818] font-normal">
-              <!-- Dynamically Populated -->
-            </tbody>
-          </table>
+      <!-- Audit Trail -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-scroll text-xl" style="color:var(--lime);"></i>
+        </div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Complete Audit History</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Every submission, review decision, and correction is permanently logged. Version-linked evidence chains track the full lifecycle of each infrastructure claim.</p>
+        <button onclick="switchTab('audit')" class="w-full py-2 rounded-lg btn-ghost text-xs font-mono flex items-center justify-center gap-2">
+          <i class="fa-solid fa-list-check" style="color:var(--green);"></i> View Audit Ledger
+        </button>
+      </div>
+
+      <!-- Version lineage -->
+      <div class="glass-strong rounded-2xl p-6 space-y-4" style="border-color:rgba(57,219,145,0.2);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,rgba(26,154,100,0.3),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.3);">
+          <i class="fa-solid fa-code-branch text-xl" style="color:#a78bfa;"></i>
+        </div>
+        <h3 class="text-base font-bold" style="color:var(--white);">Corrected Evidence Lineage</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">When evidence is flagged for correction, resubmissions are cryptographically linked to originals. No bytes are ever overwritten — the full history is preserved.</p>
+        <div class="flex items-center gap-2 text-xs font-mono" style="color:var(--muted);">
+          <div class="px-2 py-1 rounded" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;">v1</div>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          <div class="px-2 py-1 rounded" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;">v2</div>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          <div class="px-2 py-1 rounded" style="background:rgba(57,219,145,0.1);border:1px solid rgba(57,219,145,0.3);color:var(--green);">APPROVED</div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <!-- TAB 4: PUBLIC VERIFICATION -->
-    <section id="view-verify" class="hidden space-y-6 max-w-2xl mx-auto">
-      <div class="v-card p-8 space-y-6">
-        <div class="text-center space-y-2">
-          <div class="w-10 h-10 rounded-full bg-[#141414] border border-[#262626] flex items-center justify-center mx-auto text-crimson-500">
-            <i class="fa-solid fa-fingerprint"></i>
+<!-- ───────────────────────────── FINAL CTA ───────────────────────────── -->
+<section class="py-24 relative overflow-hidden" style="border-top:1px solid var(--glass-border);">
+  <!-- Atmospheric glow -->
+  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(26,154,100,0.12),transparent);"></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-5 text-center space-y-8 reveal">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono glass-surface" style="color:var(--green);">GET STARTED</div>
+    <h2 class="text-4xl sm:text-5xl xl:text-6xl font-black" style="color:var(--white);">
+      Make Every Project<br>
+      <span class="gradient-text">Verifiable.</span>
+    </h2>
+    <p class="text-lg max-w-2xl mx-auto" style="color:var(--muted);">
+      Bring field evidence, intelligent analysis and accountable verification together with GroundTruth. For government agencies, contractors, and infrastructure authorities.
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <button onclick="switchTab('submit')" class="btn-primary px-8 py-4 rounded-xl font-semibold text-base flex items-center gap-2">
+        <i class="fa-solid fa-camera"></i>
+        Explore GroundTruth
+        <i class="fa-solid fa-arrow-right text-sm"></i>
+      </button>
+      <button onclick="smoothScrollTo('section-how')" class="btn-ghost px-8 py-4 rounded-xl font-semibold text-base flex items-center gap-2">
+        <i class="fa-solid fa-play text-xs" style="color:var(--green);"></i>
+        See How It Works
+      </button>
+    </div>
+
+    <!-- Mini trust row -->
+    <div class="flex flex-wrap justify-center gap-4 pt-4">
+      <div class="flex items-center gap-2 text-sm" style="color:var(--muted);">
+        <i class="fa-solid fa-check text-xs" style="color:var(--green);"></i> No blockchain
+      </div>
+      <div class="flex items-center gap-2 text-sm" style="color:var(--muted);">
+        <i class="fa-solid fa-check text-xs" style="color:var(--green);"></i> Human-authorized
+      </div>
+      <div class="flex items-center gap-2 text-sm" style="color:var(--muted);">
+        <i class="fa-solid fa-check text-xs" style="color:var(--green);"></i> SHA-256 integrity
+      </div>
+      <div class="flex items-center gap-2 text-sm" style="color:var(--muted);">
+        <i class="fa-solid fa-check text-xs" style="color:var(--green);"></i> Full audit trail
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── FOOTER ───────────────────────────── -->
+<footer style="border-top:1px solid var(--glass-border);background:rgba(7,28,24,0.6);">
+  <div class="max-w-7xl mx-auto px-5 py-14">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-10">
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-1 space-y-4">
+        <button onclick="switchTab('landing')" class="flex items-center gap-2 cursor-pointer">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#1A9A64,#0B3028);border:1px solid rgba(57,219,145,0.4);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#39DB91" stroke-width="2.5"><circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
           </div>
-          <h2 class="text-xl font-bold text-white tracking-tight">Cryptographic Evidence Verification</h2>
-          <p class="text-xs text-[#888]">Recalculates physical byte hash and matches against stored immutable digest.</p>
-        </div>
-
-        <div class="flex space-x-2">
-          <input type="text" id="verifyInputId" placeholder="Enter Evidence UUID (e.g. e26eea29-5c3b-...)" class="flex-1 bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs font-mono text-[#eee] focus:border-crimson-600 focus:outline-none">
-          <button onclick="executeVerification()" class="bg-white hover:bg-[#e4e4e7] text-black font-semibold text-xs px-5 py-2.5 rounded-lg transition">
-            Verify Hash
-          </button>
-        </div>
-
-        <div id="verifyResultCard" class="hidden v-card p-5 space-y-3">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 5: AUDIT TIMELINE -->
-    <section id="view-audit" class="hidden space-y-6 max-w-3xl mx-auto">
-      <div class="v-card p-6 space-y-4">
-        <div class="border-b border-[#1f1f1f] pb-3">
-          <h2 class="text-lg font-bold text-white tracking-tight">Append-Only Audit Ledger</h2>
-          <p class="text-xs text-[#888]">Traceable event history of uploads, hash validations, screening, and reviewer decisions.</p>
-        </div>
-
-        <div class="space-y-2" id="auditLedgerTimeline">
-          <!-- Dynamically populated -->
+          <span class="font-bold" style="color:var(--white);">GroundTruth</span>
+        </button>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">AI-powered infrastructure evidence verification. Field photos to verified records.</p>
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 rounded-lg glass flex items-center justify-center hover:border-gt-green transition" aria-label="Twitter/X">
+            <i class="fa-brands fa-x-twitter text-xs" style="color:var(--muted);"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-lg glass flex items-center justify-center transition" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in text-xs" style="color:var(--muted);"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-lg glass flex items-center justify-center transition" aria-label="GitHub">
+            <i class="fa-brands fa-github text-xs" style="color:var(--muted);"></i>
+          </a>
         </div>
       </div>
-    </section>
 
-  </main>
-
-  <!-- Review Modal -->
-  <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="v-card max-w-md w-full p-6 space-y-4 border border-[#333]">
-      <div class="flex items-center justify-between border-b border-[#222] pb-3">
-        <h3 class="font-bold text-white text-sm" id="modalTitle">Record Human Review Decision</h3>
-        <button onclick="closeReviewModal()" class="text-[#666] hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
+      <!-- Platform -->
       <div class="space-y-3">
-        <input type="hidden" id="modalEvidenceId">
-        <input type="hidden" id="modalDecision">
+        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Platform</div>
+        <ul class="space-y-2 text-sm" style="color:var(--muted);">
+          <li><button onclick="switchTab('submit')" class="hover:text-white transition text-left">Submit Evidence</button></li>
+          <li><button onclick="switchTab('review')" class="hover:text-white transition text-left">Review Queue</button></li>
+          <li><button onclick="switchTab('verify')" class="hover:text-white transition text-left">Bar &amp; QR Scanner</button></li>
+          <li><button onclick="switchTab('audit')" class="hover:text-white transition text-left">Audit Ledger</button></li>
+        </ul>
+      </div>
 
+      <!-- Features -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Features</div>
+        <ul class="space-y-2 text-sm" style="color:var(--muted);">
+          <li><button onclick="smoothScrollTo('section-ai')" class="hover:text-white transition text-left">AI Intelligence</button></li>
+          <li><button onclick="smoothScrollTo('section-geo')" class="hover:text-white transition text-left">Geospatial</button></li>
+          <li><button onclick="smoothScrollTo('section-trust')" class="hover:text-white transition text-left">Trust &amp; Accountability</button></li>
+          <li><button onclick="smoothScrollTo('section-how')" class="hover:text-white transition text-left">How It Works</button></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Legal</div>
+        <ul class="space-y-2 text-sm" style="color:var(--muted);">
+          <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-white transition">Documentation</a></li>
+          <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid var(--glass-border);">
+      <p class="text-xs font-mono" style="color:var(--muted);">© 2025 GroundTruth — Code Sprinters. All rights reserved.</p>
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-mono px-2.5 py-1 rounded-full" style="background:rgba(57,219,145,0.1);border:1px solid rgba(57,219,145,0.2);color:var(--green);">
+          <i class="fa-solid fa-shield-halved mr-1"></i>SHA-256 Secured
+        </span>
+        <span class="text-xs font-mono px-2.5 py-1 rounded-full" style="background:rgba(26,154,100,0.1);border:1px solid rgba(57,219,145,0.15);color:var(--muted);">
+          <i class="fa-solid fa-robot mr-1"></i>AI-Advisory Only
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /view-landing -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     APP VIEWS — SUBMIT / REVIEW / VERIFY / AUDIT
+══════════════════════════════════════════════════════ -->
+
+<!-- ─── 2. SUBMIT ─── -->
+<div id="view-submit" class="app-view pt-20">
+  <div class="max-w-3xl mx-auto px-5 py-10">
+    <div class="v-card p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4" style="border-bottom:1px solid var(--glass-border);">
         <div>
-          <label class="block text-xs font-mono text-[#888] uppercase mb-1">Reviewer Justification Reason</label>
-          <textarea id="modalReason" rows="3" placeholder="Provide technical reason for this review decision..." class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs text-[#ddd] focus:border-crimson-600 focus:outline-none"></textarea>
+          <h2 class="text-xl font-bold" style="color:var(--white);">Submit Infrastructure Evidence</h2>
+          <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Upload field photographs. Generates SHA-256 digest, Asset Barcode, and QR.</p>
         </div>
-
-        <div id="modalCorrectionBox" class="hidden">
-          <label class="block text-xs font-mono text-[#888] uppercase mb-1">Required Corrective Action Instructions</label>
-          <textarea id="modalCorrectiveActions" rows="2" placeholder="Specify corrective steps required for resubmission..." class="w-full bg-[#111] border border-[#262626] rounded-lg p-2.5 text-xs text-[#ddd] focus:border-crimson-600 focus:outline-none"></textarea>
-        </div>
+        <span class="v-badge v-badge-green">MORTH / IRC COMPLIANT</span>
       </div>
 
-      <div class="flex justify-end space-x-2 pt-2 border-t border-[#222]">
-        <button onclick="closeReviewModal()" class="px-3.5 py-1.5 rounded-md text-xs font-mono text-[#888] bg-[#141414] hover:bg-[#1f1f1f]">Cancel</button>
-        <button onclick="confirmReviewDecision()" id="modalConfirmBtn" class="px-4 py-1.5 rounded-md text-xs font-semibold text-white bg-crimson-600 hover:bg-crimson-700">Confirm Decision</button>
+      <form id="evidenceForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Highway / Road Project</label>
+            <select id="inputMilestone" class="gt-input">
+              <option value="seed">NH-48-EXP: Subgrade Compaction &amp; Reinforcement Binding</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Evidence Category</label>
+            <select id="inputCategory" class="gt-input">
+              <option value="ROAD_SURFACE">Road Surface</option>
+              <option value="FOUNDATION">Foundation</option>
+              <option value="DRAINAGE">Drainage</option>
+              <option value="SIGNAGE">Signage</option>
+              <option value="SAFETY">Safety</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- GPS row -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Capture Latitude</label>
+            <input type="number" step="any" id="inputLat" class="gt-input" placeholder="26.812345" aria-label="Latitude">
+          </div>
+          <div>
+            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Capture Longitude</label>
+            <input type="number" step="any" id="inputLon" class="gt-input" placeholder="80.943210" aria-label="Longitude">
+          </div>
+        </div>
+        <button type="button" onclick="detectLocation()" class="btn-ghost text-xs font-mono px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
+          Auto-detect GPS from Device
+        </button>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Field Notes</label>
+          <textarea id="inputNotes" class="gt-input" rows="3" placeholder="Describe the site condition, work performed, observations…"></textarea>
+        </div>
+
+        <!-- Superseded -->
+        <div>
+          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Supersedes Evidence ID (optional — for corrections)</label>
+          <input type="text" id="inputSupersededId" class="gt-input font-mono" placeholder="UUID of original evidence if resubmitting a correction">
+        </div>
+
+        <!-- File upload -->
+        <div>
+          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Field Photograph *</label>
+          <div class="relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition" style="border-color:rgba(57,219,145,0.2);"
+               onclick="document.getElementById('fileInput').click()"
+               ondragover="this.style.borderColor='rgba(57,219,145,0.5)'"
+               ondragleave="this.style.borderColor='rgba(57,219,145,0.2)'"
+               ondrop="onFileDrop(event)">
+            <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="onFileSelected(this)">
+            <i class="fa-solid fa-cloud-arrow-up text-2xl mb-3" style="color:var(--green);"></i>
+            <p class="text-sm" id="fileUploadPrompt" style="color:var(--muted);">Click or drag &amp; drop road photograph to upload</p>
+            <p class="text-xs mt-1 font-mono" style="color:rgba(164,185,174,0.5);">JPEG, PNG, WEBP — max 50MB</p>
+          </div>
+        </div>
+
+        <button type="submit" id="submitFormBtn" class="btn-primary w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-upload text-xs"></i>
+          <span>Submit &amp; Generate Barcode</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 3. REVIEW ─── -->
+<div id="view-review" class="app-view pt-20">
+  <div class="max-w-7xl mx-auto px-5 py-10 space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold" style="color:var(--white);">Review &amp; Asset Queue</h2>
+        <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Human review of AI-processed evidence. Approve, correct, or reject.</p>
+      </div>
+      <button onclick="refreshEvidenceQueue()" class="btn-ghost px-4 py-2 rounded-lg text-xs font-mono flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-rotate-right" style="color:var(--green);"></i> Refresh
+      </button>
+    </div>
+
+    <div class="v-card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs font-mono" style="border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--glass-border);">
+              <th class="text-left py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">File / ID</th>
+              <th class="text-left py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">SHA-256 Hash</th>
+              <th class="text-left py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">Location</th>
+              <th class="text-left py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">AI Status</th>
+              <th class="text-left py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">Review</th>
+              <th class="text-right py-3 px-4 uppercase tracking-wider" style="color:var(--muted);">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="evidenceQueueBody">
+            <tr><td colspan="6" class="py-8 text-center" style="color:var(--muted);">
+              <i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading evidence records…
+            </td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- QR Code Modal -->
-  <div id="qrModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="v-card max-w-xs w-full p-6 text-center space-y-4 border border-[#333]">
-      <div class="flex items-center justify-between border-b border-[#222] pb-2">
-        <span class="text-xs font-mono text-[#888]">VERIFICATION QR</span>
-        <button onclick="closeQrModal()" class="text-[#666] hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+<!-- ─── 4. VERIFY / SCANNER ─── -->
+<div id="view-verify" class="app-view pt-20">
+  <div class="max-w-2xl mx-auto px-5 py-10 space-y-6">
+    <div class="v-card p-8 space-y-6">
+      <div class="pb-4" style="border-bottom:1px solid var(--glass-border);">
+        <h2 class="text-xl font-bold" style="color:var(--white);">Bar &amp; QR Scanner</h2>
+        <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Scan physical asset barcodes/QR codes or enter an Evidence UUID to verify SHA-256 integrity.</p>
       </div>
-      <div class="p-3 bg-white rounded-xl mx-auto w-fit">
-        <img id="qrImageElement" src="" alt="Verification QR Code" class="w-48 h-48">
+
+      <!-- Manual entry -->
+      <div class="space-y-3">
+        <label class="block text-xs font-mono uppercase" style="color:var(--muted);">Evidence UUID or Asset Code</label>
+        <div class="flex gap-2">
+          <input type="text" id="verifyInputId" class="gt-input font-mono flex-1" placeholder="Enter evidence UUID…" aria-label="Evidence ID to verify">
+          <button onclick="executeVerification()" class="btn-primary px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i> Verify
+          </button>
+        </div>
       </div>
-      <p class="text-[11px] text-[#71717a] font-mono" id="qrEvidenceIdLabel"></p>
+
+      <!-- Camera scanner -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono uppercase" style="color:var(--muted);">Live Camera Scanner</div>
+        <div id="reader" class="rounded-xl overflow-hidden" style="min-height:200px;background:rgba(7,28,24,0.5);border:1px solid var(--glass-border);"></div>
+        <div class="flex gap-2">
+          <button id="startScanBtn" onclick="startQrScanner()" class="btn-primary flex-1 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-camera text-xs"></i> Start Camera Scan
+          </button>
+          <button id="stopScanBtn" onclick="stopQrScanner()" class="hidden btn-ghost flex-1 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-stop text-xs" style="color:var(--orange);"></i> Stop Scanner
+          </button>
+        </div>
+      </div>
+
+      <!-- Result card -->
+      <div id="verifyResultCard" class="hidden"></div>
     </div>
   </div>
+</div>
 
-  <script>
-    const API_HOST = "http://localhost:8000";
-    let selectedFile = null;
+<!-- ─── 5. AUDIT ─── -->
+<div id="view-audit" class="app-view pt-20">
+  <div class="max-w-4xl mx-auto px-5 py-10 space-y-6">
+    <div>
+      <h2 class="text-2xl font-bold" style="color:var(--white);">Audit Ledger</h2>
+      <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Immutable record of all submitted and reviewed evidence. Cryptographic evidence chain.</p>
+    </div>
+    <div class="space-y-3" id="auditLedgerTimeline">
+      <div class="text-center py-8 text-xs font-mono" style="color:var(--muted);">
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading audit trail…
+      </div>
+    </div>
+  </div>
+</div>
 
-    function switchTab(tabId) {
-      ['landing', 'submit', 'review', 'verify', 'audit'].forEach(id => {
-        document.getElementById(`view-${id}`).classList.add('hidden');
-        const nav = document.getElementById(`nav-${id}`);
-        if (nav) {
-          nav.classList.remove('bg-[#171717]', 'text-white', 'border-[#262626]');
-          nav.classList.add('text-[#888]', 'border-transparent');
-        }
-      });
 
-      document.getElementById(`view-${tabId}`).classList.remove('hidden');
-      const activeNav = document.getElementById(`nav-${tabId}`);
-      if (activeNav) {
-        activeNav.classList.add('bg-[#171717]', 'text-white', 'border-[#262626]');
-        activeNav.classList.remove('text-[#888]', 'border-transparent');
+<!-- ══════════════════════════════════════════════════════
+     REVIEW MODAL
+══════════════════════════════════════════════════════ -->
+<div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.75);">
+  <div class="glass-strong rounded-2xl p-8 max-w-md w-full space-y-5" style="max-height:90vh;overflow-y:auto;">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-bold" id="modalTitle" style="color:var(--white);">Review Decision</h3>
+      <button onclick="closeReviewModal()" class="w-8 h-8 rounded-lg glass flex items-center justify-center cursor-pointer" aria-label="Close">
+        <i class="fa-solid fa-xmark text-xs" style="color:var(--muted);"></i>
+      </button>
+    </div>
+    <input type="hidden" id="modalEvidenceId">
+    <input type="hidden" id="modalDecision">
+    <div>
+      <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Decision Reason (required for auditability)</label>
+      <textarea id="modalReason" class="gt-input" rows="4" placeholder="Provide a clear reason for this decision…"></textarea>
+    </div>
+    <div id="modalCorrectionBox" class="hidden">
+      <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Corrective Actions Required</label>
+      <textarea id="modalCorrectiveActions" class="gt-input" rows="3" placeholder="Describe specific corrections required…"></textarea>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="confirmReviewDecision()" class="btn-primary flex-1 py-3 rounded-xl font-semibold text-sm cursor-pointer">
+        <i class="fa-solid fa-check mr-2"></i>Confirm Decision
+      </button>
+      <button onclick="closeReviewModal()" class="btn-ghost flex-1 py-3 rounded-xl font-semibold text-sm cursor-pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     ASSET BARCODE MODAL
+══════════════════════════════════════════════════════ -->
+<div id="assetModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.8);">
+  <div class="glass-strong rounded-2xl p-8 max-w-lg w-full space-y-5">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-bold" style="color:var(--white);">Asset Barcode &amp; QR</h3>
+      <button onclick="closeAssetModal()" class="w-8 h-8 rounded-lg glass flex items-center justify-center cursor-pointer" aria-label="Close">
+        <i class="fa-solid fa-xmark text-xs" style="color:var(--muted);"></i>
+      </button>
+    </div>
+    <div class="text-sm font-semibold" id="assetRoadTitle" style="color:var(--white);"></div>
+    <div class="text-xs font-mono px-3 py-2 rounded-lg" id="assetBarcodeCode" style="background:rgba(7,28,24,0.6);border:1px solid var(--glass-border);color:var(--green);"></div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <div class="text-xs font-mono uppercase" style="color:var(--muted);">Code-128 Barcode</div>
+        <div class="rounded-xl overflow-hidden p-3 flex items-center justify-center" style="background:white;min-height:100px;">
+          <img id="assetBarcodeImg" src="" alt="Barcode" class="max-w-full max-h-24 object-contain">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="text-xs font-mono uppercase" style="color:var(--muted);">QR Code</div>
+        <div class="rounded-xl overflow-hidden p-3 flex items-center justify-center" style="background:white;min-height:100px;">
+          <img id="assetQrImg" src="" alt="QR Code" class="max-w-full max-h-24 object-contain">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button onclick="printAssetTag()" class="btn-primary flex-1 py-2.5 rounded-xl font-semibold text-sm cursor-pointer">
+        <i class="fa-solid fa-print mr-2"></i>Print Asset Tag
+      </button>
+      <button onclick="closeAssetModal()" class="btn-ghost flex-1 py-2.5 rounded-xl font-semibold text-sm cursor-pointer">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+  const API_HOST = 'http://localhost:8000';
+  let selectedFile = null;
+  let html5QrScanner = null;
+
+  // ── Tab switcher ──
+  function switchTab(tabId) {
+    // Hide all views
+    document.querySelectorAll('.app-view').forEach(v => {
+      v.classList.remove('active');
+    });
+    // Show target
+    const target = document.getElementById('view-' + tabId);
+    if (target) target.classList.add('active');
+
+    // Nav highlight
+    const navIds = ['submit','review','verify','audit'];
+    navIds.forEach(id => {
+      const btn = document.getElementById('nav-' + id);
+      if (!btn) return;
+      if (id === tabId) {
+        btn.style.background = 'rgba(26,154,100,0.15)';
+        btn.style.border = '1px solid rgba(57,219,145,0.3)';
+        btn.style.color = 'var(--green)';
+      } else {
+        btn.style.background = '';
+        btn.style.border = '1px solid transparent';
+        btn.style.color = 'var(--muted)';
       }
+    });
 
-      if (tabId === 'review' || tabId === 'landing' || tabId === 'audit') {
-        refreshEvidenceQueue();
-      }
+    // Update engine status
+    document.getElementById('engineStatusText').textContent =
+      tabId === 'landing' ? 'ENGINE ONLINE' :
+      tabId === 'submit'  ? 'SUBMIT MODE'   :
+      tabId === 'review'  ? 'REVIEW MODE'   :
+      tabId === 'verify'  ? 'SCAN MODE'     : 'AUDIT MODE';
+
+    // Data refresh
+    if (['review','landing','audit'].includes(tabId)) {
+      refreshEvidenceQueue();
     }
 
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `p-3 rounded-lg border text-xs font-mono pointer-events-auto transition duration-300 ${
-        type === 'success' 
-          ? 'bg-[#0f172a] border-[#1e293b] text-[#f1f5f9]' 
-          : 'bg-[#1c0808] border-crimson-600/40 text-crimson-400'
-      }`;
-      toast.innerText = message;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Smooth scroll ──
+  function smoothScrollTo(sectionId) {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      // Make sure landing is active
+      document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-landing').classList.add('active');
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
+  }
 
-    function onFileSelected(input) {
-      if (input.files && input.files[0]) {
-        selectedFile = input.files[0];
-        document.getElementById('fileUploadPrompt').innerText = `Selected: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
-      }
+  // ── Mobile menu ──
+  function toggleMobileMenu() {
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+  }
+
+  // ── Nav scroll shrink ──
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('main-nav');
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── Toast ──
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'pointer-events-auto px-4 py-3 rounded-xl text-xs font-mono backdrop-blur-md transition duration-500';
+    toast.style.cssText = type === 'success'
+      ? 'background:rgba(11,48,40,0.9);border:1px solid rgba(57,219,145,0.3);color:var(--green);box-shadow:0 8px 32px rgba(0,0,0,0.5);'
+      : 'background:rgba(28,8,8,0.9);border:1px solid rgba(235,166,90,0.3);color:var(--orange);box-shadow:0 8px 32px rgba(0,0,0,0.5);';
+    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-2"></i>${message}`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4500);
+  }
+
+  // ── GPS detect ──
+  function detectLocation() {
+    if (!navigator.geolocation) { showToast('Geolocation not supported', 'error'); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        document.getElementById('inputLat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('inputLon').value = pos.coords.longitude.toFixed(6);
+        showToast('GPS coordinates captured from device');
+      },
+      () => showToast('Could not retrieve device location', 'error')
+    );
+  }
+
+  // ── File select ──
+  function onFileSelected(input) {
+    if (input.files && input.files[0]) {
+      selectedFile = input.files[0];
+      document.getElementById('fileUploadPrompt').textContent = `Selected: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
+      document.getElementById('fileUploadPrompt').style.color = 'var(--green)';
     }
+  }
 
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-      if (!selectedFile) {
-        showToast('Please select a photo file to upload', 'error');
-        return;
-      }
-
-      const btn = document.getElementById('submitFormBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Processing...`;
-
-      try {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('milestone_id', 'seed');
-        formData.append('category', document.getElementById('inputCategory').value);
-        formData.append('notes', document.getElementById('inputNotes').value);
-        formData.append('capture_latitude', document.getElementById('inputLat').value);
-        formData.append('capture_longitude', document.getElementById('inputLon').value);
-        const supersededId = document.getElementById('inputSupersededId').value.trim();
-        if (supersededId) formData.append('superseded_evidence_id', supersededId);
-
-        const res = await fetch(`${API_HOST}/api/v1/evidence/submit`, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.detail || 'Upload failed');
-        }
-
-        const data = await res.json();
-        showToast(`Evidence ${data.id.substring(0,8)} submitted! SHA-256 generated.`);
-        document.getElementById('evidenceForm').reset();
-        selectedFile = null;
-        document.getElementById('fileUploadPrompt').innerText = 'Click or drag & drop photograph to upload';
-        switchTab('review');
-      } catch (err) {
-        showToast(err.message, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-lock text-xs mr-1"></i> <span>Submit & Generate SHA-256 Digest</span>`;
-      }
+  function onFileDrop(e) {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      selectedFile = e.dataTransfer.files[0];
+      document.getElementById('fileUploadPrompt').textContent = `Dropped: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
+      document.getElementById('fileUploadPrompt').style.color = 'var(--green)';
     }
+  }
 
-    async function refreshEvidenceQueue() {
-      try {
-        const res = await fetch(`${API_HOST}/api/v1/evidence/list`);
-        if (!res.ok) return;
-        const list = await res.json();
+  // ── Form submit ──
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    if (!selectedFile) { showToast('Please select a road photo file', 'error'); return; }
+    const btn = document.getElementById('submitFormBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing & Hashing…`;
 
-        // Update landing metrics
-        document.getElementById('metric-total-evidence').innerText = list.length;
-        document.getElementById('metric-approved').innerText = list.filter(e => e.review_status === 'APPROVED').length;
-        document.getElementById('metric-attention').innerText = list.filter(e => e.ai_recommendation === 'ATTENTION_REQUIRED').length;
-        document.getElementById('metric-duplicates').innerText = list.filter(e => e.ai_flags && e.ai_flags.some(f => f.includes('DUPLICATE'))).length;
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('milestone_id', 'seed');
+      formData.append('category', document.getElementById('inputCategory').value);
+      formData.append('notes', document.getElementById('inputNotes').value);
+      formData.append('capture_latitude', document.getElementById('inputLat').value);
+      formData.append('capture_longitude', document.getElementById('inputLon').value);
+      const supersededId = document.getElementById('inputSupersededId').value.trim();
+      if (supersededId) formData.append('superseded_evidence_id', supersededId);
 
-        // Render Review Table
-        const tbody = document.getElementById('evidenceQueueBody');
+      const res = await fetch(`${API_HOST}/api/v1/evidence/submit`, { method: 'POST', body: formData });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || 'Upload failed'); }
+      const data = await res.json();
+      showToast(`Evidence ${data.id.substring(0,8)} submitted! SHA-256 & Barcode generated.`);
+      document.getElementById('evidenceForm').reset();
+      selectedFile = null;
+      document.getElementById('fileUploadPrompt').textContent = 'Click or drag & drop road photograph to upload';
+      document.getElementById('fileUploadPrompt').style.color = 'var(--muted)';
+      switchTab('review');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-upload text-xs mr-2"></i><span>Submit & Generate Barcode</span>`;
+    }
+  }
+
+  // ── Evidence queue ──
+  async function refreshEvidenceQueue() {
+    try {
+      const res = await fetch(`${API_HOST}/api/v1/evidence/list`);
+      if (!res.ok) return;
+      const list = await res.json();
+
+      // Landing metrics
+      const setMetric = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setMetric('metric-total-evidence', list.length);
+      setMetric('metric-approved', list.filter(e => e.review_status === 'APPROVED').length);
+      setMetric('metric-attention', list.filter(e => e.ai_recommendation === 'ATTENTION_REQUIRED').length);
+      setMetric('metric-duplicates', list.filter(e => e.version_number > 1).length);
+
+      // Review table
+      const tbody = document.getElementById('evidenceQueueBody');
+      if (tbody) {
         if (list.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-[#555] font-mono">No evidence records found in database.</td></tr>`;
-          return;
+          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-xs font-mono" style="color:var(--muted);">No evidence records found in database.</td></tr>`;
+        } else {
+          tbody.innerHTML = list.map(ev => `
+            <tr class="transition" style="border-bottom:1px solid rgba(190,255,215,0.05);"
+                onmouseover="this.style.background='rgba(26,154,100,0.04)'"
+                onmouseout="this.style.background=''">
+              <td class="py-3 px-4">
+                <span class="font-bold" style="color:var(--white);">${ev.original_filename}</span>
+                <span class="v-badge ml-1 text-[10px]">v${ev.version_number}</span><br>
+                <span class="text-[10px]" style="color:var(--muted);">${ev.id}</span>
+                ${ev.superseded_evidence_id ? `<div class="text-[10px] mt-0.5" style="color:var(--orange);">Corrected: ${ev.superseded_evidence_id.substring(0,8)}…</div>` : ''}
+              </td>
+              <td class="py-3 px-4 max-w-xs truncate" style="color:var(--muted);" title="${ev.sha256_hash}">${ev.sha256_hash}</td>
+              <td class="py-3 px-4">
+                <span class="v-badge ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'v-badge-green' : ''}">${ev.location_status}</span>
+                <div class="text-[10px] mt-1" style="color:var(--muted);">Quality: ${ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A'}</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="v-badge ${ev.ai_recommendation === 'NORMAL_REVIEW' ? '' : 'v-badge-crimson'}">${ev.ai_recommendation || 'PROCESSING'}</span>
+                ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] mt-1 max-w-xs truncate" style="color:var(--orange);">${ev.ai_flags.join(', ')}</div>` : ''}
+              </td>
+              <td class="py-3 px-4">
+                <span style="color:${ev.review_status === 'APPROVED' ? 'var(--green)' : ev.review_status === 'CORRECTION_REQUESTED' ? 'var(--orange)' : 'var(--muted)'}; font-weight:${ev.review_status !== 'PENDING' ? '700' : '400'}">
+                  ${ev.review_status}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" title="View Asset Barcode & QR"
+                  class="px-2.5 py-1 rounded-lg text-[11px] font-mono mr-1 cursor-pointer transition"
+                  style="background:rgba(26,154,100,0.1);border:1px solid rgba(57,219,145,0.25);color:var(--green);"
+                  onmouseover="this.style.background='rgba(26,154,100,0.2)'" onmouseout="this.style.background='rgba(26,154,100,0.1)'">
+                  <i class="fa-solid fa-barcode mr-1"></i>Bar &amp; QR
+                </button>
+                <button onclick="openReviewModal('${ev.id}','APPROVED')"
+                  class="px-2 py-1 rounded-lg text-[10px] font-mono mr-1 cursor-pointer transition"
+                  style="background:rgba(57,219,145,0.08);border:1px solid rgba(57,219,145,0.2);color:var(--muted);"
+                  onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--muted)'">Approve</button>
+                <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')"
+                  class="px-2 py-1 rounded-lg text-[10px] font-mono mr-1 cursor-pointer transition"
+                  style="background:rgba(235,166,90,0.08);border:1px solid rgba(235,166,90,0.2);color:var(--muted);"
+                  onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Correct</button>
+                <button onclick="openReviewModal('${ev.id}','REJECTED')"
+                  class="px-2 py-1 rounded-lg text-[10px] font-mono cursor-pointer transition"
+                  style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);color:var(--muted);"
+                  onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--muted)'">Reject</button>
+              </td>
+            </tr>
+          `).join('');
         }
+      }
 
-        tbody.innerHTML = list.map(ev => `
-          <tr class="hover:bg-[#121212] transition">
-            <td class="py-3 px-3 font-mono text-[11px]">
-              <span class="font-bold text-white">${ev.original_filename}</span>
-              <span class="v-badge text-[10px] ml-1">v${ev.version_number}</span><br>
-              <span class="text-[#555]">${ev.id}</span>
-              ${ev.superseded_evidence_id ? `<div class="text-[10px] text-amber-500/80 mt-0.5">Supersedes: ${ev.superseded_evidence_id.substring(0,8)}...</div>` : ''}
-            </td>
-            <td class="py-3 px-3 font-mono text-[10px] text-[#888] max-w-xs truncate" title="${ev.sha256_hash}">
-              ${ev.sha256_hash}
-            </td>
-            <td class="py-3 px-3 text-xs space-y-1">
-              <span class="v-badge ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'v-badge-green' : 'border-amber-500/30 text-amber-300'}">
-                ${ev.location_status}
-              </span>
-              <div class="text-[10px] text-[#666] font-mono">Quality: ${(ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A')}</div>
-            </td>
-            <td class="py-3 px-3 text-xs">
-              <span class="v-badge ${ev.ai_recommendation === 'NORMAL_REVIEW' ? 'border-[#333] text-[#aaa]' : 'v-badge-crimson'}">
-                ${ev.ai_recommendation || 'PROCESSING'}
-              </span>
-              ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] text-crimson-400 mt-0.5 font-mono max-w-xs truncate" title="${ev.ai_flags.join(', ')}">${ev.ai_flags.join(', ')}</div>` : ''}
-            </td>
-            <td class="py-3 px-3 text-xs font-mono">
-              <span class="${ev.review_status === 'APPROVED' ? 'text-emerald-400' : ev.review_status === 'CORRECTION_REQUESTED' ? 'text-amber-400' : 'text-[#888]'}">
-                ${ev.review_status}
-              </span>
-            </td>
-            <td class="py-3 px-3 text-right space-x-1 whitespace-nowrap">
-              <button onclick="showQrModal('${ev.id}')" title="Show Verification QR" class="p-1.5 rounded bg-[#161616] hover:bg-[#202020] text-[#999] hover:text-white">
-                <i class="fa-solid fa-qrcode text-[10px]"></i>
-              </button>
-              <button onclick="openReviewModal('${ev.id}', 'APPROVED')" class="px-2 py-1 rounded bg-[#161616] hover:bg-emerald-950 text-[#bbb] hover:text-emerald-300 border border-[#2a2a2a] text-[10px] font-mono">Approve</button>
-              <button onclick="openReviewModal('${ev.id}', 'CORRECTION_REQUESTED')" class="px-2 py-1 rounded bg-[#161616] hover:bg-amber-950 text-[#bbb] hover:text-amber-300 border border-[#2a2a2a] text-[10px] font-mono">Correct</button>
-              <button onclick="openReviewModal('${ev.id}', 'REJECTED')" class="px-2 py-1 rounded bg-[#161616] hover:bg-crimson-950 text-[#bbb] hover:text-crimson-300 border border-[#2a2a2a] text-[10px] font-mono">Reject</button>
-            </td>
-          </tr>
-        `).join('');
-
-        // Populate Audit Ledger View
-        const auditList = document.getElementById('auditLedgerTimeline');
+      // Audit ledger
+      const auditList = document.getElementById('auditLedgerTimeline');
+      if (auditList) {
         auditList.innerHTML = list.map(ev => `
-          <div class="v-card p-3 flex items-start justify-between text-xs font-mono">
-            <div class="space-y-1">
-              <div class="flex items-center space-x-2">
-                <span class="font-bold text-white">${ev.original_filename}</span>
-                <span class="text-[#666]">(${ev.id})</span>
+          <div class="v-card p-4 flex items-start justify-between">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs font-mono">
+                <span class="font-bold" style="color:var(--white);">${ev.original_filename}</span>
+                <span class="v-badge text-[10px]">v${ev.version_number}</span>
               </div>
-              <div class="text-[10px] text-[#71717a] truncate max-w-md">SHA-256: ${ev.sha256_hash}</div>
-              <div class="text-[10px] text-[#555]">Received: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
+              <div class="text-[11px] font-mono truncate" style="color:var(--muted);">SHA-256: ${ev.sha256_hash}</div>
+              <div class="text-[10px] font-mono" style="color:rgba(164,185,174,0.5);">ID: ${ev.id}</div>
+              <div class="text-[10px] font-mono" style="color:rgba(164,185,174,0.4);">Received: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
             </div>
-            <span class="v-badge ${ev.review_status === 'APPROVED' ? 'v-badge-green' : 'border-[#333] text-[#888]'}">
+            <span class="v-badge ${ev.review_status === 'APPROVED' ? 'v-badge-green' : ''} flex-shrink-0 ml-3">
               ${ev.review_status}
             </span>
           </div>
         `).join('');
-
-      } catch (err) {
-        console.error(err);
       }
+    } catch (err) {
+      console.error('refreshEvidenceQueue:', err);
     }
+  }
 
-    async function executeVerification() {
-      const id = document.getElementById('verifyInputId').value.trim();
-      if (!id) {
-        showToast('Please enter an Evidence UUID', 'error');
-        return;
-      }
+  // ── Verification ──
+  async function executeVerification(directId = null) {
+    const id = (directId || document.getElementById('verifyInputId').value).trim();
+    if (!id) { showToast('Please enter an Evidence UUID', 'error'); return; }
 
-      const card = document.getElementById('verifyResultCard');
-      card.classList.remove('hidden');
-      card.innerHTML = `<div class="text-center py-4 text-xs font-mono text-[#888]"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Recalculating bytes...</div>`;
+    const card = document.getElementById('verifyResultCard');
+    card.classList.remove('hidden');
+    card.style.cssText = '';
+    card.innerHTML = `<div class="text-center py-6 text-xs font-mono" style="color:var(--muted);"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Recalculating bytes…</div>`;
 
-      try {
-        const res = await fetch(`${API_HOST}/api/v1/evidence/verify/${id}`);
-        if (!res.ok) throw new Error("Verification record not found");
-        const data = await res.json();
+    try {
+      const res = await fetch(`${API_HOST}/api/v1/evidence/verify/${id}`);
+      if (!res.ok) throw new Error('Verification record not found');
+      const data = await res.json();
 
-        card.className = `v-card p-5 space-y-3 ${data.is_valid ? 'border-emerald-600/30' : 'border-crimson-600/40'}`;
-        card.innerHTML = `
-          <div class="flex items-center space-x-2 font-mono text-sm ${data.is_valid ? 'text-emerald-400' : 'text-crimson-400'}">
-            <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
-            <span class="font-bold">${data.status}</span>
-          </div>
-          <p class="text-xs text-[#888]">${data.message}</p>
-          <div class="bg-[#050505] p-3 rounded-lg border border-[#1e1e1e] font-mono text-[11px] space-y-1.5 text-[#ccc]">
-            <div><span class="text-[#666]">File:</span> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
-            <div class="truncate"><span class="text-[#666]">Recorded Hash:</span> ${data.recorded_sha256}</div>
-            <div class="truncate"><span class="text-[#666]">Computed Hash:</span> ${data.computed_sha256}</div>
-            <div><span class="text-[#666]">Decision:</span> <span class="font-bold text-white">${data.review_status}</span></div>
-          </div>
-        `;
-      } catch (err) {
-        card.className = "v-card p-5 border-crimson-600/40";
-        card.innerHTML = `<div class="font-mono text-xs text-crimson-400"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${err.message}</div>`;
-      }
+      card.className = 'v-card p-5 space-y-3';
+      card.style.borderColor = data.is_valid ? 'rgba(57,219,145,0.4)' : 'rgba(235,166,90,0.4)';
+      card.innerHTML = `
+        <div class="flex items-center gap-2 font-mono text-sm" style="color:${data.is_valid ? 'var(--green)' : 'var(--orange)'};">
+          <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+          <span class="font-bold">${data.status}</span>
+        </div>
+        <p class="text-xs" style="color:var(--muted);">${data.message}</p>
+        <div class="rounded-xl p-3 font-mono text-xs space-y-1.5" style="background:rgba(7,28,24,0.7);border:1px solid rgba(190,255,215,0.1);color:var(--white);">
+          <div><span style="color:var(--muted);">File:</span> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
+          <div class="truncate"><span style="color:var(--muted);">Recorded:</span> ${data.recorded_sha256}</div>
+          <div class="truncate"><span style="color:var(--muted);">Computed:</span> ${data.computed_sha256}</div>
+          <div><span style="color:var(--muted);">Decision:</span> <span class="font-bold">${data.review_status}</span></div>
+        </div>
+        <div class="pt-1 flex justify-end">
+          <button onclick="showAssetModal('${data.evidence_id}','${data.original_filename}')"
+            class="px-4 py-2 rounded-xl font-mono text-xs cursor-pointer btn-ghost flex items-center gap-2">
+            <i class="fa-solid fa-barcode" style="color:var(--green);"></i> View Asset Barcode &amp; QR
+          </button>
+        </div>
+      `;
+    } catch (err) {
+      card.className = 'v-card p-5';
+      card.style.borderColor = 'rgba(220,38,38,0.4)';
+      card.innerHTML = `<div class="font-mono text-xs" style="color:var(--orange);"><i class="fa-solid fa-triangle-exclamation mr-2"></i>${err.message}</div>`;
     }
+  }
 
-    function openReviewModal(evidenceId, decision) {
-      document.getElementById('modalEvidenceId').value = evidenceId;
-      document.getElementById('modalDecision').value = decision;
-      document.getElementById('modalTitle').innerText = `Human Review Decision: ${decision}`;
-      document.getElementById('modalReason').value = '';
-      document.getElementById('modalCorrectiveActions').value = '';
+  // ── Asset modal ──
+  function showAssetModal(evidenceId, filename) {
+    document.getElementById('assetRoadTitle').textContent = filename;
+    document.getElementById('assetBarcodeImg').src = `${API_HOST}/api/v1/evidence/barcode/${evidenceId}`;
+    document.getElementById('assetQrImg').src = `${API_HOST}/api/v1/evidence/qr/${evidenceId}`;
+    document.getElementById('assetBarcodeCode').textContent = `ASSET CODE: RD-${evidenceId.substring(0,8).toUpperCase()}`;
+    document.getElementById('assetModal').classList.remove('hidden');
+  }
+  function closeAssetModal() { document.getElementById('assetModal').classList.add('hidden'); }
+  function printAssetTag() { window.print(); }
 
-      if (decision === 'CORRECTION_REQUESTED') {
-        document.getElementById('modalCorrectionBox').classList.remove('hidden');
-      } else {
-        document.getElementById('modalCorrectionBox').classList.add('hidden');
-      }
+  // ── Review modal ──
+  function openReviewModal(evidenceId, decision) {
+    document.getElementById('modalEvidenceId').value = evidenceId;
+    document.getElementById('modalDecision').value = decision;
+    document.getElementById('modalTitle').textContent = `Review Decision: ${decision}`;
+    document.getElementById('modalReason').value = '';
+    document.getElementById('modalCorrectiveActions').value = '';
+    document.getElementById('modalCorrectionBox').classList.toggle('hidden', decision !== 'CORRECTION_REQUESTED');
+    document.getElementById('reviewModal').classList.remove('hidden');
+  }
+  function closeReviewModal() { document.getElementById('reviewModal').classList.add('hidden'); }
 
-      document.getElementById('reviewModal').classList.remove('hidden');
-    }
+  async function confirmReviewDecision() {
+    const id = document.getElementById('modalEvidenceId').value;
+    const decision = document.getElementById('modalDecision').value;
+    const reason = document.getElementById('modalReason').value.trim();
+    const corrective = document.getElementById('modalCorrectiveActions').value.trim();
+    if (!reason) { showToast('A reason is required for auditability', 'error'); return; }
 
-    function closeReviewModal() {
-      document.getElementById('reviewModal').classList.add('hidden');
-    }
-
-    function showQrModal(evidenceId) {
-      document.getElementById('qrImageElement').src = `${API_HOST}/api/v1/evidence/qr/${evidenceId}`;
-      document.getElementById('qrEvidenceIdLabel').innerText = evidenceId;
-      document.getElementById('qrModal').classList.remove('hidden');
-    }
-
-    function closeQrModal() {
-      document.getElementById('qrModal').classList.add('hidden');
-    }
-
-    async function confirmReviewDecision() {
-      const id = document.getElementById('modalEvidenceId').value;
-      const decision = document.getElementById('modalDecision').value;
-      const reason = document.getElementById('modalReason').value.trim();
-      const corrective = document.getElementById('modalCorrectiveActions').value.trim();
-
-      if (!reason) {
-        showToast('A reason is required for review audibility', 'error');
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_HOST}/api/v1/evidence/review/${id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            decision: decision,
-            reason: reason,
-            corrective_actions: corrective || null
-          })
-        });
-
-        if (!res.ok) throw new Error("Failed to record decision");
-        showToast(`Review decision '${decision}' recorded!`);
-        closeReviewModal();
-        refreshEvidenceQueue();
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const res = await fetch(`${API_HOST}/api/v1/evidence/review/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision, reason, corrective_actions: corrective || null })
+      });
+      if (!res.ok) throw new Error('Failed to record decision');
+      showToast(`Decision '${decision}' recorded successfully!`);
+      closeReviewModal();
       refreshEvidenceQueue();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // ── QR Scanner ──
+  function startQrScanner() {
+    document.getElementById('startScanBtn').classList.add('hidden');
+    document.getElementById('stopScanBtn').classList.remove('hidden');
+    html5QrScanner = new Html5Qrcode('reader');
+    html5QrScanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      (decodedText) => {
+        showToast(`Scanned: ${decodedText}`);
+        let targetId = decodedText;
+        if (decodedText.includes('id=')) targetId = decodedText.split('id=')[1];
+        document.getElementById('verifyInputId').value = targetId;
+        stopQrScanner();
+        executeVerification(targetId);
+      },
+      () => {}
+    ).catch(() => { showToast('Camera access denied or unavailable', 'error'); stopQrScanner(); });
+  }
+
+  function stopQrScanner() {
+    if (html5QrScanner) {
+      html5QrScanner.stop().then(() => {
+        html5QrScanner.clear();
+        document.getElementById('startScanBtn').classList.remove('hidden');
+        document.getElementById('stopScanBtn').classList.add('hidden');
+      }).catch(err => console.error(err));
+    }
+  }
+
+  // ── Carousel ──
+  function carouselScroll(dir) {
+    const c = document.getElementById('evidenceCarousel');
+    c.scrollBy({ left: dir * 340, behavior: 'smooth' });
+  }
+
+  // ── Scroll-reveal ──
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate workflow paths when grid visible
+        if (entry.target.id === 'workflowGrid') {
+          setTimeout(() => {
+            document.querySelectorAll('.workflow-path').forEach((p, i) => {
+              setTimeout(() => p.classList.add('animated'), i * 300);
+            });
+          }, 400);
+        }
+      }
     });
-  </script>
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── Init ──
+  window.addEventListener('DOMContentLoaded', () => {
+    refreshEvidenceQueue();
+    // Health check
+    fetch(`${API_HOST}/health`).then(r => r.json()).then(d => {
+      document.getElementById('engineStatusText').textContent =
+        d.status === 'ok' ? 'ENGINE ONLINE' : 'ENGINE ERROR';
+    }).catch(() => {
+      document.getElementById('engineStatusText').textContent = 'API OFFLINE';
+      document.getElementById('engineStatusText').style.color = 'var(--orange)';
+    });
+  });
+</script>
+
 </body>
 </html>

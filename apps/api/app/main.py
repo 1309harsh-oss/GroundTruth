@@ -25,7 +25,16 @@ app.add_middleware(
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(evidence_router, prefix=settings.API_V1_STR)
 
+# Initialize Firebase Service
+from apps.api.app.services.firebase_service import firebase_service
+firebase_service.initialize()
+
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "project": "GroundTruth", "version": settings.VERSION}
+    return {
+        "status": "ok",
+        "project": "GroundTruth",
+        "version": settings.VERSION,
+        "firebase_connected": firebase_service.is_connected
+    }
 
