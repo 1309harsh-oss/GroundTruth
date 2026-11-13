@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- KaTeX for crisp mathematical / coordinate / LaTeX rendering -->
+  <!-- KaTeX for LaTeX mathematical geofence formulas -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
 
@@ -37,7 +37,7 @@
 
   <style>
     /* ══════════════════════════════════════════════════════════
-       ADVANCED GLASSMORPHISM + COLOR THEORY (WHITE + BLACK + ORANGE)
+       GLASSMORPHISM + WHITE / BLACK / ORANGE PALETTE SYSTEM
        ══════════════════════════════════════════════════════════ */
     :root {
       --bg: #000000;
@@ -45,7 +45,6 @@
       --card-glass-hover: rgba(26, 26, 32, 0.75);
       --glass-nav: rgba(10, 10, 12, 0.72);
       --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-border-highlight: rgba(255, 90, 31, 0.45);
       --accent-orange: #FF5A1F;
       --accent-orange-hover: #EA580C;
       --accent-green: #10B981;
@@ -206,7 +205,7 @@
       transform: translateY(-1px);
     }
 
-    /* ─── Badges ─── */
+    /* ─── Badges & Chips ─── */
     .chip {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -233,7 +232,6 @@
       color: #A1A1AA;
     }
 
-    /* ─── Circular Progress ─── */
     .ring-svg {
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
@@ -279,7 +277,7 @@
 <div id="toastContainer" class="fixed top-20 right-6 z-[200] space-y-2 pointer-events-none"></div>
 
 <!-- ══════════════════════════════════════════════════════
-     TRANSLUCENT GLASS NAVIGATION
+     TRANSLUCENT GLASS NAVIGATION WITH RBAC CONTROLS
 ══════════════════════════════════════════════════════ -->
 <header id="main-nav" class="fixed top-0 left-0 right-0 z-50 glass-nav">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
@@ -295,13 +293,13 @@
         <div class="flex items-center gap-2">
           <span class="font-extrabold text-white text-base tracking-tight">GroundTruth</span>
           <span class="text-xs text-[#52525B] font-mono">/</span>
-          <span class="text-[11px] font-mono text-[#FF5A1F] font-semibold tracking-wider">EVIDENCE VAULT</span>
+          <span class="text-[11px] font-mono text-[#FF5A1F] font-semibold tracking-wider">RBAC SECURED</span>
         </div>
       </div>
     </button>
 
-    <!-- Operational Navigation Tabs -->
-    <nav class="hidden md:flex items-center gap-1.5 text-xs font-mono">
+    <!-- Operational Navigation Tabs (Filtered dynamically by RBAC) -->
+    <nav class="hidden md:flex items-center gap-1.5 text-xs font-mono" id="navTabsList">
       <button onclick="switchTab('landing')" id="nav-landing" class="px-3.5 py-1.5 rounded-lg text-white bg-white/10 border border-white/20 transition">
         Overview
       </button>
@@ -319,20 +317,40 @@
       </button>
     </nav>
 
-    <!-- Engine Live Status & Submit CTA -->
+    <!-- Role Switcher & Testing Environment Selector -->
     <div class="flex items-center gap-3">
-      <div class="hidden sm:flex items-center gap-2 text-[11px] font-mono px-3 py-1.5 rounded-xl glass-card">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF5A1F] opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF5A1F]"></span>
-        </span>
-        <span id="engineStatusText" class="text-white">ENGINE ONLINE</span>
+      
+      <!-- Testing Mode Role Selector -->
+      <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl glass-card border border-white/15">
+        <i class="fa-solid fa-user-shield text-[11px] text-[#FF5A1F]"></i>
+        <div class="flex flex-col">
+          <span class="text-[9px] font-mono text-[#71717A] leading-tight">ACTIVE ROLE</span>
+          <select id="rbacRoleSelect" onchange="setRbacRole(this.value)" class="bg-transparent text-white font-mono font-bold text-xs outline-none cursor-pointer">
+            <option value="ADMIN" class="bg-[#121215]">Admin (Super Admin)</option>
+            <option value="WORKER" class="bg-[#121215]">Worker / Customer</option>
+            <option value="REVIEWER" class="bg-[#121215]">Reviewer (Moderator)</option>
+            <option value="AUDITOR" class="bg-[#121215]">Auditor (Audit Trails)</option>
+          </select>
+        </div>
       </div>
 
-      <button onclick="switchTab('submit')" class="btn-orange-glow px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-camera text-[11px]"></i>
-        <span>Submit Evidence</span>
-      </button>
+      <!-- Testing Status Badge -->
+      <div class="hidden sm:flex items-center gap-2 text-[11px] font-mono px-3 py-1.5 rounded-xl glass-card">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
+        </span>
+        <span id="testingBadgeText" class="text-white">ROUTE: TESTING</span>
+      </div>
+
+      <!-- Action Button (Filtered by role) -->
+      <div id="headerActionBtnContainer">
+        <button onclick="switchTab('submit')" class="btn-orange-glow px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-camera text-[11px]"></i>
+          <span>Submit</span>
+        </button>
+      </div>
+
     </div>
 
   </div>
@@ -380,9 +398,9 @@
           Turn site photographs into authentic, traceable public records. Protect capital investments with automated AI checks, geofencing, and accountable human engineering sign-off.
         </p>
 
-        <!-- CTA Action Buttons -->
-        <div class="flex flex-wrap gap-4 pt-1">
-          <button onclick="switchTab('submit')" class="btn-white-solid px-7 py-3.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+        <!-- CTA Action Buttons (Role contextualized) -->
+        <div class="flex flex-wrap gap-4 pt-1" id="heroCtaContainer">
+          <button onclick="switchTab('submit')" id="heroSubmitBtn" class="btn-white-solid px-7 py-3.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
             <span>Submit Live Evidence</span>
             <i class="fa-solid fa-arrow-right text-[11px]"></i>
           </button>
@@ -555,7 +573,7 @@
         <span class="text-xs text-[#52525B] font-mono">/ Public Infrastructure Verification Platform</span>
       </div>
 
-      <div class="flex gap-6 text-xs font-mono text-[#A1A1AA]">
+      <div class="flex gap-6 text-xs font-mono text-[#A1A1AA]" id="footerNavLinks">
         <button onclick="switchTab('submit')" class="hover:text-white transition">Submit</button>
         <button onclick="switchTab('review')" class="hover:text-white transition">Queue</button>
         <button onclick="switchTab('verify')" class="hover:text-white transition">Scanner</button>
@@ -578,16 +596,19 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     OPERATIONAL FUNCTIONAL APP VIEWS
+     OPERATIONAL FUNCTIONAL APP VIEWS (RBAC CONTROLLED)
 ══════════════════════════════════════════════════════ -->
 
-<!-- ─── 2. SUBMIT EVIDENCE VIEW ─── -->
+<!-- ─── 2. SUBMIT EVIDENCE VIEW (Worker/Employee + Admin) ─── -->
 <div id="view-submit" class="app-view pt-24 pb-16">
   <div class="max-w-3xl mx-auto px-6">
     <div class="glass-card p-8 space-y-6">
       <div class="flex items-center justify-between pb-4 border-b border-white/10">
         <div>
-          <h2 class="text-xl font-bold text-white tracking-tight">Submit Road Evidence</h2>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-bold text-white tracking-tight">Submit Road Evidence</h2>
+            <span class="chip chip-orange text-[10px]">WORKER ROLE</span>
+          </div>
           <p class="text-xs text-[#A1A1AA] mt-1 font-mono">Upload field inspection photographs. Generates SHA-256 digest &amp; physical barcode.</p>
         </div>
         <span class="chip chip-orange">MORTH COMPLIANT</span>
@@ -631,8 +652,8 @@
         </button>
 
         <div>
-          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Inspection Notes</label>
-          <textarea id="inputNotes" class="gt-input" rows="3" placeholder="Describe compaction observations, weather, kilometer marker…"></textarea>
+          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Inspection Notes &amp; Invoice Reference</label>
+          <textarea id="inputNotes" class="gt-input" rows="3" placeholder="Describe compaction observations, attached invoice details, inspector ID…"></textarea>
         </div>
 
         <div>
@@ -641,7 +662,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Field Photograph *</label>
+          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Field Photograph / Person Evidence *</label>
           <div class="border-2 border-dashed border-white/20 hover:border-[#FF5A1F] rounded-xl p-8 text-center cursor-pointer transition"
                onclick="document.getElementById('fileInput').click()"
                ondragover="this.style.borderColor='#FF5A1F'"
@@ -663,13 +684,16 @@
   </div>
 </div>
 
-<!-- ─── 3. REVIEW QUEUE VIEW ─── -->
+<!-- ─── 3. REVIEW QUEUE VIEW (Reviewer/Moderator + Admin) ─── -->
 <div id="view-review" class="app-view pt-24 pb-16">
   <div class="max-w-7xl mx-auto px-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-bold text-white tracking-tight">Review &amp; Asset Queue</h2>
-        <p class="text-xs text-[#A1A1AA] font-mono mt-1">Authoritative review interface for designated engineering officers.</p>
+        <div class="flex items-center gap-2">
+          <h2 class="text-2xl font-bold text-white tracking-tight">Review &amp; Asset Queue</h2>
+          <span class="chip chip-green text-[10px]">REVIEWER ROLE</span>
+        </div>
+        <p class="text-xs text-[#A1A1AA] font-mono mt-1">Human review authority: Inspect submitted photos, approve, deny, or request corrections.</p>
       </div>
       <button onclick="refreshEvidenceQueue()" class="btn-glass-subtle px-4 py-2 rounded-xl text-xs font-mono flex items-center gap-2 cursor-pointer">
         <i class="fa-solid fa-rotate-right text-[#FF5A1F]"></i>
@@ -701,7 +725,7 @@
   </div>
 </div>
 
-<!-- ─── 4. BAR & QR SCANNER VIEW ─── -->
+<!-- ─── 4. BAR & QR SCANNER VIEW (All Roles) ─── -->
 <div id="view-verify" class="app-view pt-24 pb-16">
   <div class="max-w-2xl mx-auto px-6 space-y-6">
     <div class="glass-card p-8 space-y-6">
@@ -741,11 +765,14 @@
   </div>
 </div>
 
-<!-- ─── 5. AUDIT LEDGER VIEW ─── -->
+<!-- ─── 5. AUDIT LEDGER VIEW (Auditor + Admin) ─── -->
 <div id="view-audit" class="app-view pt-24 pb-16">
   <div class="max-w-4xl mx-auto px-6 space-y-6">
     <div>
-      <h2 class="text-2xl font-bold text-white tracking-tight">Audit Ledger</h2>
+      <div class="flex items-center gap-2">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Audit Ledger &amp; Chain of Custody</h2>
+        <span class="chip chip-neutral text-[10px]">AUDITOR ROLE</span>
+      </div>
       <p class="text-xs text-[#A1A1AA] font-mono mt-1">Immutable chronological sequence of all submissions, hash proofs, and engineer authorizations.</p>
     </div>
     <div class="space-y-3" id="auditLedgerTimeline">
@@ -826,12 +853,117 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     ENGINEERING JAVASCRIPT & 3D PARALLAX INTERACTION
+     ENGINEERING JAVASCRIPT: RBAC CONTROLLER & PARALLAX
 ══════════════════════════════════════════════════════ -->
 <script>
   const API_HOST = 'http://localhost:8000';
   let selectedFile = null;
   let html5QrScanner = null;
+
+  // ══════════════════════════════════════════════════════════
+  // ROLE-BASED ACCESS CONTROL (RBAC) SYSTEM
+  // Roles:
+  // 1. WORKER (Employee/Customer): Upload photo, overview, trace request/invoice/person pic.
+  // 2. REVIEWER (Moderator): Cannot upload; see, approve, deny, suggest corrections.
+  // 3. AUDITOR: Inspect audit ledger, evidence lineage, and important items.
+  // 4. ADMIN (Super Admin / Testing Route): All access.
+  // ══════════════════════════════════════════════════════════
+  let currentRole = 'ADMIN';
+
+  function setRbacRole(role) {
+    currentRole = role;
+    localStorage.setItem('groundtruth_role', role);
+    applyRbacPermissions();
+    showToast(`Role switched to: ${role} (Testing mode active)`);
+  }
+
+  function applyRbacPermissions() {
+    const role = currentRole;
+    
+    // Elements to control
+    const navSubmit = document.getElementById('nav-submit');
+    const navReview = document.getElementById('nav-review');
+    const navVerify = document.getElementById('nav-verify');
+    const navAudit = document.getElementById('nav-audit');
+    const heroSubmitBtn = document.getElementById('heroSubmitBtn');
+    const headerActionBtnContainer = document.getElementById('headerActionBtnContainer');
+    const roleSelect = document.getElementById('rbacRoleSelect');
+
+    if (roleSelect) roleSelect.value = role;
+
+    // Reset visibility
+    if (navSubmit) navSubmit.style.display = '';
+    if (navReview) navReview.style.display = '';
+    if (navVerify) navVerify.style.display = '';
+    if (navAudit) navAudit.style.display = '';
+    if (heroSubmitBtn) heroSubmitBtn.style.display = '';
+
+    if (role === 'WORKER') {
+      // Worker: Overview, Submit photo, Barcode/QR verify. CANNOT see review queue or audit ledger.
+      if (navReview) navReview.style.display = 'none';
+      if (navAudit) navAudit.style.display = 'none';
+      if (headerActionBtnContainer) {
+        headerActionBtnContainer.innerHTML = `
+          <button onclick="switchTab('submit')" class="btn-orange-glow px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-camera text-[11px]"></i>
+            <span>Upload Photo</span>
+          </button>
+        `;
+      }
+      // If currently on an unauthorized tab, redirect to overview
+      const activeView = document.querySelector('.app-view.active');
+      if (activeView && (activeView.id === 'view-review' || activeView.id === 'view-audit')) {
+        switchTab('submit');
+      }
+    } 
+    else if (role === 'REVIEWER') {
+      // Reviewer: Overview, Review queue, Barcode/QR verify. CANNOT upload photo or alter audit ledger.
+      if (navSubmit) navSubmit.style.display = 'none';
+      if (navAudit) navAudit.style.display = 'none';
+      if (heroSubmitBtn) heroSubmitBtn.style.display = 'none';
+      if (headerActionBtnContainer) {
+        headerActionBtnContainer.innerHTML = `
+          <button onclick="switchTab('review')" class="btn-white-solid px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-clipboard-check text-[11px]"></i>
+            <span>Review Queue</span>
+          </button>
+        `;
+      }
+      const activeView = document.querySelector('.app-view.active');
+      if (activeView && (activeView.id === 'view-submit' || activeView.id === 'view-audit')) {
+        switchTab('review');
+      }
+    } 
+    else if (role === 'AUDITOR') {
+      // Auditor: Overview, Audit Ledger, Barcode/QR verify. CANNOT submit or review decisions.
+      if (navSubmit) navSubmit.style.display = 'none';
+      if (navReview) navReview.style.display = 'none';
+      if (heroSubmitBtn) heroSubmitBtn.style.display = 'none';
+      if (headerActionBtnContainer) {
+        headerActionBtnContainer.innerHTML = `
+          <button onclick="switchTab('audit')" class="btn-glass-subtle px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-list-check text-[11px] text-[#FF5A1F]"></i>
+            <span>Audit Ledger</span>
+          </button>
+        `;
+      }
+      const activeView = document.querySelector('.app-view.active');
+      if (activeView && (activeView.id === 'view-submit' || activeView.id === 'view-review')) {
+        switchTab('audit');
+      }
+    } 
+    else {
+      // ADMIN (Super Admin): Unrestricted access to all segments
+      if (headerActionBtnContainer) {
+        headerActionBtnContainer.innerHTML = `
+          <button onclick="switchTab('submit')" class="btn-orange-glow px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-crown text-[11px]"></i>
+            <span>Admin Action</span>
+          </button>
+        `;
+      }
+    }
+  }
 
   // ── Render KaTeX LaTeX Formulas ──
   function renderLatex() {
@@ -871,8 +1003,22 @@
     });
   }
 
-  // ── Tab Navigation ──
+  // ── Tab Navigation (Guarded by RBAC) ──
   function switchTab(tabId) {
+    // RBAC Security Check
+    if (currentRole === 'WORKER' && (tabId === 'review' || tabId === 'audit')) {
+      showToast(`Access Denied: Worker role is not authorized to access ${tabId}`, 'error');
+      return;
+    }
+    if (currentRole === 'REVIEWER' && (tabId === 'submit' || tabId === 'audit')) {
+      showToast(`Access Denied: Reviewer role is not authorized to access ${tabId}`, 'error');
+      return;
+    }
+    if (currentRole === 'AUDITOR' && (tabId === 'submit' || tabId === 'review')) {
+      showToast(`Access Denied: Auditor role is not authorized to access ${tabId}`, 'error');
+      return;
+    }
+
     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById('view-' + tabId);
     if (target) target.classList.add('active');
@@ -889,15 +1035,6 @@
         btn.classList.add('text-[#A1A1AA]', 'border-transparent');
       }
     });
-
-    const statusEl = document.getElementById('engineStatusText');
-    if (statusEl) {
-      statusEl.textContent =
-        tabId === 'landing' ? 'ENGINE ONLINE' :
-        tabId === 'submit'  ? 'SUBMIT MODE'   :
-        tabId === 'review'  ? 'REVIEW MODE'   :
-        tabId === 'verify'  ? 'SCAN MODE'     : 'AUDIT MODE';
-    }
 
     if (['review', 'landing', 'audit'].includes(tabId)) {
       refreshEvidenceQueue();
@@ -956,9 +1093,14 @@
     }
   }
 
-  // ── Form Submission to FastAPI ──
+  // ── Form Submission to FastAPI (Worker + Admin) ──
   async function handleFormSubmit(e) {
     e.preventDefault();
+    if (currentRole === 'REVIEWER' || currentRole === 'AUDITOR') {
+      showToast(`Role '${currentRole}' is not authorized to submit evidence`, 'error');
+      return;
+    }
+
     if (!selectedFile) {
       showToast('Please select a photographic evidence file', 'error');
       return;
@@ -989,7 +1131,12 @@
       selectedFile = null;
       document.getElementById('fileUploadPrompt').textContent = 'Click or drag & drop field photograph to upload';
       document.getElementById('fileUploadPrompt').style.color = '#FFFFFF';
-      switchTab('review');
+      
+      if (currentRole === 'ADMIN') {
+        switchTab('review');
+      } else {
+        switchTab('landing');
+      }
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
@@ -1005,7 +1152,7 @@
       if (!res.ok) return;
       const list = await res.json();
 
-      // Render Real Database Items on Landing Page (Clean real cards, no fake mocks)
+      // Render Real Database Items on Landing Page
       const liveGrid = document.getElementById('liveEvidenceGrid');
       if (liveGrid) {
         if (list.length === 0) {
@@ -1036,7 +1183,7 @@
         }
       }
 
-      // Render Review Queue Table
+      // Render Review Queue Table (Action buttons guarded by role)
       const tbody = document.getElementById('evidenceQueueBody');
       if (tbody) {
         if (list.length === 0) {
@@ -1068,9 +1215,11 @@
                 <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-[#FF5A1F] text-[11px] mr-1 cursor-pointer">
                   <i class="fa-solid fa-barcode mr-1"></i>Bar &amp; QR
                 </button>
-                <button onclick="openReviewModal('${ev.id}','APPROVED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#10B981]/20 text-[#10B981] border border-white/15 text-[10px] mr-1 cursor-pointer">Approve</button>
-                <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#FF5A1F]/20 text-[#FF5A1F] border border-white/15 text-[10px] mr-1 cursor-pointer">Correct</button>
-                <button onclick="openReviewModal('${ev.id}','REJECTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-red-500/20 text-[#EF4444] border border-white/15 text-[10px] cursor-pointer">Reject</button>
+                ${(currentRole === 'REVIEWER' || currentRole === 'ADMIN') ? `
+                  <button onclick="openReviewModal('${ev.id}','APPROVED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#10B981]/20 text-[#10B981] border border-white/15 text-[10px] mr-1 cursor-pointer">Approve</button>
+                  <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#FF5A1F]/20 text-[#FF5A1F] border border-white/15 text-[10px] mr-1 cursor-pointer">Suggest</button>
+                  <button onclick="openReviewModal('${ev.id}','REJECTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-red-500/20 text-[#EF4444] border border-white/15 text-[10px] cursor-pointer">Deny</button>
+                ` : `<span class="text-[10px] text-[#52525B]">Read-Only</span>`}
               </td>
             </tr>
           `).join('');
@@ -1156,11 +1305,15 @@
   function closeAssetModal() { document.getElementById('assetModal').classList.add('hidden'); }
   function printAssetTag() { window.print(); }
 
-  // ── Review Modals ──
+  // ── Review Modals (Reviewer + Admin) ──
   function openReviewModal(evidenceId, decision) {
+    if (currentRole !== 'REVIEWER' && currentRole !== 'ADMIN') {
+      showToast('Only Reviewers/Moderators or Admins can record review decisions', 'error');
+      return;
+    }
     document.getElementById('modalEvidenceId').value = evidenceId;
     document.getElementById('modalDecision').value = decision;
-    document.getElementById('modalTitle').textContent = `Review Decision: ${decision}`;
+    document.getElementById('modalTitle').textContent = `Review Decision: ${decision === 'CORRECTION_REQUESTED' ? 'Suggest Correction' : decision === 'REJECTED' ? 'Deny Evidence' : 'Approve Evidence'}`;
     document.getElementById('modalReason').value = '';
     document.getElementById('modalCorrectiveActions').value = '';
     document.getElementById('modalCorrectionBox').classList.toggle('hidden', decision !== 'CORRECTION_REQUESTED');
@@ -1228,6 +1381,11 @@
 
   // ── Startup Initialization ──
   window.addEventListener('DOMContentLoaded', () => {
+    // Load persisted RBAC role or default to ADMIN
+    const savedRole = localStorage.getItem('groundtruth_role') || 'ADMIN';
+    currentRole = savedRole;
+    applyRbacPermissions();
+
     renderLatex();
     refreshEvidenceQueue();
     fetch(`${API_HOST}/health`)
