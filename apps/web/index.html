@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
   <!-- Typography: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,20 +23,30 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
             mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
           },
           colors: {
-            gt: {
-              bg:       '#071C18',
-              bg2:      '#0B3028',
-              surface:  '#103D30',
-              emerald:  '#1A9A64',
-              green:    '#39DB91',
-              lime:     '#B5FF77',
-              white:    '#F4F8F4',
-              muted:    '#A4B9AE',
-              orange:   '#EBA65A',
+            brand: {
+              black: '#000000',
+              deep: '#09090B',
+              surface: '#121215',
+              card: '#16161A',
+              cardHover: '#1D1D22',
+              border: '#27272A',
+              borderLight: '#3F3F46',
+              white: '#FFFFFF',
+              offWhite: '#FAFAFA',
+              textMuted: '#A1A1AA',
+              textDim: '#71717A',
+              orange: '#FF5A1F',
+              orangeHover: '#EA580C',
+              orangeDim: 'rgba(255, 90, 31, 0.12)',
+              orangeBorder: 'rgba(255, 90, 31, 0.35)',
+              green: '#10B981',
+              greenDim: 'rgba(16, 185, 129, 0.12)',
+              greenBorder: 'rgba(16, 185, 129, 0.35)',
+              blue: '#3B82F6'
             }
           }
         }
@@ -46,1258 +56,898 @@
 
   <style>
     /* ══════════════════════════════════════════════════════════
-       A. ADVANCED GLASSMORPHISM DESIGN SYSTEM & TOKEN HIERARCHY
+       COLOR THEORY SYSTEM: WHITE + BLACK + ACCENT ORANGE CONTRAST
+       Dominant (60%): Deep Obsidian / Crisp High-Contrast Whites
+       Secondary (30%): Pure Neutral Grayscale Cards & Polished Chrome
+       Accent (10%): Safety Infrastructure Orange (#FF5A1F) & Functional Green
        ══════════════════════════════════════════════════════════ */
     :root {
-      --bg: #071C18;
-      --bg2: #0B3028;
-      --surface: #103D30;
-      --emerald: #1A9A64;
-      --green: #39DB91;
-      --lime: #B5FF77;
-      --white: #F4F8F4;
-      --muted: #A4B9AE;
-      --orange: #EBA65A;
-
-      /* Multi-tier Glass Opacities */
-      --glass-primary-bg: rgba(9, 36, 30, 0.72);
-      --glass-secondary-bg: rgba(11, 48, 40, 0.42);
-      --glass-card-bg: rgba(14, 52, 42, 0.58);
-      --glass-nav-bg: rgba(7, 28, 24, 0.78);
-
-      /* Glass Borders */
-      --glass-border-light: rgba(190, 255, 215, 0.18);
-      --glass-border-hover: rgba(57, 219, 145, 0.45);
-      --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
-      --glass-specular-edge: inset 0 0 0 1px rgba(181, 255, 119, 0.08);
-
-      /* Directional Lighting & Shadows */
-      --glass-shadow-primary: 0 20px 50px -10px rgba(0, 0, 0, 0.65), 0 0 20px -2px rgba(26, 154, 100, 0.15);
-      --glass-shadow-float: 0 30px 70px -15px rgba(0, 0, 0, 0.75), 0 0 35px 2px rgba(57, 219, 145, 0.2);
+      --bg-black: #000000;
+      --bg-deep: #09090B;
+      --bg-surface: #121215;
+      --bg-card: #16161A;
+      --border-subtle: #27272A;
+      --border-light: #3F3F46;
+      --text-white: #FFFFFF;
+      --text-offwhite: #F4F4F5;
+      --text-muted: #A1A1AA;
+      --text-dim: #71717A;
+      --accent-orange: #FF5A1F;
+      --accent-orange-hover: #EA580C;
+      --accent-green: #10B981;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--bg);
-      color: var(--white);
+      background-color: var(--bg-black);
+      color: var(--text-offwhite);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      perspective: 1200px;
+      background-image: 
+        radial-gradient(circle at 50% -5%, rgba(255, 90, 31, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 40%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     }
 
-    /* ─── Animated Topographic & Atmospheric Lighting Canvas ─── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: -20%;
-      background-image:
-        radial-gradient(ellipse 75% 45% at 50% -10%, rgba(26, 154, 100, 0.25) 0%, transparent 60%),
-        radial-gradient(circle 500px at 85% 55%, rgba(57, 219, 145, 0.12) 0%, transparent 55%),
-        radial-gradient(circle 450px at 15% 75%, rgba(181, 255, 119, 0.08) 0%, transparent 50%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 40 Q20 15 40 40 Q60 65 80 40' fill='none' stroke='rgba(57,219,145,0.045)' stroke-width='1.2'/%3E%3Cpath d='M0 70 Q20 45 40 70 Q60 95 80 70' fill='none' stroke='rgba(57,219,145,0.035)' stroke-width='1'/%3E%3Cpath d='M0 15 Q20 -10 40 15 Q60 40 80 15' fill='none' stroke='rgba(57,219,145,0.035)' stroke-width='1'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      animation: ambientShift 22s ease-in-out infinite alternate;
-      will-change: transform, opacity;
-    }
-
-    @keyframes ambientShift {
-      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
-      50% { transform: scale(1.04) translate(-1.5%, 1%); opacity: 1; }
-      100% { transform: scale(1.02) translate(1%, -1.5%); opacity: 0.85; }
-    }
-
-    /* ─── 1. Primary Glass Panel ─── */
-    .glass-primary {
-      background: var(--glass-primary-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--glass-border-light);
-      box-shadow: var(--glass-shadow-primary), var(--glass-inner-highlight);
-    }
-
-    /* ─── 2. Secondary Glass Panel ─── */
-    .glass-secondary {
-      background: var(--glass-secondary-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(190, 255, 215, 0.12);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    /* ─── 3. Floating Glass Card with 3D Depth ─── */
-    .glass-float-card {
-      background: var(--glass-card-bg);
-      backdrop-filter: blur(26px);
-      -webkit-backdrop-filter: blur(26px);
-      border: 1px solid var(--glass-border-light);
-      box-shadow: var(--glass-shadow-float), var(--glass-inner-highlight), var(--glass-specular-edge);
-      transform-style: preserve-3d;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-      will-change: transform;
-    }
-
-    /* ─── 4. Glass Navigation ─── */
-    .glass-nav {
-      background: var(--glass-nav-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--glass-border-light);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), var(--glass-inner-highlight);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .glass-nav.scrolled {
-      background: rgba(5, 20, 17, 0.94);
-      backdrop-filter: blur(28px);
-      border-bottom-color: rgba(57, 219, 145, 0.25);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
-    }
-
-    /* ─── 5. Glass CTA Button ─── */
-    .btn-glass-cta {
-      background: linear-gradient(135deg, rgba(26, 154, 100, 0.95), rgba(16, 92, 60, 0.85));
-      border: 1px solid rgba(57, 219, 145, 0.5);
-      color: var(--white);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 25px rgba(26, 154, 100, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .btn-glass-cta::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-      transition: left 0.6s ease;
-    }
-    .btn-glass-cta:hover {
-      transform: translateY(-2px) scale(1.02);
-      background: linear-gradient(135deg, rgba(34, 185, 120, 0.98), rgba(26, 154, 100, 0.9));
-      box-shadow: 0 0 45px rgba(57, 219, 145, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.45);
-      border-color: rgba(181, 255, 119, 0.8);
-    }
-    .btn-glass-cta:hover::before { left: 100%; }
-
-    .btn-glass-ghost {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-border-light);
-      backdrop-filter: blur(12px);
-      color: var(--white);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      transition: all 0.25s ease;
-    }
-    .btn-glass-ghost:hover {
-      background: rgba(57, 219, 145, 0.12);
-      border-color: rgba(57, 219, 145, 0.4);
-      transform: translateY(-1.5px);
-      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    /* ══════════════════════════════════════════════════════════
-       B. HERO MOTION & EDITORIAL WORD REVEALS
-       ══════════════════════════════════════════════════════════ */
-    .word-reveal-wrap {
-      display: inline-block;
-      overflow: hidden;
-      vertical-align: bottom;
-    }
-    .word-reveal {
-      display: inline-block;
-      transform: translateY(115%) rotate(3deg);
-      opacity: 0;
-      animation: wordSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      will-change: transform, opacity;
-    }
-    @keyframes wordSlideUp {
-      to { transform: translateY(0) rotate(0deg); opacity: 1; }
-    }
-
-    /* Staggered entrance delays */
-    .delay-1 { animation-delay: 0.08s; }
-    .delay-2 { animation-delay: 0.18s; }
-    .delay-3 { animation-delay: 0.28s; }
-    .delay-4 { animation-delay: 0.38s; }
-    .delay-5 { animation-delay: 0.48s; }
-    .delay-6 { animation-delay: 0.58s; }
-    .delay-7 { animation-delay: 0.68s; }
-    .delay-8 { animation-delay: 0.78s; }
-
-    .fade-stagger-1 {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
-    }
-    .fade-stagger-2 {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
-    }
-    .fade-stagger-3 {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
-    }
-
-    @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Hero Dashboard Gentle Floating */
-    .hero-dashboard-float {
-      animation: heroFloat 7s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-    @keyframes heroFloat {
-      0% { transform: translateY(0px) rotateX(1deg) rotateY(-1deg); }
-      100% { transform: translateY(-12px) rotateX(-1deg) rotateY(1deg); }
-    }
-
-    /* ══════════════════════════════════════════════════════════
-       C. EVIDENCE FEED CAROUSEL & 3D TILT
-       ══════════════════════════════════════════════════════════ */
-    .evidence-carousel {
-      display: flex;
-      gap: 24px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      padding: 12px 6px 28px 6px;
-      perspective: 1000px;
-    }
-    .evidence-carousel::-webkit-scrollbar { display: none; }
-
-    .feed-card {
-      scroll-snap-align: start;
-      flex: 0 0 340px;
-      border-radius: 18px;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-      cursor: pointer;
+    /* ─── Premium Contrast Cards ─── */
+    .pro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
-    .feed-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 30px rgba(57, 219, 145, 0.25);
-      border-color: rgba(57, 219, 145, 0.45);
+    .pro-card:hover {
+      border-color: var(--border-light);
+      box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
-    .feed-card:hover .card-img-zoom {
-      transform: scale(1.06);
+    .pro-card-featured {
+      background: linear-gradient(180deg, #18181D 0%, #121215 100%);
+      border: 1px solid rgba(255, 90, 31, 0.3);
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 0 30px -5px rgba(255, 90, 31, 0.15);
     }
-    .card-img-zoom {
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    .pro-card-featured:hover {
+      border-color: rgba(255, 90, 31, 0.55);
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.95), 0 0 45px -5px rgba(255, 90, 31, 0.25);
+    }
+
+    /* ─── Buttons: White Dominant & Vibrant Orange ─── */
+    .btn-white {
+      background: #FFFFFF;
+      color: #000000;
+      border: 1px solid #FFFFFF;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+    }
+    .btn-white:hover {
+      background: #F4F4F5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-orange {
+      background: var(--accent-orange);
+      color: #FFFFFF;
+      border: 1px solid var(--accent-orange);
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 14px rgba(255, 90, 31, 0.3);
+    }
+    .btn-orange:hover {
+      background: var(--accent-orange-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 24px rgba(255, 90, 31, 0.5);
+    }
+
+    .btn-outline {
+      background: #111114;
+      color: #E4E4E7;
+      border: 1px solid #27272A;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-outline:hover {
+      background: #18181C;
+      border-color: #3F3F46;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    /* ─── Status Badges ─── */
+    .badge-base {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-orange {
+      background: rgba(255, 90, 31, 0.1);
+      border: 1px solid rgba(255, 90, 31, 0.4);
+      color: #FF7A45;
+    }
+    .badge-green {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+    }
+    .badge-neutral {
+      background: #18181B;
+      border: 1px solid #27272A;
+      color: #A1A1AA;
+    }
+
+    /* ─── Hero Floating Dashboard Animation ─── */
+    .hero-float {
+      animation: floatSmooth 6s ease-in-out infinite alternate;
       will-change: transform;
     }
-
-    /* Active Highlight Card */
-    .feed-card.card-active {
-      border-color: rgba(181, 255, 119, 0.55);
-      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), 0 0 35px rgba(57, 219, 145, 0.25);
+    @keyframes floatSmooth {
+      0% { transform: translateY(0px) rotateX(0deg); }
+      100% { transform: translateY(-10px) rotateX(0.5deg); }
     }
 
-    /* ══════════════════════════════════════════════════════════
-       D. AI EVIDENCE SCANNING & BOUNDING HIGHLIGHTS
-       ══════════════════════════════════════════════════════════ */
-    .scan-line-restrained {
+    /* ─── Scanning Laser Effect ─── */
+    .laser-scan {
       position: absolute;
       left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(57, 219, 145, 0.85), rgba(181, 255, 119, 0.95), transparent);
-      box-shadow: 0 0 12px rgba(57, 219, 145, 0.6);
-      animation: restrainedScan 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      background: linear-gradient(90deg, transparent, var(--accent-orange), #FFA94D, transparent);
+      box-shadow: 0 0 12px rgba(255, 90, 31, 0.7);
+      animation: laserMove 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       pointer-events: none;
       z-index: 20;
     }
-    @keyframes restrainedScan {
-      0%   { top: 2%; opacity: 0; }
-      15%  { opacity: 1; }
-      85%  { opacity: 1; }
-      100% { top: 96%; opacity: 0; }
+    @keyframes laserMove {
+      0% { top: 0%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
     }
 
-    .ai-bbox-targeted {
-      position: absolute;
-      border: 1.5px solid var(--lime);
-      border-radius: 4px;
-      box-shadow: 0 0 15px rgba(181, 255, 119, 0.3), inset 0 0 10px rgba(181, 255, 119, 0.15);
-      animation: bboxPulseTarget 3s ease-in-out infinite;
-      z-index: 15;
+    /* ─── Horizontal Marquee Ticker ─── */
+    .ticker-wrapper {
+      display: flex;
+      overflow: hidden;
+      user-select: none;
     }
-    @keyframes bboxPulseTarget {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50%       { opacity: 1;   transform: scale(1.015); box-shadow: 0 0 22px rgba(181, 255, 119, 0.5); }
+    .ticker-run {
+      display: flex;
+      animation: scrollTicker 30s linear infinite;
+      width: max-content;
     }
-
-    /* ══════════════════════════════════════════════════════════
-       E. GEOLOCATION RADAR & MAP PULSING
-       ══════════════════════════════════════════════════════════ */
-    .geo-radar-pulse {
-      animation: radarRing 2.6s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
-    }
-    @keyframes radarRing {
-      0%   { r: 6; opacity: 0.9; stroke-width: 2; }
-      100% { r: 28; opacity: 0; stroke-width: 0.5; }
+    .ticker-run:hover { animation-play-state: paused; }
+    @keyframes scrollTicker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
-    /* ══════════════════════════════════════════════════════════
-       F. WORKFLOW ANIMATIONS & SVG PATH CONNECTIONS
-       ══════════════════════════════════════════════════════ */
-    .workflow-connector {
-      stroke-dasharray: 240;
-      stroke-dashoffset: 240;
-      transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ─── Evidence Feed Horizontal Carousel ─── */
+    .carousel-box {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 12px;
     }
-    .workflow-connector.active {
+    .carousel-box::-webkit-scrollbar { display: none; }
+    .carousel-item {
+      scroll-snap-align: start;
+      flex: 0 0 340px;
+      transition: all 0.25s ease;
+    }
+    .carousel-item:hover {
+      transform: translateY(-4px);
+    }
+
+    /* ─── SVG Connector Progress Path ─── */
+    .path-connector {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 1.2s ease;
+    }
+    .path-connector.active {
       stroke-dashoffset: 0;
     }
 
-    .workflow-node {
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .workflow-node:hover {
-      transform: translateY(-6px) scale(1.02);
-      border-color: rgba(57, 219, 145, 0.4);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(26, 154, 100, 0.25);
-    }
-
-    /* ══════════════════════════════════════════════════════════
-       G. SCROLL ANIMATIONS & REVEAL SYSTEM
-       ══════════════════════════════════════════════════════ */
-    .reveal-elem {
+    /* ─── Scroll Reveal ─── */
+    .reveal-item {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .reveal-elem.is-visible {
+    .reveal-item.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* ─── Ticker Marquee ─── */
-    .ticker-track {
-      display: flex;
-      animation: tickerRun 28s linear infinite;
-      width: max-content;
-      will-change: transform;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes tickerRun {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    /* ─── Gradient text ─── */
-    .gradient-text {
-      background: linear-gradient(135deg, var(--green) 0%, var(--lime) 50%, var(--green) 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradPan 5s linear infinite;
-    }
-    @keyframes gradPan {
-      0%   { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    /* ─── Circular Progress ─── */
-    .ring-progress {
-      transform: rotate(-90deg);
-      transform-origin: 50% 50%;
-      transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* ─── App Views ─── */
+    /* ─── Inputs & App Views ─── */
     .app-view { display: none; }
     .app-view.active { display: block; }
 
-    /* ─── V-Card Compatibility (Used by tabs) ─── */
-    .v-card {
-      background: var(--glass-card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border-light);
-      border-radius: 16px;
-      box-shadow: var(--glass-shadow-primary), var(--glass-inner-highlight);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .v-card:hover {
-      border-color: rgba(57, 219, 145, 0.35);
-      box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(26, 154, 100, 0.18);
-    }
-
-    .v-badge {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      border: 1px solid rgba(190, 255, 215, 0.2);
-      background: rgba(26, 154, 100, 0.15);
-      color: var(--muted);
-      backdrop-filter: blur(8px);
-    }
-    .v-badge-green {
-      border-color: rgba(57, 219, 145, 0.45);
-      background: rgba(57, 219, 145, 0.12);
-      color: #39DB91;
-    }
-    .v-badge-crimson {
-      border-color: rgba(235, 166, 90, 0.45);
-      background: rgba(235, 166, 90, 0.12);
-      color: var(--orange);
-    }
-
     .gt-input {
       width: 100%;
-      background: rgba(7, 28, 24, 0.85);
-      border: 1px solid rgba(190, 255, 215, 0.18);
-      border-radius: 10px;
-      padding: 11px 14px;
+      background: #0E0E11;
+      border: 1px solid #27272A;
+      border-radius: 8px;
+      padding: 10px 14px;
       font-size: 13px;
-      color: var(--white);
+      color: #FFFFFF;
       outline: none;
       transition: all 0.2s ease;
       font-family: inherit;
     }
     .gt-input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(57, 219, 145, 0.2), 0 0 15px rgba(57, 219, 145, 0.1);
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 0 2px rgba(255, 90, 31, 0.2);
     }
-    .gt-input::placeholder { color: rgba(164, 185, 174, 0.6); }
-    select.gt-input option { background: #071C18; color: #fff; }
+    select.gt-input option { background: #121215; color: #FFFFFF; }
 
+    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
 
-    /* Accessibility: Reduced Motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
       }
-      .word-reveal { transform: none !important; opacity: 1 !important; }
-      .reveal-elem { opacity: 1 !important; transform: none !important; }
-      .hero-dashboard-float { animation: none !important; }
-      .scan-line-restrained { display: none !important; }
-    }
-
-    @media print {
-      #main-nav, .no-print { display: none !important; }
+      .hero-float { animation: none !important; }
+      .laser-scan { display: none !important; }
     }
   </style>
 </head>
-<body>
+<body class="selection:bg-[#FF5A1F] selection:text-white">
 
 <!-- ══════════════════════════════════════════════════════
-     TOAST CONTAINER
+     NOTIFICATION TOAST CONTAINER
 ══════════════════════════════════════════════════════ -->
-<div id="toastContainer" class="fixed top-24 right-6 z-[200] space-y-2 pointer-events-none"></div>
+<div id="toastContainer" class="fixed top-20 right-6 z-[200] space-y-2 pointer-events-none"></div>
 
 <!-- ══════════════════════════════════════════════════════
-     A4. GLASS NAVIGATION
+     HEADER NAVIGATION (HIGH-CONTRAST MONOCHROME + ORANGE ACCENT)
 ══════════════════════════════════════════════════════ -->
-<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 glass-nav">
-  <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
-
-    <!-- Logo & Brand Identifier -->
-    <button onclick="switchTab('landing')" class="flex items-center gap-2.5 flex-shrink-0 cursor-pointer group" aria-label="GroundTruth Home">
-      <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(57,219,145,0.4)]"
-           style="background:linear-gradient(135deg,#1A9A64,#0B3028);border:1px solid rgba(57,219,145,0.5);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39DB91" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 bg-black/85 backdrop-blur-xl border-b border-[#27272A] transition-all">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+    
+    <!-- Logo & Title -->
+    <button onclick="switchTab('landing')" class="flex items-center gap-3 cursor-pointer group text-left" aria-label="GroundTruth Home">
+      <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black font-black text-sm group-hover:scale-105 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.25)]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="12 2 22 20 2 20" />
         </svg>
       </div>
-      <span class="font-bold text-gt-white text-base tracking-tight" style="color:var(--white)">GroundTruth</span>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-white text-base tracking-tight">GroundTruth</span>
+          <span class="text-xs text-[#52525B] font-mono">/</span>
+          <span class="text-[11px] font-mono text-[#FF5A1F] font-semibold tracking-wider">VERIFICATION</span>
+        </div>
+      </div>
     </button>
 
-    <!-- Desktop Nav Links -->
-    <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
-      <button onclick="smoothScrollTo('section-how')" class="px-3.5 py-1.5 rounded-lg text-gt-muted hover:text-white transition-colors" style="color:var(--muted)">How It Works</button>
-      <button onclick="smoothScrollTo('section-feed')" class="px-3.5 py-1.5 rounded-lg text-gt-muted hover:text-white transition-colors" style="color:var(--muted)">Evidence Feed</button>
-      <button onclick="smoothScrollTo('section-ai')" class="px-3.5 py-1.5 rounded-lg text-gt-muted hover:text-white transition-colors" style="color:var(--muted)">AI Intelligence</button>
-      <button onclick="smoothScrollTo('section-geo')" class="px-3.5 py-1.5 rounded-lg text-gt-muted hover:text-white transition-colors" style="color:var(--muted)">Geospatial</button>
-      <button onclick="smoothScrollTo('section-trust')" class="px-3.5 py-1.5 rounded-lg text-gt-muted hover:text-white transition-colors" style="color:var(--muted)">For Agencies</button>
+    <!-- Navigation Section Links (Desktop) -->
+    <nav class="hidden lg:flex items-center gap-1 text-xs font-medium text-[#A1A1AA]">
+      <button onclick="smoothScrollTo('section-how')" class="px-3 py-1.5 rounded-md hover:text-white transition">How It Works</button>
+      <button onclick="smoothScrollTo('section-feed')" class="px-3 py-1.5 rounded-md hover:text-white transition">Evidence Stream</button>
+      <button onclick="smoothScrollTo('section-ai')" class="px-3 py-1.5 rounded-md hover:text-white transition">AI Diagnostic</button>
+      <button onclick="smoothScrollTo('section-geo')" class="px-3 py-1.5 rounded-md hover:text-white transition">Geospatial</button>
+      <button onclick="smoothScrollTo('section-trust')" class="px-3 py-1.5 rounded-md hover:text-white transition">Accountability</button>
     </nav>
 
     <!-- Operational App Tabs (Desktop) -->
     <nav class="hidden md:flex items-center gap-1 text-xs font-mono">
-      <button onclick="switchTab('submit')" id="nav-submit" class="px-3 py-1.5 rounded-lg transition-all" style="color:var(--muted);border:1px solid transparent;">
-        Submit Evidence
+      <button onclick="switchTab('submit')" id="nav-submit" class="px-3 py-1.5 rounded-md text-[#71717A] hover:text-white hover:bg-[#18181B] transition border border-transparent">
+        Submit
       </button>
-      <button onclick="switchTab('review')" id="nav-review" class="px-3 py-1.5 rounded-lg transition-all" style="color:var(--muted);border:1px solid transparent;">
-        Review Queue
+      <button onclick="switchTab('review')" id="nav-review" class="px-3 py-1.5 rounded-md text-[#71717A] hover:text-white hover:bg-[#18181B] transition border border-transparent">
+        Queue
       </button>
-      <button onclick="switchTab('verify')" id="nav-verify" class="px-3 py-1.5 rounded-lg transition-all" style="color:var(--muted);border:1px solid transparent;">
+      <button onclick="switchTab('verify')" id="nav-verify" class="px-3 py-1.5 rounded-md text-[#71717A] hover:text-white hover:bg-[#18181B] transition border border-transparent">
         Bar &amp; QR
       </button>
-      <button onclick="switchTab('audit')" id="nav-audit" class="px-3 py-1.5 rounded-lg transition-all" style="color:var(--muted);border:1px solid transparent;">
-        Audit Ledger
+      <button onclick="switchTab('audit')" id="nav-audit" class="px-3 py-1.5 rounded-md text-[#71717A] hover:text-white hover:bg-[#18181B] transition border border-transparent">
+        Ledger
       </button>
     </nav>
 
-    <!-- Header Actions & Engine Pill -->
-    <div class="flex items-center gap-3 flex-shrink-0">
-      <!-- Live Engine Beacon -->
-      <div class="hidden sm:flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-xl glass-secondary">
+    <!-- Action & Engine Status Beacon -->
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 text-[11px] font-mono px-3 py-1.5 rounded-md bg-[#121215] border border-[#27272A]">
         <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full" style="background:var(--green);opacity:0.7;"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2" style="background:var(--green);"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF5A1F] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF5A1F]"></span>
         </span>
-        <span id="engineStatusText" style="color:var(--muted);">ENGINE ONLINE</span>
+        <span id="engineStatusText" class="text-[#D4D4D8]">ENGINE ONLINE</span>
       </div>
 
-      <!-- Submit CTA Button -->
-      <button onclick="switchTab('submit')" class="btn-glass-cta px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-camera text-xs"></i>
+      <button onclick="switchTab('submit')" class="btn-orange px-3.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5 cursor-pointer">
+        <i class="fa-solid fa-camera text-[11px]"></i>
         <span>Submit Evidence</span>
       </button>
 
-      <!-- Mobile Menu Toggle -->
-      <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-xl glass-secondary cursor-pointer" aria-label="Toggle Navigation">
-        <i class="fa-solid fa-bars" style="color:var(--muted);"></i>
+      <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-md bg-[#121215] border border-[#27272A] text-[#A1A1AA] cursor-pointer" aria-label="Toggle Menu">
+        <i class="fa-solid fa-bars text-sm"></i>
       </button>
     </div>
+
   </div>
 
   <!-- Mobile Drawer -->
-  <div id="mobileMenu" class="hidden lg:hidden border-t px-5 py-4 space-y-2 glass-secondary" style="border-color:var(--glass-border-light);">
-    <button onclick="switchTab('submit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--white);">Submit Evidence</button>
-    <button onclick="switchTab('review');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--white);">Review Queue</button>
-    <button onclick="switchTab('verify');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--white);">Bar &amp; QR Scanner</button>
-    <button onclick="switchTab('audit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-sm" style="color:var(--white);">Audit Ledger</button>
-    <div class="border-t pt-2 space-y-1" style="border-color:rgba(190,255,215,0.1);">
-      <button onclick="smoothScrollTo('section-how');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-lg text-sm" style="color:var(--muted);">How It Works</button>
-      <button onclick="smoothScrollTo('section-feed');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-lg text-sm" style="color:var(--muted);">Evidence Feed</button>
-      <button onclick="smoothScrollTo('section-geo');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-lg text-sm" style="color:var(--muted);">Geospatial</button>
-      <button onclick="smoothScrollTo('section-trust');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-lg text-sm" style="color:var(--muted);">For Agencies</button>
+  <div id="mobileMenu" class="hidden lg:hidden border-t border-[#27272A] px-6 py-4 space-y-2 bg-black/95">
+    <button onclick="switchTab('submit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-sm text-white">Submit Evidence</button>
+    <button onclick="switchTab('review');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-sm text-white">Review &amp; Asset Queue</button>
+    <button onclick="switchTab('verify');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-sm text-white">Bar &amp; QR Scanner</button>
+    <button onclick="switchTab('audit');toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-sm text-white">Audit Ledger</button>
+    <div class="border-t border-[#27272A] pt-2 space-y-1">
+      <button onclick="smoothScrollTo('section-how');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-md text-xs text-[#A1A1AA]">How It Works</button>
+      <button onclick="smoothScrollTo('section-feed');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-md text-xs text-[#A1A1AA]">Evidence Feed</button>
+      <button onclick="smoothScrollTo('section-geo');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-md text-xs text-[#A1A1AA]">Geospatial Intelligence</button>
+      <button onclick="smoothScrollTo('section-trust');toggleMobileMenu()" class="w-full text-left px-3 py-1.5 rounded-md text-xs text-[#A1A1AA]">Trust &amp; Accountability</button>
     </div>
   </div>
 </header>
 
 <!-- ══════════════════════════════════════════════════════
-     LANDING PAGE
+     PRIMARY LANDING VIEW
 ══════════════════════════════════════════════════════ -->
 <div id="view-landing" class="app-view active">
 
-<!-- ───────────────────────────── B. HERO SECTION ───────────────────────────── -->
-<section class="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
-  <!-- Subtle Ambient Glows -->
-  <div class="absolute top-16 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none" style="background:radial-gradient(circle,rgba(26,154,100,0.18),transparent 70%);"></div>
-  <div class="absolute bottom-16 right-1/4 w-[420px] h-[420px] rounded-full blur-[100px] pointer-events-none" style="background:radial-gradient(circle,rgba(57,219,145,0.1),transparent 65%);"></div>
+<!-- ───────────────────────────── 1. HERO SECTION ───────────────────────────── -->
+<section class="relative min-h-[92vh] flex items-center pt-24 pb-16 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-  <div class="relative z-10 max-w-7xl mx-auto px-5 w-full">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-
-      <!-- Left Column: Typography & CTAs -->
-      <div class="space-y-7">
-        <!-- Label Badge -->
-        <div class="fade-stagger-1 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider glass-secondary">
-          <span class="w-2 h-2 rounded-full" style="background:var(--green);box-shadow:0 0 8px var(--green);"></span>
-          <span style="color:var(--green);">AI-Powered Infrastructure Verification</span>
+      <!-- Left 7 Cols: High-Contrast Editorial Typography -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono tracking-wide badge-orange">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#FF5A1F]"></span>
+          <span>INFRASTRUCTURE EVIDENCE VERIFICATION</span>
         </div>
 
-        <!-- Headline: Word-by-Word Reveal -->
-        <h1 class="text-4xl sm:text-5xl xl:text-6xl font-black leading-[1.12] tracking-tight" style="color:var(--white);">
-          <span class="word-reveal-wrap"><span class="word-reveal delay-1">From</span></span>
-          <span class="word-reveal-wrap"><span class="word-reveal delay-2">Field</span></span>
-          <span class="word-reveal-wrap"><span class="word-reveal delay-3">Evidence</span></span>
-          <span class="word-reveal-wrap"><span class="word-reveal delay-4">to</span></span><br>
-          <span class="word-reveal-wrap"><span class="word-reveal delay-5 gradient-text">Verified</span></span>
-          <span class="word-reveal-wrap"><span class="word-reveal delay-6 gradient-text">Infrastructure.</span></span>
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.08]">
+          From Field Evidence to<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#E4E4E7] to-[#A1A1AA]">
+            Verified Infrastructure.
+          </span>
         </h1>
 
-        <!-- Staggered Paragraph -->
-        <p class="fade-stagger-2 text-base sm:text-lg leading-relaxed max-w-lg" style="color:var(--muted);">
-          Turn site photographs into authentic, traceable evidence. Verify infrastructure progress with AI analysis, location intelligence, and accountable human review.
+        <p class="text-base sm:text-lg text-[#A1A1AA] leading-relaxed max-w-xl font-normal">
+          Turn site photographs into authentic, traceable public records. Protect capital investments with automated AI checks, geofencing, and accountable human engineering sign-off.
         </p>
 
-        <!-- CTA Buttons -->
-        <div class="fade-stagger-3 flex flex-wrap gap-4 pt-1">
-          <button onclick="switchTab('submit')" class="btn-glass-cta px-6 py-3.5 rounded-xl font-semibold flex items-center gap-2 text-sm cursor-pointer">
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-wrap gap-3.5 pt-2">
+          <button onclick="switchTab('submit')" class="btn-white px-6 py-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 cursor-pointer">
             <span>Explore the Platform</span>
-            <i class="fa-solid fa-arrow-right text-xs"></i>
+            <i class="fa-solid fa-arrow-right text-[11px]"></i>
           </button>
-          <button onclick="smoothScrollTo('section-how')" class="btn-glass-ghost px-6 py-3.5 rounded-xl font-semibold flex items-center gap-2 text-sm cursor-pointer">
+          
+          <button onclick="smoothScrollTo('section-how')" class="btn-outline px-6 py-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 cursor-pointer">
             <span>See How It Works</span>
-            <i class="fa-solid fa-chevron-down text-xs" style="color:var(--green);"></i>
+            <i class="fa-solid fa-chevron-down text-[10px] text-[#FF5A1F]"></i>
           </button>
         </div>
 
-        <!-- Trust Badges -->
-        <div class="fade-stagger-3 flex flex-wrap gap-3 pt-2">
-          <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl glass-secondary text-xs" style="color:var(--muted);">
-            <i class="fa-solid fa-shield-halved" style="color:var(--green);"></i>
-            <span>Authentic Evidence</span>
+        <!-- Four Trust Indicators -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#1C1C20]">
+          <div class="space-y-1">
+            <div class="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-shield-halved text-[#10B981]"></i>
+              <span>Authentic</span>
+            </div>
+            <div class="text-[11px] text-[#71717A]">SHA-256 Verified</div>
           </div>
-          <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl glass-secondary text-xs" style="color:var(--muted);">
-            <i class="fa-solid fa-robot" style="color:var(--green);"></i>
-            <span>AI Analysis</span>
+          <div class="space-y-1">
+            <div class="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-microchip text-[#FF5A1F]"></i>
+              <span>AI Analysis</span>
+            </div>
+            <div class="text-[11px] text-[#71717A]">Advisory Quality</div>
           </div>
-          <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl glass-secondary text-xs" style="color:var(--muted);">
-            <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
-            <span>Geo-Verified</span>
+          <div class="space-y-1">
+            <div class="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-location-dot text-[#3B82F6]"></i>
+              <span>Geo-Fenced</span>
+            </div>
+            <div class="text-[11px] text-[#71717A]">GPS Coords Locked</div>
           </div>
-          <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl glass-secondary text-xs" style="color:var(--muted);">
-            <i class="fa-solid fa-user-check" style="color:var(--green);"></i>
-            <span>Human Review</span>
+          <div class="space-y-1">
+            <div class="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-user-check text-[#10B981]"></i>
+              <span>Human Review</span>
+            </div>
+            <div class="text-[11px] text-[#71717A]">Engineer Authority</div>
           </div>
         </div>
+
       </div>
 
-      <!-- Right Column: Interactive 3D Parallax Floating Dashboard -->
-      <div class="relative flex justify-center lg:justify-end">
-        <div id="heroCardWrapper" class="relative w-full max-w-[530px] hero-dashboard-float">
+      <!-- Right 5 Cols: Visual Centerpiece (Road Improvement Dashboard) -->
+      <div class="lg:col-span-5 relative flex justify-center">
+        <div class="w-full max-w-[480px] hero-float">
           
-          <!-- Radial Emerald Halo -->
-          <div class="absolute -inset-3 rounded-3xl blur-2xl opacity-40 pointer-events-none" style="background:radial-gradient(ellipse at center, rgba(57,219,145,0.4), rgba(26,154,100,0.1), transparent 70%);"></div>
-
-          <!-- A3. Floating Glass Evidence Card Centerpiece -->
-          <div id="heroGlassCard" class="glass-float-card rounded-2xl overflow-hidden relative" style="border-color:rgba(190,255,215,0.22);">
-
-            <!-- Dashboard Top Header Bar -->
-            <div class="px-5 py-3.5 flex items-center justify-between" style="border-bottom:1px solid var(--glass-border-light);background:rgba(7,28,24,0.5);">
+          <div class="pro-card pro-card-featured p-5 space-y-4">
+            
+            <!-- Dashboard Card Top Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-[#27272A]">
               <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded flex items-center justify-center" style="background:var(--emerald);">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-                </div>
-                <span class="text-xs font-semibold" style="color:var(--white);">GroundTruth</span>
-                <span class="text-xs" style="color:var(--muted);">/</span>
-                <span class="text-xs font-mono" style="color:var(--muted);">NH-47 Road Improvement</span>
+                <div class="w-5 h-5 rounded bg-white flex items-center justify-center text-black font-bold text-[10px]">GT</div>
+                <span class="text-xs font-bold text-white tracking-tight">NH-47 Road Improvement</span>
               </div>
-              <span class="px-2.5 py-1 rounded-full text-xs font-mono flex items-center gap-1.5" style="background:rgba(235,166,90,0.14);border:1px solid rgba(235,166,90,0.35);color:var(--orange);">
-                <i class="fa-solid fa-clock text-[10px]"></i>
-                <span>In Review</span>
+              <span class="badge-base badge-orange">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#FF5A1F]"></span>
+                <span>IN REVIEW</span>
               </span>
             </div>
 
-            <!-- Project Specification Title -->
-            <div class="px-5 py-4 flex items-start justify-between" style="border-bottom:1px solid var(--glass-border-light);">
-              <div>
-                <div class="text-xs font-mono mb-1" style="color:var(--green);">Roads &amp; Highways • Progress Review</div>
-                <h3 class="text-xl font-bold tracking-tight" style="color:var(--white);">NH-47 Road Improvement</h3>
-                <div class="text-xs font-mono mt-1" style="color:var(--muted);">PROJECT ID: GT-78452</div>
-              </div>
-            </div>
-
-            <!-- Photo & Satellite Map Container -->
-            <div class="px-5 py-4 grid grid-cols-2 gap-3">
+            <!-- Road Photo & Satellite Box -->
+            <div class="grid grid-cols-2 gap-3">
               
-              <!-- Evidence Photo with D. AI Evidence Scanning Line -->
-              <div class="relative rounded-xl overflow-hidden shadow-inner" style="height:145px;background:linear-gradient(135deg,#123324,#081c14);">
-                <!-- Simulated Road Vector View -->
-                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 145" preserveAspectRatio="xMidYMid slice">
-                  <defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14422b"/><stop offset="100%" stop-color="#081d13"/></linearGradient></defs>
-                  <rect fill="url(#skyGrad)" width="200" height="145"/>
-                  <polygon points="35,145 75,75 125,75 165,145" fill="#242826"/>
-                  <line x1="100" y1="75" x2="100" y2="145" stroke="#ffffff" stroke-width="2.5" stroke-dasharray="6,6" opacity="0.65"/>
-                  <rect x="12" y="55" width="8" height="30" fill="#1b5a2e"/>
-                  <ellipse cx="16" cy="52" rx="12" ry="14" fill="#2a8b3d"/>
-                  <rect x="175" y="50" width="8" height="35" fill="#1b5a2e"/>
-                  <ellipse cx="179" cy="48" rx="12" ry="14" fill="#2a8b3d"/>
+              <!-- Evidence Photo with Laser Scan -->
+              <div class="relative rounded-lg overflow-hidden h-36 bg-[#0E0E12] border border-[#27272A]">
+                <svg class="w-full h-full" viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice">
+                  <defs><linearGradient id="skyH" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18181F"/><stop offset="100%" stop-color="#0E0E12"/></linearGradient></defs>
+                  <rect fill="url(#skyH)" width="200" height="140"/>
+                  <polygon points="40,140 75,70 125,70 160,140" fill="#27272E"/>
+                  <line x1="100" y1="70" x2="100" y2="140" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="6,6" opacity="0.6"/>
+                  <rect x="15" y="55" width="8" height="30" fill="#1A3324"/>
+                  <ellipse cx="19" cy="52" rx="10" ry="12" fill="#204E32"/>
+                  <rect x="175" y="50" width="8" height="35" fill="#1A3324"/>
+                  <ellipse cx="179" cy="48" rx="10" ry="12" fill="#204E32"/>
                 </svg>
-
-                <!-- Restrained AI Scanning Laser Line -->
-                <div class="scan-line-restrained"></div>
-
-                <!-- AI Bounding Box -->
-                <div class="ai-bbox-targeted" style="top:32%;left:16%;width:68%;height:52%;"></div>
-
-                <!-- Photo Tag & Confidence -->
-                <div class="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 rounded-md" style="background:rgba(0,0,0,0.75);color:var(--muted);backdrop-filter:blur(4px);">Evidence_0467.jpg</div>
-                <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-mono" style="background:rgba(181,255,119,0.18);border:1px solid rgba(181,255,119,0.4);color:var(--lime);backdrop-filter:blur(4px);">
-                  <i class="fa-solid fa-wand-magic-sparkles text-[8px]"></i>
-                  <span>AI Scan 98.4%</span>
+                <div class="laser-scan"></div>
+                <div class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-black/80 text-[#FF5A1F] border border-[#FF5A1F]/40">
+                  <i class="fa-solid fa-wand-magic-sparkles text-[8px] mr-1"></i>AI SCAN
+                </div>
+                <div class="absolute bottom-2 left-2 text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/80 text-[#A1A1AA]">
+                  Evidence_0467.jpg
                 </div>
               </div>
 
-              <!-- Satellite Context Map -->
-              <div class="relative rounded-xl overflow-hidden shadow-inner" style="height:145px;background:#06180f;">
-                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 160 145" preserveAspectRatio="xMidYMid slice">
-                  <defs>
-                    <linearGradient id="mapGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a291a"/><stop offset="100%" stop-color="#04120b"/></linearGradient>
-                  </defs>
-                  <rect fill="url(#mapGrad)" width="160" height="145"/>
-                  <!-- Map grid lines -->
-                  <line x1="0" y1="36" x2="160" y2="36" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <line x1="0" y1="72" x2="160" y2="72" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <line x1="0" y1="108" x2="160" y2="108" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <line x1="40" y1="0" x2="40" y2="145" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <line x1="80" y1="0" x2="80" y2="145" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <line x1="120" y1="0" x2="120" y2="145" stroke="rgba(57,219,145,0.12)" stroke-width="0.5"/>
-                  <!-- Highway corridor -->
-                  <path d="M0,72 Q40,66 80,72 Q120,78 160,72" stroke="rgba(255,255,255,0.35)" stroke-width="3" fill="none"/>
-                  <path d="M80,0 L80,145" stroke="rgba(255,255,255,0.18)" stroke-width="1.8" fill="none"/>
-                  <!-- Geofence Pulse Marker -->
-                  <circle cx="80" cy="72" class="geo-radar-pulse" fill="none" stroke="var(--green)"/>
-                  <circle cx="80" cy="72" r="6" fill="var(--green)"/>
-                  <circle cx="80" cy="72" r="2.5" fill="white"/>
+              <!-- Satellite Context -->
+              <div class="relative rounded-lg overflow-hidden h-36 bg-[#0E0E12] border border-[#27272A]">
+                <svg class="w-full h-full" viewBox="0 0 160 140" preserveAspectRatio="xMidYMid slice">
+                  <rect fill="#0E0E12" width="160" height="140"/>
+                  <line x1="0" y1="35" x2="160" y2="35" stroke="#27272A" stroke-width="0.5"/>
+                  <line x1="0" y1="70" x2="160" y2="70" stroke="#27272A" stroke-width="0.5"/>
+                  <line x1="0" y1="105" x2="160" y2="105" stroke="#27272A" stroke-width="0.5"/>
+                  <line x1="40" y1="0" x2="40" y2="140" stroke="#27272A" stroke-width="0.5"/>
+                  <line x1="80" y1="0" x2="80" y2="140" stroke="#27272A" stroke-width="0.5"/>
+                  <line x1="120" y1="0" x2="120" y2="140" stroke="#27272A" stroke-width="0.5"/>
+                  <path d="M0,70 Q40,65 80,70 Q120,75 160,70" stroke="#52525B" stroke-width="3" fill="none"/>
+                  <circle cx="80" cy="70" r="5" fill="#FF5A1F"/>
+                  <circle cx="80" cy="70" r="10" fill="none" stroke="#FF5A1F" stroke-width="1.5" opacity="0.4"/>
                 </svg>
-                <div class="absolute bottom-2 right-2 text-[9px] font-mono px-2 py-0.5 rounded-md" style="background:rgba(0,0,0,0.75);color:var(--muted);backdrop-filter:blur(4px);">Satellite GPS</div>
+                <div class="absolute bottom-2 right-2 text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/80 text-[#A1A1AA]">
+                  Satellite GPS
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Metadata Strip -->
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+              <div class="p-2 rounded-lg bg-[#0E0E11] border border-[#27272A]">
+                <div class="text-[10px] text-[#71717A]">GPS Coordinate</div>
+                <div class="text-white font-medium">26.812°N, 80.943°E</div>
+              </div>
+              <div class="p-2 rounded-lg bg-[#0E0E11] border border-[#27272A]">
+                <div class="text-[10px] text-[#71717A]">SHA-256 Digest</div>
+                <div class="text-[#10B981] font-medium flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check text-[10px]"></i> Verified
+                </div>
+              </div>
+              <div class="p-2 rounded-lg bg-[#0E0E11] border border-[#27272A]">
+                <div class="text-[10px] text-[#71717A]">Captured At</div>
+                <div class="text-white font-medium">Mar 10, 10:24 AM</div>
+              </div>
+              <div class="p-2 rounded-lg bg-[#0E0E11] border border-[#27272A]">
+                <div class="text-[10px] text-[#71717A]">Extracted OCR</div>
+                <div class="text-white font-medium">NH-47, Pkg-2</div>
               </div>
             </div>
 
-            <!-- Metadata Details Grid -->
-            <div class="px-5 pb-4 grid grid-cols-2 gap-2 text-xs font-mono">
-              <div class="p-2 rounded-xl glass-secondary flex items-center gap-2">
-                <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
-                <div class="truncate">
-                  <div class="text-[9px]" style="color:var(--muted);">GPS Coordinates</div>
-                  <div style="color:var(--white);">26.812°N, 80.943°E</div>
+            <!-- AI Summary & 72% Progress -->
+            <div class="p-3 rounded-lg bg-[#0E0E11] border border-[#27272A] flex items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="text-[11px] font-bold text-white flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-[#10B981]"></i>
+                  <span>Quality Spec Passed</span>
                 </div>
+                <div class="text-[10px] text-[#A1A1AA]">Compaction within 2% MORTH tolerance</div>
               </div>
-              <div class="p-2 rounded-xl glass-secondary flex items-center gap-2">
-                <i class="fa-solid fa-calendar" style="color:var(--green);"></i>
-                <div class="truncate">
-                  <div class="text-[9px]" style="color:var(--muted);">Capture Timestamp</div>
-                  <div style="color:var(--white);">Mar 10, 2025, 10:24 AM</div>
-                </div>
-              </div>
-              <div class="p-2 rounded-xl glass-secondary flex items-center gap-2">
-                <i class="fa-solid fa-shield-halved" style="color:var(--green);"></i>
-                <div class="truncate">
-                  <div class="text-[9px]" style="color:var(--muted);">SHA-256 Digest</div>
-                  <div class="flex items-center gap-1" style="color:var(--green);">
-                    <i class="fa-solid fa-circle-check text-[10px]"></i>
-                    <span>Verified Match</span>
-                  </div>
-                </div>
-              </div>
-              <div class="p-2 rounded-xl glass-secondary flex items-center gap-2">
-                <i class="fa-solid fa-font" style="color:var(--green);"></i>
-                <div class="truncate">
-                  <div class="text-[9px]" style="color:var(--muted);">OCR Extracted</div>
-                  <div style="color:var(--white);">NH-47, Pkg-2, Ch-500</div>
-                </div>
+              <div class="text-right">
+                <div class="text-xl font-black text-white font-mono">72%</div>
+                <div class="text-[10px] text-[#71717A] font-mono">Phase 2 of 3</div>
               </div>
             </div>
 
-            <!-- AI Summary & Circular Progress Component -->
-            <div class="px-5 pb-5 flex items-start justify-between gap-4">
-              <div class="flex-1 rounded-xl p-3 glass-secondary" style="border-color:rgba(57,219,145,0.16);">
-                <div class="flex items-center gap-2 mb-2">
-                  <i class="fa-solid fa-wand-magic-sparkles text-xs" style="color:var(--lime);"></i>
-                  <span class="text-xs font-semibold" style="color:var(--lime);">AI Analysis Summary</span>
-                </div>
-                <ul class="space-y-1.5 text-[11px]" style="color:var(--muted);">
-                  <li class="flex items-start gap-1.5">
-                    <i class="fa-solid fa-check text-[10px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
-                    <span>Road surface alignment matches project specifications.</span>
-                  </li>
-                  <li class="flex items-start gap-1.5">
-                    <i class="fa-solid fa-check text-[10px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
-                    <span>Zero visual tampering or duplicate artifacts detected.</span>
-                  </li>
-                  <li class="flex items-start gap-1.5">
-                    <i class="fa-solid fa-check text-[10px] mt-0.5" style="color:var(--green);flex-shrink:0;"></i>
-                    <span>Milestone compaction consistent with Phase 2 schedule.</span>
-                  </li>
-                </ul>
-              </div>
+          </div><!-- /pro-card -->
+        </div>
+      </div>
 
-              <!-- Animated Progress Ring -->
-              <div class="flex-shrink-0 flex flex-col items-center gap-1 pt-1">
-                <svg width="74" height="74" viewBox="0 0 74 74">
-                  <circle cx="37" cy="37" r="30" fill="none" stroke="rgba(57,219,145,0.12)" stroke-width="6"/>
-                  <circle id="heroProgressCircle" class="ring-progress" cx="37" cy="37" r="30" fill="none" stroke="url(#ringGrad)" stroke-width="6"
-                          stroke-dasharray="188.5" stroke-dashoffset="52.8" stroke-linecap="round"/>
-                  <defs>
-                    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#39DB91"/>
-                      <stop offset="100%" stop-color="#B5FF77"/>
-                    </linearGradient>
-                  </defs>
-                  <text x="37" y="42" text-anchor="middle" font-size="14" font-weight="800" fill="#F4F8F4" font-family="Inter">72%</text>
-                </svg>
-                <div class="text-[10px] font-mono text-center" style="color:var(--muted);">Project Progress<br>Phase 2 of 3</div>
-              </div>
-            </div>
-
-          </div><!-- /heroGlassCard -->
-        </div><!-- /heroCardWrapper -->
-      </div><!-- /right column -->
-
-    </div><!-- /grid -->
+    </div>
   </div>
 </section>
 
-<!-- ───────────────────────────── INFRASTRUCTURE TICKER ───────────────────────────── -->
-<div class="relative overflow-hidden py-4 border-y glass-secondary" style="border-color:var(--glass-border-light);">
-  <div class="flex items-center gap-6 text-xs font-mono" style="color:var(--muted);">
-    <span class="flex-shrink-0 px-6 font-semibold" style="color:var(--green);">Trusted for Public Infrastructure</span>
-    <div class="ticker-track">
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-road" style="color:var(--green);"></i> Roads &amp; Highways</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-building" style="color:var(--green);"></i> Buildings &amp; Facilities</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-droplet" style="color:var(--green);"></i> Water Infrastructure</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-bridge" style="color:var(--green);"></i> Bridges &amp; Structures</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-water" style="color:var(--green);"></i> Drainage Systems</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-solar-panel" style="color:var(--green);"></i> Public Utilities</span>
-      <!-- Seamless loop duplicates -->
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-road" style="color:var(--green);"></i> Roads &amp; Highways</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-building" style="color:var(--green);"></i> Buildings &amp; Facilities</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-droplet" style="color:var(--green);"></i> Water Infrastructure</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-bridge" style="color:var(--green);"></i> Bridges &amp; Structures</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-water" style="color:var(--green);"></i> Drainage Systems</span>
-      <span class="px-6 flex items-center gap-2 flex-shrink-0"><i class="fa-solid fa-solar-panel" style="color:var(--green);"></i> Public Utilities</span>
+<!-- ───────────────────────────── 2. INFRASTRUCTURE TICKER ───────────────────────────── -->
+<div class="border-y border-[#27272A] bg-[#09090B] py-3.5">
+  <div class="max-w-7xl mx-auto px-6 flex items-center gap-6 text-xs font-mono">
+    <div class="flex items-center gap-2 text-white font-bold flex-shrink-0">
+      <span class="w-2 h-2 rounded-full bg-[#FF5A1F]"></span>
+      <span>PUBLIC INFRASTRUCTURE</span>
+    </div>
+    <div class="ticker-wrapper flex-1">
+      <div class="ticker-run text-[#A1A1AA]">
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-road text-white"></i> Roads &amp; Expressways</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-building text-white"></i> Public Facilities</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-droplet text-white"></i> Water Reservoirs</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-bridge text-white"></i> Bridges &amp; Flyovers</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-water text-white"></i> Stormwater Drainage</span>
+        <!-- Duplicates -->
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-road text-white"></i> Roads &amp; Expressways</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-building text-white"></i> Public Facilities</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-droplet text-white"></i> Water Reservoirs</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-bridge text-white"></i> Bridges &amp; Flyovers</span>
+        <span class="px-6 flex items-center gap-2"><i class="fa-solid fa-water text-white"></i> Stormwater Drainage</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ───────────────────────────── F. WORKFLOW: 4 STAGES ───────────────────────────── -->
-<section id="section-how" class="relative py-24 overflow-hidden">
-  <div class="max-w-7xl mx-auto px-5">
+<!-- ───────────────────────────── 3. HOW IT WORKS: 4 STAGES ───────────────────────────── -->
+<section id="section-how" class="py-24 border-b border-[#27272A]">
+  <div class="max-w-7xl mx-auto px-6">
     
-    <div class="text-center mb-16 reveal-elem">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary mb-4" style="color:var(--green);">
-        <i class="fa-solid fa-diagram-project"></i>
-        <span>HOW IT WORKS</span>
+    <div class="text-center mb-16 reveal-item">
+      <div class="badge-base badge-orange mb-3">
+        <span>WORKFLOW ARCHITECTURE</span>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="color:var(--white);">
-        Evidence in. <span class="gradient-text">Accountability out.</span>
+      <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        Evidence in. <span class="text-[#FF5A1F]">Accountability out.</span>
       </h2>
-      <p class="mt-3 text-base max-w-xl mx-auto" style="color:var(--muted);">
-        Four distinct cryptographic and human verification stages transform raw field photos into audit-ready infrastructure records.
+      <p class="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
+        Four transparent stages converting field photos into immutable, audit-ready engineering records.
       </p>
     </div>
 
-    <!-- 4 Stage Steps Grid with Connected SVG Paths -->
-    <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="workflowStepsGrid">
-
-      <!-- Animated SVG Connectors (Desktop) -->
-      <svg class="absolute top-12 left-0 right-0 w-full h-4 hidden lg:block pointer-events-none" viewBox="0 0 1200 20" preserveAspectRatio="none" style="z-index:1;">
-        <path id="wfConnector1" class="workflow-connector" d="M150,10 L380,10" stroke="url(#wfGradLine)" stroke-width="2" fill="none"/>
-        <path id="wfConnector2" class="workflow-connector" d="M430,10 L660,10" stroke="url(#wfGradLine)" stroke-width="2" fill="none"/>
-        <path id="wfConnector3" class="workflow-connector" d="M710,10 L940,10" stroke="url(#wfGradLine)" stroke-width="2" fill="none"/>
-        <defs>
-          <linearGradient id="wfGradLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="rgba(57,219,145,0.9)"/>
-            <stop offset="100%" stop-color="rgba(181,255,119,0.7)"/>
-          </linearGradient>
-        </defs>
-      </svg>
-
+    <!-- 4 Stage Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="workflowGrid">
+      
       <!-- Stage 01 -->
-      <div class="workflow-node glass-primary rounded-2xl p-6 space-y-4 reveal-elem relative z-10">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform duration-300 group-hover:scale-110"
-             style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-camera" style="color:var(--green);"></i>
+      <div class="pro-card p-6 space-y-4 reveal-item">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-white text-base">
+          <i class="fa-solid fa-camera"></i>
         </div>
-        <div class="text-xs font-mono font-bold" style="color:var(--green);">01 // STAGE</div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Capture Evidence</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Inspectors capture field photographs with device location and timestamp automatically bound and cryptographically preserved.
+        <div class="text-xs font-mono font-bold text-[#FF5A1F]">STAGE // 01</div>
+        <h3 class="text-base font-bold text-white">Capture Evidence</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Inspectors upload site photos. GPS location and timestamp are automatically bound to raw bytes.
         </p>
-        <div class="flex items-center gap-2 text-xs font-mono pt-1" style="color:var(--muted);">
-          <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
-          <span>GPS &amp; Timestamp Context</span>
+        <div class="pt-2 text-[11px] font-mono text-[#71717A] flex items-center gap-1.5">
+          <i class="fa-solid fa-location-dot text-[#FF5A1F]"></i>
+          <span>GPS &amp; Timestamp Bound</span>
         </div>
       </div>
 
       <!-- Stage 02 -->
-      <div class="workflow-node glass-primary rounded-2xl p-6 space-y-4 reveal-elem relative z-10">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform duration-300 group-hover:scale-110"
-             style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--lime);"></i>
+      <div class="pro-card p-6 space-y-4 reveal-item">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-[#FF5A1F] text-base">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
         </div>
-        <div class="text-xs font-mono font-bold" style="color:var(--lime);">02 // STAGE</div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Analyze &amp; Validate</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Asynchronous AI checks image quality, perceptual hash deduplication, OCR chainage extraction, and boundary geofences.
+        <div class="text-xs font-mono font-bold text-[#FF5A1F]">STAGE // 02</div>
+        <h3 class="text-base font-bold text-white">Analyze &amp; Validate</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Asynchronous AI assesses image blur variance, perceptual duplicate matches, and boundary geofences.
         </p>
-        <div class="flex items-center gap-2 text-xs font-mono pt-1" style="color:var(--muted);">
-          <i class="fa-solid fa-microchip" style="color:var(--lime);"></i>
+        <div class="pt-2 text-[11px] font-mono text-[#71717A] flex items-center gap-1.5">
+          <i class="fa-solid fa-microchip text-[#FF5A1F]"></i>
           <span>Advisory AI Assessment</span>
         </div>
       </div>
 
       <!-- Stage 03 -->
-      <div class="workflow-node glass-primary rounded-2xl p-6 space-y-4 reveal-elem relative z-10">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform duration-300 group-hover:scale-110"
-             style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-user-shield" style="color:var(--green);"></i>
+      <div class="pro-card p-6 space-y-4 reveal-item">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-[#10B981] text-base">
+          <i class="fa-solid fa-user-check"></i>
         </div>
-        <div class="text-xs font-mono font-bold" style="color:var(--green);">03 // STAGE</div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Review &amp; Verify</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Authorized human engineers retain final authority. Approve, reject, or request corrections with auditable reasoning.
+        <div class="text-xs font-mono font-bold text-[#10B981]">STAGE // 03</div>
+        <h3 class="text-base font-bold text-white">Review &amp; Verify</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Human engineers retain final authority. Approve, reject, or request corrections with auditable reasons.
         </p>
-        <div class="flex items-center gap-2 text-xs font-mono pt-1" style="color:var(--muted);">
-          <i class="fa-solid fa-signature" style="color:var(--green);"></i>
+        <div class="pt-2 text-[11px] font-mono text-[#71717A] flex items-center gap-1.5">
+          <i class="fa-solid fa-signature text-[#10B981]"></i>
           <span>Human Sign-Off Authority</span>
         </div>
       </div>
 
       <!-- Stage 04 -->
-      <div class="workflow-node glass-primary rounded-2xl p-6 space-y-4 reveal-elem relative z-10">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform duration-300 group-hover:scale-110"
-             style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-barcode" style="color:var(--orange);"></i>
+      <div class="pro-card p-6 space-y-4 reveal-item">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-white text-base">
+          <i class="fa-solid fa-barcode"></i>
         </div>
-        <div class="text-xs font-mono font-bold" style="color:var(--orange);">04 // STAGE</div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Track &amp; Report</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Generates printable Code-128 physical asset barcodes, encrypted QR tags, and an immutable audit ledger.
+        <div class="text-xs font-mono font-bold text-white">STAGE // 04</div>
+        <h3 class="text-base font-bold text-white">Track &amp; Report</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Generates Code-128 physical asset barcodes, encrypted QR tags, and an immutable audit ledger.
         </p>
-        <div class="flex items-center gap-2 text-xs font-mono pt-1" style="color:var(--muted);">
-          <i class="fa-solid fa-qrcode" style="color:var(--orange);"></i>
+        <div class="pt-2 text-[11px] font-mono text-[#71717A] flex items-center gap-1.5">
+          <i class="fa-solid fa-qrcode text-white"></i>
           <span>Physical Barcodes &amp; Ledger</span>
         </div>
       </div>
 
-    </div><!-- /workflow steps -->
+    </div>
 
-    <!-- Live Metrics Strip -->
-    <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 reveal-elem">
-      <div class="glass-secondary rounded-2xl p-5 cursor-pointer hover:border-gt-green transition-all" onclick="switchTab('review')">
-        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
-          <span>Total Evidence</span>
-          <i class="fa-solid fa-folder-closed" style="color:rgba(190,255,215,0.4);"></i>
-        </div>
-        <div class="text-3xl font-black" style="color:var(--white);" id="metric-total-evidence">—</div>
-        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Server-verified records</div>
+    <!-- Metrics Strip -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 reveal-item">
+      <div class="pro-card p-5 cursor-pointer hover:border-[#FF5A1F] transition-all" onclick="switchTab('review')">
+        <div class="text-[11px] font-mono text-[#71717A] uppercase mb-1">Total Evidence</div>
+        <div class="text-3xl font-black text-white" id="metric-total-evidence">—</div>
+        <div class="text-[11px] text-[#71717A] mt-1 font-mono">Server-verified files</div>
       </div>
-
-      <div class="glass-secondary rounded-2xl p-5 cursor-pointer hover:border-gt-green transition-all" onclick="switchTab('review')">
-        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
-          <span>Approved</span>
-          <i class="fa-solid fa-check-circle" style="color:var(--green);"></i>
-        </div>
-        <div class="text-3xl font-black" style="color:var(--green);" id="metric-approved">—</div>
-        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Engineer sign-offs</div>
+      <div class="pro-card p-5 cursor-pointer hover:border-[#10B981] transition-all" onclick="switchTab('review')">
+        <div class="text-[11px] font-mono text-[#71717A] uppercase mb-1">Approved Milestones</div>
+        <div class="text-3xl font-black text-[#10B981]" id="metric-approved">—</div>
+        <div class="text-[11px] text-[#71717A] mt-1 font-mono">Human engineer signed</div>
       </div>
-
-      <div class="glass-secondary rounded-2xl p-5 cursor-pointer hover:border-gt-green transition-all" onclick="switchTab('review')">
-        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
-          <span>Attention Needed</span>
-          <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange);"></i>
-        </div>
-        <div class="text-3xl font-black" style="color:var(--orange);" id="metric-attention">—</div>
-        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Advisory AI flags</div>
+      <div class="pro-card p-5 cursor-pointer hover:border-[#FF5A1F] transition-all" onclick="switchTab('review')">
+        <div class="text-[11px] font-mono text-[#71717A] uppercase mb-1">Attention Flags</div>
+        <div class="text-3xl font-black text-[#FF5A1F]" id="metric-attention">—</div>
+        <div class="text-[11px] text-[#71717A] mt-1 font-mono">Flagged by advisory AI</div>
       </div>
-
-      <div class="glass-secondary rounded-2xl p-5 cursor-pointer hover:border-gt-green transition-all" onclick="switchTab('review')">
-        <div class="text-xs font-mono uppercase tracking-wider mb-2 flex items-center justify-between" style="color:var(--muted);">
-          <span>Lineage Chains</span>
-          <i class="fa-solid fa-code-branch" style="color:#b39ddb;"></i>
-        </div>
-        <div class="text-3xl font-black" style="color:#b39ddb;" id="metric-duplicates">—</div>
-        <div class="text-xs mt-1 font-mono" style="color:var(--muted);">Traceable revisions</div>
+      <div class="pro-card p-5 cursor-pointer hover:border-white transition-all" onclick="switchTab('review')">
+        <div class="text-[11px] font-mono text-[#71717A] uppercase mb-1">Corrected Lineages</div>
+        <div class="text-3xl font-black text-white" id="metric-duplicates">—</div>
+        <div class="text-[11px] text-[#71717A] mt-1 font-mono">Linked resubmissions</div>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- ───────────────────────────── C. EVIDENCE FEED ───────────────────────────── -->
-<section id="section-feed" class="py-24 border-t" style="border-color:var(--glass-border-light);">
-  <div class="max-w-7xl mx-auto px-5">
+<!-- ───────────────────────────── 4. EVIDENCE STREAM CAROUSEL ───────────────────────────── -->
+<section id="section-feed" class="py-24 border-b border-[#27272A]">
+  <div class="max-w-7xl mx-auto px-6">
     
-    <div class="flex items-end justify-between mb-10 reveal-elem">
+    <div class="flex items-end justify-between mb-10 reveal-item">
       <div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary mb-3" style="color:var(--green);">
-          <i class="fa-solid fa-layer-group"></i>
-          <span>EVIDENCE INTELLIGENCE FEED</span>
+        <div class="badge-base badge-orange mb-2">
+          <span>EVIDENCE REPOSITORY</span>
         </div>
-        <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="color:var(--white);">Physical Evidence Stream</h2>
-        <p class="mt-2 text-sm" style="color:var(--muted);">Demonstration pipeline — interactive previews of multi-sector infrastructure inspection assets</p>
+        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Active Infrastructure Stream</h2>
+        <p class="text-xs sm:text-sm text-[#A1A1AA] mt-1">Multi-sector construction inspections verified through cryptographic hashing</p>
       </div>
-
-      <div class="hidden sm:flex items-center gap-2">
-        <button onclick="carouselScroll(-1)" class="btn-glass-ghost w-11 h-11 rounded-full flex items-center justify-center cursor-pointer" aria-label="Scroll left">
-          <i class="fa-solid fa-chevron-left text-xs" style="color:var(--green);"></i>
+      <div class="flex items-center gap-2">
+        <button onclick="carouselScroll(-1)" class="w-10 h-10 rounded-lg bg-[#16161A] border border-[#27272A] hover:border-white text-white flex items-center justify-center cursor-pointer transition">
+          <i class="fa-solid fa-chevron-left text-xs"></i>
         </button>
-        <button onclick="carouselScroll(1)" class="btn-glass-ghost w-11 h-11 rounded-full flex items-center justify-center cursor-pointer" aria-label="Scroll right">
-          <i class="fa-solid fa-chevron-right text-xs" style="color:var(--green);"></i>
+        <button onclick="carouselScroll(1)" class="w-10 h-10 rounded-lg bg-[#16161A] border border-[#27272A] hover:border-white text-white flex items-center justify-center cursor-pointer transition">
+          <i class="fa-solid fa-chevron-right text-xs"></i>
         </button>
       </div>
     </div>
 
-    <!-- Interactive Carousel Cards -->
-    <div class="evidence-carousel" id="evidenceCarousel">
-
-      <!-- Card 1: NH-48 Expressway -->
-      <div class="feed-card glass-primary card-active overflow-hidden">
-        <div class="relative h-48 overflow-hidden" style="background:linear-gradient(135deg,#133725,#071a12);">
-          <svg class="card-img-zoom w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
-            <defs><linearGradient id="c1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16462d"/><stop offset="100%" stop-color="#071b12"/></linearGradient></defs>
-            <rect fill="url(#c1g)" width="320" height="200"/>
-            <polygon points="60,200 110,100 210,100 260,200" fill="#202221"/>
-            <line x1="160" y1="100" x2="160" y2="200" stroke="white" stroke-width="3" stroke-dasharray="8,8" opacity="0.6"/>
-            <rect x="20" y="80" width="10" height="50" fill="#1b5a2e"/>
-            <ellipse cx="25" cy="78" rx="15" ry="18" fill="#29873c"/>
-            <rect x="288" y="70" width="10" height="60" fill="#1b5a2e"/>
-            <ellipse cx="293" cy="68" rx="15" ry="18" fill="#29873c"/>
+    <!-- Carousel Cards -->
+    <div class="carousel-box" id="evidenceCarousel">
+      
+      <!-- Card 1 -->
+      <div class="carousel-item pro-card overflow-hidden">
+        <div class="h-44 bg-[#0E0E12] relative overflow-hidden border-b border-[#27272A]">
+          <svg class="w-full h-full" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+            <rect fill="#14141A" width="320" height="180"/>
+            <polygon points="60,180 110,80 210,80 260,180" fill="#24242C"/>
+            <line x1="160" y1="80" x2="160" y2="180" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,6" opacity="0.6"/>
+            <rect x="20" y="60" width="8" height="40" fill="#1C3526"/>
+            <ellipse cx="24" cy="58" rx="12" ry="14" fill="#29523B"/>
           </svg>
-          <div class="scan-line-restrained"></div>
-          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.18);border:1px solid rgba(57,219,145,0.35);color:var(--green);backdrop-filter:blur(8px);">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Validated
-          </div>
-          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-mono font-bold" style="background:rgba(57,219,145,0.92);color:#071C18;">APPROVED</div>
+          <div class="laser-scan"></div>
+          <span class="absolute top-3 left-3 badge-base badge-orange">ROADS</span>
+          <span class="absolute top-3 right-3 badge-base badge-green">APPROVED</span>
         </div>
         <div class="p-5 space-y-3">
-          <div>
-            <h4 class="font-bold text-sm" style="color:var(--white);">NH-48 Expressway Upgrade</h4>
-            <div class="text-xs font-mono mt-0.5" style="color:var(--green);">Roads &amp; Highways</div>
+          <h4 class="font-bold text-sm text-white">NH-48 Expressway Segment B</h4>
+          <div class="text-xs font-mono text-[#A1A1AA] space-y-1">
+            <div><i class="fa-solid fa-location-dot text-[#FF5A1F] mr-1.5"></i>Pune, Maharashtra</div>
+            <div><i class="fa-regular fa-clock text-[#71717A] mr-1.5"></i>14 Mar 2025, 09:42 AM</div>
+            <div class="text-[10px] text-[#71717A]">ID: GT-EV-00218</div>
           </div>
-          <div class="text-xs font-mono space-y-1.5" style="color:var(--muted);">
-            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Pune, Maharashtra</div>
-            <div class="flex items-center gap-2"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>14 Mar 2025, 09:42 AM</div>
-            <div class="flex items-center gap-2"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00218</div>
-          </div>
-          <div class="rounded-xl p-2.5 text-xs glass-secondary" style="color:var(--muted);">
-            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Surface texture and compaction within 2% IRC deviation.
-          </div>
-          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2.5 rounded-xl btn-glass-ghost flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-            <span>View Barcode &amp; QR Tag</span>
+          <button onclick="switchTab('verify')" class="w-full py-2.5 rounded-lg btn-outline text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
+            <span>Scan Asset Barcode</span>
           </button>
         </div>
       </div>
 
-      <!-- Card 2: Bridge Infrastructure -->
-      <div class="feed-card glass-primary overflow-hidden">
-        <div class="relative h-48 overflow-hidden" style="background:#091d12;">
-          <svg class="card-img-zoom w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
-            <defs><linearGradient id="c2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#123020"/><stop offset="100%" stop-color="#05140c"/></linearGradient></defs>
-            <rect fill="url(#c2g)" width="320" height="200"/>
-            <rect x="0" y="130" width="320" height="70" fill="rgba(26,154,100,0.22)"/>
-            <rect x="20" y="110" width="280" height="20" fill="#2d312f" rx="2"/>
-            <rect x="90" y="110" width="16" height="60" fill="#222524"/>
-            <rect x="210" y="110" width="16" height="60" fill="#222524"/>
-            <line x1="160" y1="40" x2="90" y2="110" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
-            <line x1="160" y1="40" x2="210" y2="110" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
-            <rect x="154" y="30" width="12" height="85" fill="#3b3f3d"/>
+      <!-- Card 2 -->
+      <div class="carousel-item pro-card overflow-hidden">
+        <div class="h-44 bg-[#0E0E12] relative overflow-hidden border-b border-[#27272A]">
+          <svg class="w-full h-full" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+            <rect fill="#14141A" width="320" height="180"/>
+            <rect x="0" y="110" width="320" height="70" fill="#1B263B"/>
+            <rect x="20" y="90" width="280" height="20" fill="#2E2E38"/>
+            <rect x="90" y="90" width="16" height="60" fill="#22222A"/>
+            <rect x="210" y="90" width="16" height="60" fill="#22222A"/>
           </svg>
-          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(235,166,90,0.18);border:1px solid rgba(235,166,90,0.35);color:var(--orange);backdrop-filter:blur(8px);">
-            <i class="fa-solid fa-clock mr-1"></i>In Review
-          </div>
-          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-mono font-bold" style="background:rgba(235,166,90,0.25);border:1px solid rgba(235,166,90,0.45);color:var(--orange);">PENDING</div>
+          <span class="absolute top-3 left-3 badge-base badge-neutral">BRIDGES</span>
+          <span class="absolute top-3 right-3 badge-base badge-orange">IN REVIEW</span>
         </div>
         <div class="p-5 space-y-3">
-          <div>
-            <h4 class="font-bold text-sm" style="color:var(--white);">Brahmaputra River Bridge</h4>
-            <div class="text-xs font-mono mt-0.5" style="color:var(--green);">Bridges &amp; Structures</div>
+          <h4 class="font-bold text-sm text-white">Brahmaputra Bridge Pier 4</h4>
+          <div class="text-xs font-mono text-[#A1A1AA] space-y-1">
+            <div><i class="fa-solid fa-location-dot text-[#FF5A1F] mr-1.5"></i>Guwahati, Assam</div>
+            <div><i class="fa-regular fa-clock text-[#71717A] mr-1.5"></i>22 Feb 2025, 11:15 AM</div>
+            <div class="text-[10px] text-[#71717A]">ID: GT-EV-00341</div>
           </div>
-          <div class="text-xs font-mono space-y-1.5" style="color:var(--muted);">
-            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Guwahati, Assam</div>
-            <div class="flex items-center gap-2"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>22 Feb 2025, 11:15 AM</div>
-            <div class="flex items-center gap-2"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00341</div>
-          </div>
-          <div class="rounded-xl p-2.5 text-xs glass-secondary" style="color:var(--muted);">
-            <i class="fa-solid fa-triangle-exclamation mr-1" style="color:var(--orange);"></i>Pier foundation requires structural supervisor verification.
-          </div>
-          <button onclick="switchTab('review')" class="w-full text-xs font-mono py-2.5 rounded-xl btn-glass-ghost flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-clipboard-check" style="color:var(--green);"></i>
-            <span>Open Review Record</span>
+          <button onclick="switchTab('review')" class="w-full py-2.5 rounded-lg btn-outline text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-clipboard-check text-[#10B981]"></i>
+            <span>Inspect in Queue</span>
           </button>
         </div>
       </div>
 
-      <!-- Card 3: Stormwater Drainage -->
-      <div class="feed-card glass-primary overflow-hidden">
-        <div class="relative h-48 overflow-hidden" style="background:#07170e;">
-          <svg class="card-img-zoom w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
-            <defs><linearGradient id="c3g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f2e1c"/><stop offset="100%" stop-color="#06160d"/></linearGradient></defs>
-            <rect fill="url(#c3g)" width="320" height="200"/>
-            <rect x="0" y="90" width="320" height="30" fill="#181a19"/>
-            <line x1="0" y1="105" x2="320" y2="105" stroke="rgba(57,219,145,0.4)" stroke-width="1.5"/>
-            <circle cx="60" cy="105" r="3.5" fill="var(--green)"/>
-            <circle cx="140" cy="105" r="3.5" fill="var(--green)"/>
-            <circle cx="220" cy="105" r="3.5" fill="var(--green)"/>
-            <rect x="0" y="140" width="320" height="60" fill="#102719"/>
+      <!-- Card 3 -->
+      <div class="carousel-item pro-card overflow-hidden">
+        <div class="h-44 bg-[#0E0E12] relative overflow-hidden border-b border-[#27272A]">
+          <svg class="w-full h-full" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+            <rect fill="#14141A" width="320" height="180"/>
+            <rect x="0" y="70" width="320" height="30" fill="#202028"/>
+            <circle cx="60" cy="85" r="4" fill="#FF5A1F"/>
+            <circle cx="160" cy="85" r="4" fill="#FF5A1F"/>
+            <circle cx="260" cy="85" r="4" fill="#FF5A1F"/>
+            <rect x="0" y="110" width="320" height="70" fill="#181820"/>
           </svg>
-          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.18);border:1px solid rgba(57,219,145,0.35);color:var(--green);backdrop-filter:blur(8px);">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Validated
-          </div>
-          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-mono font-bold" style="background:rgba(57,219,145,0.92);color:#071C18;">APPROVED</div>
+          <span class="absolute top-3 left-3 badge-base badge-orange">DRAINAGE</span>
+          <span class="absolute top-3 right-3 badge-base badge-green">APPROVED</span>
         </div>
         <div class="p-5 space-y-3">
-          <div>
-            <h4 class="font-bold text-sm" style="color:var(--white);">NH-44 Stormwater Drainage</h4>
-            <div class="text-xs font-mono mt-0.5" style="color:var(--green);">Drainage Systems</div>
+          <h4 class="font-bold text-sm text-white">NH-44 Stormwater Culvert</h4>
+          <div class="text-xs font-mono text-[#A1A1AA] space-y-1">
+            <div><i class="fa-solid fa-location-dot text-[#FF5A1F] mr-1.5"></i>Nagpur, Maharashtra</div>
+            <div><i class="fa-regular fa-clock text-[#71717A] mr-1.5"></i>5 Mar 2025, 14:30 PM</div>
+            <div class="text-[10px] text-[#71717A]">ID: GT-EV-00189</div>
           </div>
-          <div class="text-xs font-mono space-y-1.5" style="color:var(--muted);">
-            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Nagpur, Maharashtra</div>
-            <div class="flex items-center gap-2"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>5 Mar 2025, 14:30 PM</div>
-            <div class="flex items-center gap-2"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00189</div>
-          </div>
-          <div class="rounded-xl p-2.5 text-xs glass-secondary" style="color:var(--muted);">
-            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Precast culvert grade certified to standard MORTH spec 300.
-          </div>
-          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2.5 rounded-xl btn-glass-ghost flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-            <span>View Barcode &amp; QR Tag</span>
+          <button onclick="switchTab('verify')" class="w-full py-2.5 rounded-lg btn-outline text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
+            <span>Scan Asset Barcode</span>
           </button>
         </div>
       </div>
 
-      <!-- Card 4: Collectorate Building -->
-      <div class="feed-card glass-primary overflow-hidden">
-        <div class="relative h-48 overflow-hidden" style="background:#091b10;">
-          <svg class="card-img-zoom w-full h-full" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
-            <defs><linearGradient id="c4g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14311d"/><stop offset="100%" stop-color="#07190f"/></linearGradient></defs>
-            <rect fill="url(#c4g)" width="320" height="200"/>
-            <rect x="75" y="45" width="170" height="155" fill="#1c201e"/>
-            <rect x="95" y="65" width="32" height="26" rx="2" fill="rgba(57,219,145,0.18)" stroke="rgba(57,219,145,0.3)" stroke-width="1"/>
-            <rect x="144" y="65" width="32" height="26" rx="2" fill="rgba(57,219,145,0.18)" stroke="rgba(57,219,145,0.3)" stroke-width="1"/>
-            <rect x="193" y="65" width="32" height="26" rx="2" fill="rgba(57,219,145,0.18)" stroke="rgba(57,219,145,0.3)" stroke-width="1"/>
-            <rect x="144" y="145" width="32" height="55" fill="#0f1210" rx="2"/>
+      <!-- Card 4 -->
+      <div class="carousel-item pro-card overflow-hidden">
+        <div class="h-44 bg-[#0E0E12] relative overflow-hidden border-b border-[#27272A]">
+          <svg class="w-full h-full" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+            <rect fill="#14141A" width="320" height="180"/>
+            <rect x="80" y="40" width="160" height="140" fill="#252530"/>
+            <rect x="100" y="60" width="30" height="25" fill="#3B3B4A"/>
+            <rect x="145" y="60" width="30" height="25" fill="#3B3B4A"/>
+            <rect x="190" y="60" width="30" height="25" fill="#3B3B4A"/>
+            <rect x="145" y="130" width="30" height="50" fill="#181820"/>
           </svg>
-          <div class="absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-mono" style="background:rgba(57,219,145,0.18);border:1px solid rgba(57,219,145,0.35);color:var(--green);backdrop-filter:blur(8px);">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI Validated
-          </div>
-          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-mono font-bold" style="background:rgba(57,219,145,0.92);color:#071C18;">APPROVED</div>
+          <span class="absolute top-3 left-3 badge-base badge-neutral">BUILDINGS</span>
+          <span class="absolute top-3 right-3 badge-base badge-green">APPROVED</span>
         </div>
         <div class="p-5 space-y-3">
-          <div>
-            <h4 class="font-bold text-sm" style="color:var(--white);">Collectorate Administrative Complex</h4>
-            <div class="text-xs font-mono mt-0.5" style="color:var(--green);">Public Buildings</div>
+          <h4 class="font-bold text-sm text-white">Collectorate Complex Wing A</h4>
+          <div class="text-xs font-mono text-[#A1A1AA] space-y-1">
+            <div><i class="fa-solid fa-location-dot text-[#FF5A1F] mr-1.5"></i>Lucknow, UP</div>
+            <div><i class="fa-regular fa-clock text-[#71717A] mr-1.5"></i>18 Feb 2025, 10:00 AM</div>
+            <div class="text-[10px] text-[#71717A]">ID: GT-EV-00276</div>
           </div>
-          <div class="text-xs font-mono space-y-1.5" style="color:var(--muted);">
-            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--green);width:12px;"></i>Lucknow, Uttar Pradesh</div>
-            <div class="flex items-center gap-2"><i class="fa-regular fa-clock" style="color:var(--green);width:12px;"></i>18 Feb 2025, 10:00 AM</div>
-            <div class="flex items-center gap-2"><i class="fa-solid fa-hashtag" style="color:var(--green);width:12px;"></i>GT-EV-00276</div>
-          </div>
-          <div class="rounded-xl p-2.5 text-xs glass-secondary" style="color:var(--muted);">
-            <i class="fa-solid fa-robot mr-1" style="color:var(--lime);"></i>Facade structural alignment corresponds to approved milestone.
-          </div>
-          <button onclick="switchTab('verify')" class="w-full text-xs font-mono py-2.5 rounded-xl btn-glass-ghost flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-            <span>View Barcode &amp; QR Tag</span>
+          <button onclick="switchTab('verify')" class="w-full py-2.5 rounded-lg btn-outline text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
+            <span>Scan Asset Barcode</span>
           </button>
         </div>
       </div>
 
-    </div><!-- /carousel -->
+    </div>
   </div>
 </section>
 
-<!-- ───────────────────────────── D. AI EVIDENCE SCANNING ───────────────────────────── -->
-<section id="section-ai" class="py-24 border-t" style="border-color:var(--glass-border-light);">
-  <div class="max-w-7xl mx-auto px-5">
+<!-- ───────────────────────────── 5. AI DIAGNOSTIC & GEOSPATIAL ───────────────────────────── -->
+<section id="section-ai" class="py-24 border-b border-[#27272A]">
+  <div class="max-w-7xl mx-auto px-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       
-      <!-- Left: Technical Breakdown -->
-      <div class="space-y-6 reveal-elem">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary" style="color:var(--green);">
-          <i class="fa-solid fa-brain"></i>
+      <!-- Diagnostic Explanations -->
+      <div class="space-y-6 reveal-item">
+        <div class="badge-base badge-orange">
           <span>AI EVIDENCE ANALYSIS</span>
         </div>
-        <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="color:var(--white);">
-          How GroundTruth reads<br>
-          <span class="gradient-text">field evidence.</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          How GroundTruth audits <span class="text-[#FF5A1F]">site evidence.</span>
         </h2>
-        <p class="text-base leading-relaxed" style="color:var(--muted);">
-          Every photograph enters an automated advisory pipeline executing objective physical and cryptographic checks prior to human engineer verification.
+        <p class="text-sm sm:text-base text-[#A1A1AA] leading-relaxed">
+          Every submission triggers an asynchronous analysis pipeline that calculates objective quality metrics, compares perceptual hashes, and runs OCR text recognition without modifying the original evidence.
         </p>
 
-        <div class="space-y-4">
-          <div class="flex items-start gap-4 p-4 rounded-2xl glass-secondary">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.25);border:1px solid rgba(57,219,145,0.35);">
-              <i class="fa-solid fa-eye text-sm" style="color:var(--green);"></i>
+        <div class="space-y-3">
+          <div class="p-4 rounded-lg bg-[#141418] border border-[#27272A] flex items-start gap-4">
+            <div class="w-9 h-9 rounded bg-white text-black font-bold flex items-center justify-center flex-shrink-0 text-sm">
+              01
             </div>
             <div>
-              <div class="text-sm font-semibold" style="color:var(--white);">Image Quality &amp; Exposure Scoring</div>
-              <div class="text-xs mt-1" style="color:var(--muted);">Evaluates Laplacian blur variance and luminance thresholds to reject blurred or underexposed site photos.</div>
+              <div class="text-sm font-bold text-white">Laplacian Variance Blur Detection</div>
+              <div class="text-xs text-[#A1A1AA] mt-0.5">Calculates sharpness to ensure field photos have sufficient visual clarity for audit scrutiny.</div>
             </div>
           </div>
 
-          <div class="flex items-start gap-4 p-4 rounded-2xl glass-secondary">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.25);border:1px solid rgba(57,219,145,0.35);">
-              <i class="fa-solid fa-fingerprint text-sm" style="color:var(--lime);"></i>
+          <div class="p-4 rounded-lg bg-[#141418] border border-[#27272A] flex items-start gap-4">
+            <div class="w-9 h-9 rounded bg-[#FF5A1F] text-white font-bold flex items-center justify-center flex-shrink-0 text-sm">
+              02
             </div>
             <div>
-              <div class="text-sm font-semibold" style="color:var(--white);">Perceptual Duplicate Detection (pHash &amp; dHash)</div>
-              <div class="text-xs mt-1" style="color:var(--muted);">Flags identical or subtly altered photographic resubmissions using Hamming distance cross-matching.</div>
+              <div class="text-sm font-bold text-white">Perceptual Image Hash (pHash &amp; dHash)</div>
+              <div class="text-xs text-[#A1A1AA] mt-0.5">Flags identical or cropped resubmissions across historical milestones via Hamming distances.</div>
             </div>
           </div>
 
-          <div class="flex items-start gap-4 p-4 rounded-2xl glass-secondary">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(26,154,100,0.25);border:1px solid rgba(57,219,145,0.35);">
-              <i class="fa-solid fa-font text-sm" style="color:var(--green);"></i>
+          <div class="p-4 rounded-lg bg-[#141418] border border-[#27272A] flex items-start gap-4">
+            <div class="w-9 h-9 rounded bg-[#10B981] text-white font-bold flex items-center justify-center flex-shrink-0 text-sm">
+              03
             </div>
             <div>
-              <div class="text-sm font-semibold" style="color:var(--white);">OCR Physical Signage Extraction</div>
-              <div class="text-xs mt-1" style="color:var(--muted);">Automatically identifies kilometer chainage markers, package identifiers, and project nameboards.</div>
+              <div class="text-sm font-bold text-white">Optical Character Recognition (OCR)</div>
+              <div class="text-xs text-[#A1A1AA] mt-0.5">Extracts on-site signage, chainage kilometer markers, and package identifiers automatically.</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right: Restrained Scanning Visualizer -->
-      <div class="reveal-elem">
-        <div class="glass-primary rounded-2xl overflow-hidden" style="border-color:rgba(57,219,145,0.3);">
-          
-          <div class="relative" style="height:270px;background:linear-gradient(135deg,#0a271c,#05150f);">
-            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 270" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <linearGradient id="aiGradScene" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14422c"/><stop offset="100%" stop-color="#05170f"/></linearGradient>
-              </defs>
-              <rect fill="url(#aiGradScene)" width="500" height="270"/>
-              <!-- Highway perspective -->
-              <polygon points="100,270 180,125 320,125 400,270" fill="#202221"/>
-              <line x1="250" y1="125" x2="250" y2="270" stroke="white" stroke-width="3" stroke-dasharray="10,10" opacity="0.45"/>
-              <rect x="0" y="210" width="500" height="60" fill="#141715"/>
-              <!-- Trees -->
-              <rect x="40" y="105" width="12" height="70" fill="#185229"/>
-              <ellipse cx="46" cy="100" rx="20" ry="22" fill="#268239"/>
-              <rect x="440" y="95" width="12" height="80" fill="#185229"/>
-              <ellipse cx="446" cy="90" rx="20" ry="22" fill="#268239"/>
-              <!-- Targeted Bounding Box -->
-              <rect x="140" y="115" width="220" height="135" fill="none" stroke="#B5FF77" stroke-width="2" stroke-dasharray="6,3" rx="4" opacity="0.85"/>
-              <polyline points="140,135 140,115 160,115" stroke="#B5FF77" stroke-width="3" fill="none"/>
-              <polyline points="340,135 340,115 320,115" stroke="#B5FF77" stroke-width="3" fill="none"/>
-              <polyline points="140,230 140,250 160,250" stroke="#B5FF77" stroke-width="3" fill="none"/>
-              <polyline points="340,230 340,250 320,250" stroke="#B5FF77" stroke-width="3" fill="none"/>
-              <!-- OCR detected tag -->
-              <rect x="225" y="155" width="50" height="28" rx="4" fill="rgba(181,255,119,0.2)" stroke="#B5FF77" stroke-width="1.2"/>
-              <text x="250" y="173" text-anchor="middle" fill="#B5FF77" font-size="9" font-family="monospace">NH-47</text>
+      <!-- Live Inspection Card -->
+      <div id="section-geo" class="reveal-item">
+        <div class="pro-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-[#27272A]">
+            <span class="text-xs font-mono font-bold text-white">REAL-TIME GEOFENCE MONITORING</span>
+            <span class="badge-base badge-green">IN BOUNDS</span>
+          </div>
+
+          <div class="h-60 rounded-lg bg-[#0E0E12] border border-[#27272A] relative overflow-hidden flex items-center justify-center">
+            <svg class="w-full h-full" viewBox="0 0 400 240">
+              <rect fill="#0E0E12" width="400" height="240"/>
+              <!-- Grid lines -->
+              <line x1="0" y1="60" x2="400" y2="60" stroke="#1F1F24" stroke-width="1"/>
+              <line x1="0" y1="120" x2="400" y2="120" stroke="#1F1F24" stroke-width="1"/>
+              <line x1="0" y1="180" x2="400" y2="180" stroke="#1F1F24" stroke-width="1"/>
+              <line x1="100" y1="0" x2="100" y2="240" stroke="#1F1F24" stroke-width="1"/>
+              <line x1="200" y1="0" x2="200" y2="240" stroke="#1F1F24" stroke-width="1"/>
+              <line x1="300" y1="0" x2="300" y2="240" stroke="#1F1F24" stroke-width="1"/>
+              <!-- Highway corridor -->
+              <path d="M0,120 Q100,100 200,120 Q300,140 400,120" stroke="#3F3F46" stroke-width="3" fill="none"/>
+              <!-- Geofence polygon -->
+              <polygon points="120,60 280,50 320,170 160,190" fill="rgba(255, 90, 31, 0.08)" stroke="#FF5A1F" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <!-- Location pin -->
+              <circle cx="210" cy="115" r="6" fill="#FF5A1F"/>
+              <circle cx="210" cy="115" r="14" fill="none" stroke="#FF5A1F" stroke-width="1" opacity="0.4"/>
             </svg>
-
-            <!-- Restrained Scanning Line -->
-            <div class="scan-line-restrained"></div>
-
-            <!-- Analysis Header Banner -->
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-              <div class="px-2.5 py-1 rounded-lg text-xs font-mono flex items-center gap-2" style="background:rgba(0,0,0,0.8);color:var(--lime);backdrop-filter:blur(6px);">
-                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
-                <span>ANALYSIS COMPLETE</span>
-              </div>
-              <div class="px-2.5 py-1 rounded-lg text-xs font-mono" style="background:rgba(0,0,0,0.8);color:var(--muted);backdrop-filter:blur(6px);">
-                Confidence: 96.8%
-              </div>
+            <div class="absolute bottom-3 left-3 text-[10px] font-mono px-2 py-1 rounded bg-black/80 text-white border border-[#27272A]">
+              Lat: 26.812345°N | Lon: 80.943210°E
             </div>
           </div>
 
-          <!-- Progressive Intelligence Extraction Grid -->
-          <div class="p-6 space-y-4">
-            <div class="text-xs font-mono font-semibold" style="color:var(--green);">EXTRACTED AUDIT PARAMETERS</div>
-            <div class="grid grid-cols-2 gap-2.5 text-xs font-mono">
-              <div class="p-2.5 rounded-xl glass-secondary">
-                <div style="color:var(--muted);">OCR Detected</div>
-                <div class="font-bold" style="color:var(--white);">NH-47, Pkg-2</div>
-              </div>
-              <div class="p-2.5 rounded-xl glass-secondary">
-                <div style="color:var(--muted);">Quality Score</div>
-                <div class="font-bold" style="color:var(--green);">91.2% (Pass)</div>
-              </div>
-              <div class="p-2.5 rounded-xl glass-secondary">
-                <div style="color:var(--muted);">Duplicate Match</div>
-                <div class="font-bold" style="color:var(--green);">0 Matches (Clean)</div>
-              </div>
-              <div class="p-2.5 rounded-xl glass-secondary">
-                <div style="color:var(--muted);">Geofence Status</div>
-                <div class="font-bold" style="color:var(--green);">IN BOUNDARY ✓</div>
-              </div>
+          <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+            <div class="p-2.5 rounded bg-[#101014] border border-[#27272A]">
+              <div class="text-[10px] text-[#71717A]">Chainage Detected</div>
+              <div class="text-white font-bold">KM 12+500</div>
             </div>
-            
-            <div class="text-xs p-3 rounded-xl glass-secondary flex items-start gap-2" style="color:var(--muted);">
-              <i class="fa-solid fa-circle-info text-xs mt-0.5" style="color:var(--green);"></i>
-              <span>AI recommendations are strictly advisory. Designated engineering officers retain exclusive verification authority.</span>
+            <div class="p-2.5 rounded bg-[#101014] border border-[#27272A]">
+              <div class="text-[10px] text-[#71717A]">Geofence Accuracy</div>
+              <div class="text-[#10B981] font-bold">Within 4.2m of Centerline</div>
             </div>
           </div>
 
@@ -1308,356 +958,129 @@
   </div>
 </section>
 
-<!-- ───────────────────────────── E. GEOSPATIAL INTELLIGENCE ───────────────────────────── -->
-<section id="section-geo" class="py-24 border-t" style="border-color:var(--glass-border-light);">
-  <div class="max-w-7xl mx-auto px-5">
+<!-- ───────────────────────────── 6. TRUST & ACCOUNTABILITY ───────────────────────────── -->
+<section id="section-trust" class="py-24 border-b border-[#27272A]">
+  <div class="max-w-7xl mx-auto px-6">
     
-    <div class="text-center mb-14 reveal-elem">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary mb-4" style="color:var(--green);">
-        <i class="fa-solid fa-earth-asia"></i>
-        <span>GEOSPATIAL INTELLIGENCE</span>
+    <div class="text-center mb-16 reveal-item">
+      <div class="badge-base badge-orange mb-3">
+        <span>ACCOUNTABILITY PROTOCOL</span>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="color:var(--white);">
-        Infrastructure, <span class="gradient-text">mapped and verified.</span>
+      <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        Every claim deserves <span class="text-[#FF5A1F]">evidence.</span>
       </h2>
-      <p class="mt-3 text-base max-w-xl mx-auto" style="color:var(--muted);">
-        Every piece of evidence is bound to spatial coordinates and validated against geographic project boundaries in real-time.
+      <p class="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
+        GroundTruth combines server-side SHA-256 byte verification, device location context, and human review sign-off.
       </p>
     </div>
 
-    <!-- Geospatial Map Visualizer -->
-    <div class="glass-primary rounded-2xl overflow-hidden reveal-elem relative" style="height:440px;">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal-item">
       
-      <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1200 440" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <radialGradient id="mapBgDeep" cx="50%" cy="50%">
-            <stop offset="0%" stop-color="#0c2e21"/>
-            <stop offset="100%" stop-color="#05150f"/>
-          </radialGradient>
-        </defs>
-        <rect fill="url(#mapBgDeep)" width="1200" height="440"/>
-
-        <!-- Topographic Coordinate Grid -->
-        <g opacity="0.08" stroke="#39DB91" stroke-width="0.6">
-          <line x1="0" y1="60" x2="1200" y2="60"/><line x1="0" y1="120" x2="1200" y2="120"/>
-          <line x1="0" y1="180" x2="1200" y2="180"/><line x1="0" y1="240" x2="1200" y2="240"/>
-          <line x1="0" y1="300" x2="1200" y2="300"/><line x1="0" y1="360" x2="1200" y2="360"/>
-          <line x1="150" y1="0" x2="150" y2="440"/><line x1="300" y1="0" x2="300" y2="440"/>
-          <line x1="450" y1="0" x2="450" y2="440"/><line x1="600" y1="0" x2="600" y2="440"/>
-          <line x1="750" y1="0" x2="750" y2="440"/><line x1="900" y1="0" x2="900" y2="440"/>
-          <line x1="1050" y1="0" x2="1050" y2="440"/>
-        </g>
-
-        <!-- Dynamic Highway Corridors -->
-        <path d="M0,220 Q300,195 600,220 Q900,245 1200,220" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="4"/>
-        <path d="M600,0 Q585,220 600,440" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="3"/>
-        <path d="M0,360 Q400,340 750,320 Q950,310 1200,340" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-
-        <!-- Geofence Zone Polygons -->
-        <polygon points="240,110 440,90 490,190 370,240 230,190" fill="rgba(57,219,145,0.08)" stroke="rgba(57,219,145,0.4)" stroke-width="1.8" stroke-dasharray="6,4"/>
-        <polygon points="680,150 850,130 900,260 780,290 660,250" fill="rgba(181,255,119,0.06)" stroke="rgba(181,255,119,0.3)" stroke-width="1.8" stroke-dasharray="6,4"/>
-
-        <!-- Radar Pulse Marker 1 -->
-        <circle cx="350" cy="165" class="geo-radar-pulse" fill="none" stroke="var(--green)"/>
-        <circle cx="350" cy="165" r="7" fill="var(--green)"/>
-        <circle cx="350" cy="165" r="3" fill="white"/>
-
-        <!-- Radar Pulse Marker 2 -->
-        <circle cx="760" cy="210" class="geo-radar-pulse" fill="none" stroke="var(--lime)"/>
-        <circle cx="760" cy="210" r="7" fill="var(--lime)"/>
-        <circle cx="760" cy="210" r="3" fill="white"/>
-
-        <!-- Marker 3: Attention Required -->
-        <circle cx="510" cy="300" r="6" fill="var(--orange)"/>
-        <circle cx="510" cy="300" r="14" fill="none" stroke="var(--orange)" stroke-width="1" opacity="0.4"/>
-
-        <!-- Compass Rose -->
-        <g transform="translate(1130,50)">
-          <circle r="22" fill="rgba(7,28,24,0.85)" stroke="rgba(57,219,145,0.35)" stroke-width="1.2"/>
-          <text y="-8" text-anchor="middle" fill="#39DB91" font-size="9" font-family="monospace" font-weight="bold">N</text>
-          <line y1="-5" y2="-15" stroke="#39DB91" stroke-width="1.8"/>
-          <line y1="5" y2="15" stroke="rgba(57,219,145,0.4)" stroke-width="1"/>
-          <line x1="-15" x2="15" stroke="rgba(57,219,145,0.4)" stroke-width="1"/>
-        </g>
-      </svg>
-
-      <!-- Active Floating Location Cards -->
-      <div class="absolute top-5 left-5 space-y-2">
-        <div class="glass-nav rounded-xl px-4 py-3 text-xs font-mono" style="min-width:210px;">
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="w-2 h-2 rounded-full" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>
-            <span class="font-bold" style="color:var(--white);">NH-48 Expressway</span>
-          </div>
-          <div style="color:var(--muted);">Pune, Maharashtra</div>
-          <div class="mt-1" style="color:var(--green);">14 Verified Submissions</div>
+      <!-- Card 1: Server-Side SHA-256 -->
+      <div class="pro-card p-6 space-y-4">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-white text-base">
+          <i class="fa-solid fa-fingerprint"></i>
         </div>
-        <div class="glass-nav rounded-xl px-4 py-3 text-xs font-mono">
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="w-2 h-2 rounded-full" style="background:var(--orange);box-shadow:0 0 6px var(--orange);"></span>
-            <span class="font-bold" style="color:var(--white);">Brahmaputra Bridge</span>
-          </div>
-          <div style="color:var(--muted);">Guwahati, Assam</div>
-          <div class="mt-1" style="color:var(--orange);">3 Pending Review</div>
-        </div>
-      </div>
-
-      <!-- Top Right Status Badge -->
-      <div class="absolute top-5 right-5 flex items-center gap-2 px-3.5 py-2 rounded-xl glass-nav">
-        <span class="w-2 h-2 rounded-full" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>
-        <span class="text-xs font-mono font-bold" style="color:var(--green);">LIVE GEOFENCE ACTIVE</span>
-      </div>
-
-      <!-- Bottom Right Legend -->
-      <div class="absolute bottom-5 right-5 glass-nav rounded-xl px-4 py-3 text-xs font-mono space-y-1.5">
-        <div class="font-bold mb-1" style="color:var(--green);">MAP LEGEND</div>
-        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:var(--green);"></span><span style="color:var(--muted);">Approved Inspection</span></div>
-        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:var(--orange);"></span><span style="color:var(--muted);">Pending Review</span></div>
-        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full border" style="background:transparent;border-color:var(--green);"></span><span style="color:var(--muted);">Project Boundary</span></div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ───────────────────────────── TRUST & ACCOUNTABILITY ───────────────────────────── -->
-<section id="section-trust" class="py-24 border-t" style="border-color:var(--glass-border-light);">
-  <div class="max-w-7xl mx-auto px-5">
-    
-    <div class="text-center mb-16 reveal-elem">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary mb-4" style="color:var(--green);">
-        <i class="fa-solid fa-shield"></i>
-        <span>TRUST AND ACCOUNTABILITY</span>
-      </div>
-      <h2 class="text-4xl sm:text-5xl font-black tracking-tight" style="color:var(--white);">
-        Every claim deserves <span class="gradient-text">evidence.</span>
-      </h2>
-      <p class="mt-4 text-base max-w-2xl mx-auto" style="color:var(--muted);">
-        GroundTruth combines server-side SHA-256 byte verification, device location context, automated checks, and human sign-off into an indisputable evidence chain.
-      </p>
-    </div>
-
-    <!-- 6 Core Accountability Capabilities -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-elem">
-      
-      <!-- SHA-256 Integrity -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-fingerprint" style="color:var(--green);"></i>
-        </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Server-Side SHA-256 Integrity</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Raw image bytes are hashed upon initial ingestion. The digest is recalculated dynamically upon review to guarantee zero bit-level tampering.
+        <h3 class="text-base font-bold text-white">Server-Side SHA-256 Proofs</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Every file is digested upon receipt. The original bytes are stored immutably, and digests are recomputed dynamically during verification.
         </p>
-        <div class="rounded-xl p-3 font-mono text-xs glass-secondary" style="color:var(--green);word-break:break-all;">
-          SHA256: e5eab012...8df07e21
+        <div class="p-2.5 rounded bg-[#0E0E12] border border-[#27272A] font-mono text-[11px] text-[#FF5A1F] truncate">
+          SHA: e5eab012...8df07e21
         </div>
       </div>
 
-      <!-- Location & Time Context -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-location-crosshairs" style="color:var(--lime);"></i>
+      <!-- Card 2: Human Sign-off -->
+      <div class="pro-card p-6 space-y-4">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-[#10B981] text-base">
+          <i class="fa-solid fa-user-shield"></i>
         </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Location &amp; Timestamp Context</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Coordinates and server receipt timestamps are bound at submission. Geofence algorithms enforce that inspection occurs inside designated bounds.
+        <h3 class="text-base font-bold text-white">Human Engineer Authority</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          AI checks are strictly advisory. Only authenticated human review officers hold legal authorization to sign off on project milestones.
         </p>
-        <div class="rounded-xl p-3 font-mono text-xs glass-secondary space-y-1">
-          <div style="color:var(--muted);">Latitude: <span style="color:var(--white);">26.812345°N</span></div>
-          <div style="color:var(--muted);">Longitude: <span style="color:var(--white);">80.943210°E</span></div>
-          <div style="color:var(--green);">Status: IN GEOFENCE ✓</div>
+        <div class="p-2.5 rounded bg-[#0E0E12] border border-[#27272A] font-mono text-[11px] text-[#10B981]">
+          Decisions: APPROVED / CORRECTION / REJECT
         </div>
       </div>
 
-      <!-- Human Verification Authority -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-user-shield" style="color:var(--orange);"></i>
+      <!-- Card 3: Physical Asset Barcodes -->
+      <div class="pro-card p-6 space-y-4">
+        <div class="w-10 h-10 rounded-lg bg-[#1F1F24] border border-[#2E2E35] flex items-center justify-center text-[#FF5A1F] text-base">
+          <i class="fa-solid fa-barcode"></i>
         </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Human Authorization Exclusive</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          No AI algorithm can independently approve an infrastructure milestone. Only authenticated human engineers with RBAC clearance decide.
+        <h3 class="text-base font-bold text-white">Physical Barcodes &amp; QR</h3>
+        <p class="text-xs text-[#A1A1AA] leading-relaxed">
+          Generates Code-128 physical asset tags printable for site markers. Any inspector can scan tags on-site using any smartphone camera.
         </p>
-        <div class="space-y-1.5 text-xs font-mono">
-          <div class="flex items-center justify-between" style="color:var(--muted);">
-            <span>AI Automated Pass</span>
-            <span style="color:var(--green);">Passed</span>
-          </div>
-          <div class="flex items-center justify-between" style="color:var(--muted);">
-            <span>Engineer Decision</span>
-            <span class="font-bold" style="color:var(--green);">APPROVED</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Physical Asset Barcodes -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-        </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Physical Asset Barcodes &amp; QR</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Every approved road milestone generates a physical Code-128 barcode and QR tag printable for on-site concrete pillars and signboard markers.
-        </p>
-        <div class="flex gap-2">
-          <button onclick="switchTab('verify')" class="flex-1 py-2 rounded-xl btn-glass-ghost text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-            <span>Scan Barcode</span>
-          </button>
-          <button onclick="switchTab('verify')" class="flex-1 py-2 rounded-xl btn-glass-ghost text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-qrcode" style="color:var(--green);"></i>
-            <span>Scan QR</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Immutable Audit Ledger -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-scroll" style="color:var(--lime);"></i>
-        </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Comprehensive Audit History</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          Every action is immutably logged with actor, timestamp, previous state, and reason. Provides full accountability for government auditors.
-        </p>
-        <button onclick="switchTab('audit')" class="w-full py-2 rounded-xl btn-glass-ghost text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
-          <i class="fa-solid fa-list-check" style="color:var(--green);"></i>
-          <span>View Audit Ledger</span>
+        <button onclick="switchTab('verify')" class="w-full py-2 rounded-lg btn-outline text-xs font-mono flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-qrcode text-[#FF5A1F]"></i>
+          <span>Open Scanner Module</span>
         </button>
       </div>
 
-      <!-- Corrected Lineage -->
-      <div class="glass-primary rounded-2xl p-6 space-y-4 hover:border-gt-green transition-all">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,rgba(26,154,100,0.35),rgba(7,28,24,0.6));border:1px solid rgba(57,219,145,0.4);">
-          <i class="fa-solid fa-code-branch" style="color:#b39ddb;"></i>
-        </div>
-        <h3 class="text-base font-bold" style="color:var(--white);">Corrected Road Lineage</h3>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">
-          When defects require correction, resubmitted evidence is linked via foreign keys to the original submission without ever overwriting historical bytes.
-        </p>
-        <div class="flex items-center gap-2 text-xs font-mono pt-1" style="color:var(--muted);">
-          <span class="px-2 py-0.5 rounded glass-secondary" style="color:#b39ddb;">v1: Flagged</span>
-          <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          <span class="px-2 py-0.5 rounded glass-secondary" style="color:var(--green);">v2: Approved</span>
-        </div>
-      </div>
-
     </div>
+
   </div>
 </section>
 
-<!-- ───────────────────────────── FINAL CTA ───────────────────────────── -->
-<section class="py-28 relative overflow-hidden border-t" style="border-color:var(--glass-border-light);">
-  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 65% 65% at 50% 50%, rgba(26,154,100,0.18), transparent 70%);"></div>
-
-  <div class="relative z-10 max-w-4xl mx-auto px-5 text-center space-y-8 reveal-elem">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono glass-secondary" style="color:var(--green);">
-      <i class="fa-solid fa-shield-halved"></i>
-      <span>PUBLIC INFRASTRUCTURE INTEGRITY</span>
+<!-- ───────────────────────────── 7. FINAL CALL TO ACTION ───────────────────────────── -->
+<section class="py-24 text-center">
+  <div class="max-w-4xl mx-auto px-6 space-y-6 reveal-item">
+    
+    <div class="badge-base badge-orange">
+      <span>GET STARTED</span>
     </div>
 
-    <h2 class="text-4xl sm:text-5xl xl:text-6xl font-black tracking-tight" style="color:var(--white);">
-      Make Every Project<br>
-      <span class="gradient-text">Verifiable.</span>
+    <h2 class="text-4xl sm:text-6xl font-black text-white tracking-tight">
+      Make Every Project <span class="text-[#FF5A1F]">Verifiable.</span>
     </h2>
 
-    <p class="text-lg max-w-2xl mx-auto" style="color:var(--muted);">
-      Bring field evidence, intelligent analysis, and accountable human verification together with GroundTruth. For government agencies, contractors, and public auditors.
+    <p class="text-base sm:text-lg text-[#A1A1AA] max-w-xl mx-auto">
+      Unite field officers, engineers, and government audit departments under a single cryptographic evidence standard.
     </p>
 
-    <div class="flex flex-wrap gap-4 justify-center pt-2">
-      <button onclick="switchTab('submit')" class="btn-glass-cta px-8 py-4 rounded-xl font-semibold text-base flex items-center gap-2 cursor-pointer">
+    <div class="flex flex-wrap justify-center gap-4 pt-3">
+      <button onclick="switchTab('submit')" class="btn-orange px-8 py-4 rounded-lg text-sm font-bold flex items-center gap-2 cursor-pointer">
         <i class="fa-solid fa-camera"></i>
-        <span>Explore GroundTruth</span>
-        <i class="fa-solid fa-arrow-right text-sm"></i>
+        <span>Submit First Evidence</span>
+        <i class="fa-solid fa-arrow-right text-xs"></i>
       </button>
-      <button onclick="smoothScrollTo('section-how')" class="btn-glass-ghost px-8 py-4 rounded-xl font-semibold text-base flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-diagram-project text-xs" style="color:var(--green);"></i>
-        <span>See How It Works</span>
+
+      <button onclick="switchTab('verify')" class="btn-outline px-8 py-4 rounded-lg text-sm font-semibold flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
+        <span>Scan Existing Asset</span>
       </button>
     </div>
 
-    <!-- Assurance Strip -->
-    <div class="flex flex-wrap justify-center gap-6 pt-6 text-xs font-mono" style="color:var(--muted);">
-      <div class="flex items-center gap-2"><i class="fa-solid fa-check" style="color:var(--green);"></i> No Blockchain Needed</div>
-      <div class="flex items-center gap-2"><i class="fa-solid fa-check" style="color:var(--green);"></i> Human Sign-Off Authority</div>
-      <div class="flex items-center gap-2"><i class="fa-solid fa-check" style="color:var(--green);"></i> SHA-256 Byte Proofs</div>
-      <div class="flex items-center gap-2"><i class="fa-solid fa-check" style="color:var(--green);"></i> Complete Audit Trail</div>
-    </div>
   </div>
 </section>
 
-<!-- ───────────────────────────── FOOTER ───────────────────────────── -->
-<footer class="border-t glass-nav" style="border-color:var(--glass-border-light);">
-  <div class="max-w-7xl mx-auto px-5 py-14">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-10">
+<!-- ───────────────────────────── 8. FOOTER ───────────────────────────── -->
+<footer class="border-t border-[#27272A] bg-[#09090B] py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-8 border-b border-[#1E1E24]">
       
-      <!-- Brand Details -->
-      <div class="col-span-2 md:col-span-1 space-y-4">
-        <button onclick="switchTab('landing')" class="flex items-center gap-2.5 cursor-pointer">
-          <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#1A9A64,#0B3028);border:1px solid rgba(57,219,145,0.4);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#39DB91" stroke-width="2.5"><circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-          </div>
-          <span class="font-bold tracking-tight" style="color:var(--white);">GroundTruth</span>
-        </button>
-        <p class="text-sm leading-relaxed" style="color:var(--muted);">AI-powered infrastructure evidence verification. Transforming field photos into traceable public records.</p>
-        <div class="flex gap-3">
-          <a href="#" class="w-8 h-8 rounded-lg glass-secondary flex items-center justify-center hover:border-gt-green transition" aria-label="Twitter">
-            <i class="fa-brands fa-x-twitter text-xs" style="color:var(--muted);"></i>
-          </a>
-          <a href="#" class="w-8 h-8 rounded-lg glass-secondary flex items-center justify-center hover:border-gt-green transition" aria-label="LinkedIn">
-            <i class="fa-brands fa-linkedin-in text-xs" style="color:var(--muted);"></i>
-          </a>
-          <a href="#" class="w-8 h-8 rounded-lg glass-secondary flex items-center justify-center hover:border-gt-green transition" aria-label="GitHub">
-            <i class="fa-brands fa-github text-xs" style="color:var(--muted);"></i>
-          </a>
-        </div>
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded bg-white flex items-center justify-center text-black font-black text-xs">GT</div>
+        <span class="font-bold text-white text-sm">GroundTruth</span>
+        <span class="text-xs text-[#52525B] font-mono">/ Public Infrastructure Verification</span>
       </div>
 
-      <!-- Navigation Column -->
-      <div class="space-y-3">
-        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Platform Operations</div>
-        <ul class="space-y-2 text-sm" style="color:var(--muted);">
-          <li><button onclick="switchTab('submit')" class="hover:text-white transition text-left">Submit Road Evidence</button></li>
-          <li><button onclick="switchTab('review')" class="hover:text-white transition text-left">Review &amp; Asset Queue</button></li>
-          <li><button onclick="switchTab('verify')" class="hover:text-white transition text-left">Bar &amp; QR Scanner</button></li>
-          <li><button onclick="switchTab('audit')" class="hover:text-white transition text-left">Audit Ledger</button></li>
-        </ul>
+      <div class="flex gap-6 text-xs text-[#71717A]">
+        <button onclick="switchTab('submit')" class="hover:text-white transition">Submit</button>
+        <button onclick="switchTab('review')" class="hover:text-white transition">Queue</button>
+        <button onclick="switchTab('verify')" class="hover:text-white transition">Verify</button>
+        <button onclick="switchTab('audit')" class="hover:text-white transition">Ledger</button>
       </div>
 
-      <!-- Capabilities Column -->
-      <div class="space-y-3">
-        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Capabilities</div>
-        <ul class="space-y-2 text-sm" style="color:var(--muted);">
-          <li><button onclick="smoothScrollTo('section-ai')" class="hover:text-white transition text-left">AI Evidence Analysis</button></li>
-          <li><button onclick="smoothScrollTo('section-geo')" class="hover:text-white transition text-left">Geospatial Intelligence</button></li>
-          <li><button onclick="smoothScrollTo('section-trust')" class="hover:text-white transition text-left">Trust &amp; Accountability</button></li>
-          <li><button onclick="smoothScrollTo('section-how')" class="hover:text-white transition text-left">4-Stage Workflow</button></li>
-        </ul>
-      </div>
-
-      <!-- Specifications Column -->
-      <div class="space-y-3">
-        <div class="text-xs font-mono font-semibold uppercase tracking-wider" style="color:var(--green);">Standards</div>
-        <ul class="space-y-2 text-sm" style="color:var(--muted);">
-          <li><span class="text-xs font-mono">MORTH Section 300</span></li>
-          <li><span class="text-xs font-mono">IRC SP:84 Four-Laning</span></li>
-          <li><span class="text-xs font-mono">SHA-256 Byte Vault</span></li>
-          <li><span class="text-xs font-mono">ISO 19650 BIM Alignment</span></li>
-        </ul>
-      </div>
     </div>
 
-    <!-- Copyright Sub-bar -->
-    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t" style="border-color:rgba(190,255,215,0.1);">
-      <p class="text-xs font-mono" style="color:var(--muted);">© 2026 GroundTruth — Code Sprinters. All rights reserved.</p>
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-mono px-3 py-1 rounded-full glass-secondary" style="color:var(--green);">
-          <i class="fa-solid fa-shield-halved mr-1"></i>SHA-256 Verified
-        </span>
-        <span class="text-xs font-mono px-3 py-1 rounded-full glass-secondary" style="color:var(--muted);">
-          <i class="fa-solid fa-robot mr-1"></i>Human Authorized
-        </span>
+    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#52525B]">
+      <div>© 2026 GroundTruth Platform. Built for Public Infrastructure Authorities.</div>
+      <div class="flex items-center gap-4">
+        <span>MORTH SPEC 300 COMPLIANT</span>
+        <span>SHA-256 VAULT</span>
       </div>
     </div>
   </div>
@@ -1667,31 +1090,31 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     APP VIEWS: SUBMIT / REVIEW / VERIFY / AUDIT
+     OPERATIONAL APP VIEWS
 ══════════════════════════════════════════════════════ -->
 
 <!-- ─── 2. SUBMIT EVIDENCE ─── -->
 <div id="view-submit" class="app-view pt-24 pb-16">
-  <div class="max-w-3xl mx-auto px-5">
-    <div class="v-card p-8 space-y-6">
-      <div class="flex items-center justify-between pb-4" style="border-bottom:1px solid var(--glass-border-light);">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="pro-card p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-[#27272A]">
         <div>
-          <h2 class="text-xl font-bold tracking-tight" style="color:var(--white);">Submit Infrastructure Evidence</h2>
-          <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Upload field photographs. Generates SHA-256 digest, Asset Barcode, and QR.</p>
+          <h2 class="text-xl font-bold text-white tracking-tight">Submit Road Evidence</h2>
+          <p class="text-xs text-[#A1A1AA] mt-1 font-mono">Upload field inspection photographs. Generates SHA-256 digest &amp; physical barcode.</p>
         </div>
-        <span class="v-badge v-badge-green">MORTH / IRC COMPLIANT</span>
+        <span class="badge-base badge-orange">MORTH COMPLIANT</span>
       </div>
 
       <form id="evidenceForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Highway / Road Project</label>
+            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Highway / Project</label>
             <select id="inputMilestone" class="gt-input">
               <option value="seed">NH-48-EXP: Subgrade Compaction &amp; Reinforcement Binding</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Evidence Category</label>
+            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Evidence Category</label>
             <select id="inputCategory" class="gt-input">
               <option value="ROAD_SURFACE">Road Surface</option>
               <option value="FOUNDATION">Foundation</option>
@@ -1705,47 +1128,47 @@
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Capture Latitude</label>
+            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Capture Latitude</label>
             <input type="number" step="any" id="inputLat" class="gt-input font-mono" placeholder="26.812345" aria-label="Latitude">
           </div>
           <div>
-            <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Capture Longitude</label>
+            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Capture Longitude</label>
             <input type="number" step="any" id="inputLon" class="gt-input font-mono" placeholder="80.943210" aria-label="Longitude">
           </div>
         </div>
 
-        <button type="button" onclick="detectLocation()" class="btn-glass-ghost text-xs font-mono px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer">
-          <i class="fa-solid fa-location-dot" style="color:var(--green);"></i>
+        <button type="button" onclick="detectLocation()" class="btn-outline text-xs font-mono px-4 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-location-dot text-[#FF5A1F]"></i>
           <span>Auto-detect GPS from Device</span>
         </button>
 
         <div>
-          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Field Inspection Notes</label>
-          <textarea id="inputNotes" class="gt-input" rows="3" placeholder="Describe site condition, observed compaction, weather, chainage markers…"></textarea>
+          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Inspection Notes</label>
+          <textarea id="inputNotes" class="gt-input" rows="3" placeholder="Describe compaction observations, weather, kilometer marker…"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Supersedes Evidence ID (Optional for Corrections)</label>
-          <input type="text" id="inputSupersededId" class="gt-input font-mono" placeholder="UUID of previous evidence if resubmitting corrected work">
+          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Supersedes Evidence ID (For Corrections)</label>
+          <input type="text" id="inputSupersededId" class="gt-input font-mono" placeholder="UUID of previous rejected evidence if resubmitting corrected work">
         </div>
 
         <div>
-          <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Field Photograph *</label>
-          <div class="relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all" style="border-color:rgba(57,219,145,0.25);"
+          <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Field Photograph *</label>
+          <div class="border-2 border-dashed border-[#27272A] hover:border-[#FF5A1F] rounded-xl p-8 text-center cursor-pointer transition"
                onclick="document.getElementById('fileInput').click()"
-               ondragover="this.style.borderColor='rgba(57,219,145,0.6)'"
-               ondragleave="this.style.borderColor='rgba(57,219,145,0.25)'"
+               ondragover="this.style.borderColor='#FF5A1F'"
+               ondragleave="this.style.borderColor='#27272A'"
                ondrop="onFileDrop(event)">
             <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="onFileSelected(this)">
-            <i class="fa-solid fa-cloud-arrow-up text-2xl mb-3" style="color:var(--green);"></i>
-            <p class="text-sm font-medium" id="fileUploadPrompt" style="color:var(--muted);">Click or drag &amp; drop field photograph to upload</p>
-            <p class="text-xs mt-1 font-mono" style="color:rgba(164,185,174,0.5);">JPEG, PNG, WEBP — up to 50MB</p>
+            <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#FF5A1F] mb-3"></i>
+            <p class="text-sm font-medium text-[#A1A1AA]" id="fileUploadPrompt">Click or drag &amp; drop field photograph to upload</p>
+            <p class="text-xs text-[#52525B] font-mono mt-1">JPEG, PNG, WEBP — up to 50MB</p>
           </div>
         </div>
 
-        <button type="submit" id="submitFormBtn" class="btn-glass-cta w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer">
+        <button type="submit" id="submitFormBtn" class="btn-orange w-full py-3.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 cursor-pointer">
           <i class="fa-solid fa-upload text-xs"></i>
-          <span>Submit &amp; Generate Physical Barcode</span>
+          <span>Submit &amp; Generate Barcode</span>
         </button>
       </form>
     </div>
@@ -1754,33 +1177,33 @@
 
 <!-- ─── 3. REVIEW QUEUE ─── -->
 <div id="view-review" class="app-view pt-24 pb-16">
-  <div class="max-w-7xl mx-auto px-5 space-y-6">
+  <div class="max-w-7xl mx-auto px-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight" style="color:var(--white);">Review &amp; Asset Queue</h2>
-        <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Human engineer verification queue. Authorize, request corrections, or reject.</p>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Review &amp; Asset Queue</h2>
+        <p class="text-xs text-[#A1A1AA] font-mono mt-1">Authoritative review interface for designated engineering officers.</p>
       </div>
-      <button onclick="refreshEvidenceQueue()" class="btn-glass-ghost px-4 py-2.5 rounded-xl text-xs font-mono flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-rotate-right" style="color:var(--green);"></i>
+      <button onclick="refreshEvidenceQueue()" class="btn-outline px-4 py-2 rounded-lg text-xs font-mono flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-rotate-right text-[#FF5A1F]"></i>
         <span>Refresh Queue</span>
       </button>
     </div>
 
-    <div class="v-card overflow-hidden">
+    <div class="pro-card overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full text-xs font-mono" style="border-collapse:collapse;">
+        <table class="w-full text-xs font-mono">
           <thead>
-            <tr style="border-bottom:1px solid var(--glass-border-light);background:rgba(7,28,24,0.4);">
-              <th class="text-left py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">File / ID</th>
-              <th class="text-left py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">SHA-256 Hash</th>
-              <th class="text-left py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">Location &amp; Score</th>
-              <th class="text-left py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">Advisory AI</th>
-              <th class="text-left py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">Review Decision</th>
-              <th class="text-right py-3.5 px-4 uppercase tracking-wider" style="color:var(--muted);">Actions</th>
+            <tr class="border-b border-[#27272A] bg-[#0E0E12] text-[#A1A1AA]">
+              <th class="text-left py-3.5 px-4 uppercase">File / ID</th>
+              <th class="text-left py-3.5 px-4 uppercase">SHA-256 Digest</th>
+              <th class="text-left py-3.5 px-4 uppercase">Location &amp; Quality</th>
+              <th class="text-left py-3.5 px-4 uppercase">Advisory AI</th>
+              <th class="text-left py-3.5 px-4 uppercase">Review Status</th>
+              <th class="text-right py-3.5 px-4 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody id="evidenceQueueBody">
-            <tr><td colspan="6" class="py-10 text-center" style="color:var(--muted);">
+            <tr><td colspan="6" class="py-10 text-center text-[#71717A]">
               <i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading evidence records…
             </td></tr>
           </tbody>
@@ -1790,37 +1213,37 @@
   </div>
 </div>
 
-<!-- ─── 4. BARCODE & QR SCANNER ─── -->
+<!-- ─── 4. BAR & QR SCANNER ─── -->
 <div id="view-verify" class="app-view pt-24 pb-16">
-  <div class="max-w-2xl mx-auto px-5 space-y-6">
-    <div class="v-card p-8 space-y-6">
-      <div class="pb-4" style="border-bottom:1px solid var(--glass-border-light);">
-        <h2 class="text-xl font-bold tracking-tight" style="color:var(--white);">Bar &amp; QR Asset Scanner</h2>
-        <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Scan physical asset barcodes/QR tags or query UUIDs for byte-level verification.</p>
+  <div class="max-w-2xl mx-auto px-6 space-y-6">
+    <div class="pro-card p-8 space-y-6">
+      <div class="pb-4 border-b border-[#27272A]">
+        <h2 class="text-xl font-bold text-white tracking-tight">Bar &amp; QR Asset Scanner</h2>
+        <p class="text-xs text-[#A1A1AA] font-mono mt-1">Scan physical asset tags on-site or verify evidence UUIDs against raw byte digests.</p>
       </div>
 
       <div class="space-y-3">
-        <label class="block text-xs font-mono uppercase" style="color:var(--muted);">Evidence UUID or Asset Code</label>
+        <label class="block text-xs font-mono uppercase text-[#A1A1AA]">Evidence UUID or Asset Code</label>
         <div class="flex gap-2">
-          <input type="text" id="verifyInputId" class="gt-input font-mono flex-1" placeholder="Enter evidence UUID or asset string…" aria-label="Evidence ID">
-          <button onclick="executeVerification()" class="btn-glass-cta px-6 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          <input type="text" id="verifyInputId" class="gt-input font-mono flex-1" placeholder="Enter UUID or asset string…" aria-label="Evidence ID">
+          <button onclick="executeVerification()" class="btn-orange px-6 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <span>Verify</span>
           </button>
         </div>
       </div>
 
       <div class="space-y-3">
-        <div class="text-xs font-mono uppercase" style="color:var(--muted);">Direct Webcam Scanner</div>
-        <div id="reader" class="rounded-xl overflow-hidden glass-secondary" style="min-height:220px;"></div>
+        <div class="text-xs font-mono uppercase text-[#A1A1AA]">Direct Camera Scanner</div>
+        <div id="reader" class="rounded-lg overflow-hidden bg-[#0A0A0D] border border-[#27272A]" style="min-height:220px;"></div>
         <div class="flex gap-2">
-          <button id="startScanBtn" onclick="startQrScanner()" class="btn-glass-cta flex-1 py-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-camera text-xs"></i>
+          <button id="startScanBtn" onclick="startQrScanner()" class="btn-white flex-1 py-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-camera"></i>
             <span>Start Camera Scan</span>
           </button>
-          <button id="stopScanBtn" onclick="stopQrScanner()" class="hidden btn-glass-ghost flex-1 py-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fa-solid fa-stop text-xs" style="color:var(--orange);"></i>
-            <span>Stop Camera Scan</span>
+          <button id="stopScanBtn" onclick="stopQrScanner()" class="hidden btn-outline flex-1 py-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-stop text-[#FF5A1F]"></i>
+            <span>Stop Scanner</span>
           </button>
         </div>
       </div>
@@ -1832,13 +1255,13 @@
 
 <!-- ─── 5. AUDIT LEDGER ─── -->
 <div id="view-audit" class="app-view pt-24 pb-16">
-  <div class="max-w-4xl mx-auto px-5 space-y-6">
+  <div class="max-w-4xl mx-auto px-6 space-y-6">
     <div>
-      <h2 class="text-2xl font-bold tracking-tight" style="color:var(--white);">Audit Ledger</h2>
-      <p class="text-xs mt-1 font-mono" style="color:var(--muted);">Immutable chronological log of all evidence submissions, hashes, and review authorizations.</p>
+      <h2 class="text-2xl font-bold text-white tracking-tight">Audit Ledger</h2>
+      <p class="text-xs text-[#A1A1AA] font-mono mt-1">Immutable chronological sequence of all submissions, hash proofs, and engineer authorizations.</p>
     </div>
     <div class="space-y-3" id="auditLedgerTimeline">
-      <div class="text-center py-10 text-xs font-mono" style="color:var(--muted);">
+      <div class="text-center py-10 text-xs font-mono text-[#71717A]">
         <i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading audit history…
       </div>
     </div>
@@ -1848,74 +1271,74 @@
 <!-- ══════════════════════════════════════════════════════
      MODAL: REVIEW DECISION
 ══════════════════════════════════════════════════════ -->
-<div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">
-  <div class="glass-primary rounded-2xl p-8 max-w-md w-full space-y-5" style="max-height:90vh;overflow-y:auto;">
+<div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+  <div class="pro-card p-8 max-w-md w-full space-y-5 bg-[#141418] border border-[#3F3F46]">
     <div class="flex items-center justify-between">
-      <h3 class="text-base font-bold tracking-tight" id="modalTitle" style="color:var(--white);">Review Decision</h3>
-      <button onclick="closeReviewModal()" class="w-8 h-8 rounded-lg glass-secondary flex items-center justify-center cursor-pointer" aria-label="Close">
-        <i class="fa-solid fa-xmark text-xs" style="color:var(--muted);"></i>
+      <h3 class="text-base font-bold text-white" id="modalTitle">Review Decision</h3>
+      <button onclick="closeReviewModal()" class="w-8 h-8 rounded-lg bg-[#1E1E24] text-[#A1A1AA] hover:text-white flex items-center justify-center cursor-pointer" aria-label="Close">
+        <i class="fa-solid fa-xmark text-xs"></i>
       </button>
     </div>
     <input type="hidden" id="modalEvidenceId">
     <input type="hidden" id="modalDecision">
     <div>
-      <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Decision Reason (Required for Audit Ledger)</label>
-      <textarea id="modalReason" class="gt-input" rows="4" placeholder="Detail engineering rationale, specifications checked, or reasons for rejection…"></textarea>
+      <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Reason for Decision (Required for Audit Ledger)</label>
+      <textarea id="modalReason" class="gt-input" rows="4" placeholder="Detail specifications checked, reason for sign-off or defect identified…"></textarea>
     </div>
     <div id="modalCorrectionBox" class="hidden">
-      <label class="block text-xs font-mono uppercase mb-1.5" style="color:var(--muted);">Corrective Instructions for Contractor</label>
-      <textarea id="modalCorrectiveActions" class="gt-input" rows="3" placeholder="Specify necessary corrective physical actions…"></textarea>
+      <label class="block text-xs font-mono uppercase mb-1.5 text-[#FF5A1F]">Correction Instructions for Field Contractor</label>
+      <textarea id="modalCorrectiveActions" class="gt-input" rows="3" placeholder="Specify physical corrective actions required…"></textarea>
     </div>
     <div class="flex gap-3">
-      <button onclick="confirmReviewDecision()" class="btn-glass-cta flex-1 py-3.5 rounded-xl font-semibold text-xs cursor-pointer">
-        <i class="fa-solid fa-check mr-2"></i>Confirm Authorization
+      <button onclick="confirmReviewDecision()" class="btn-orange flex-1 py-3 rounded-lg text-xs font-bold cursor-pointer">
+        <i class="fa-solid fa-check mr-1.5"></i>Confirm Sign-off
       </button>
-      <button onclick="closeReviewModal()" class="btn-glass-ghost flex-1 py-3.5 rounded-xl font-semibold text-xs cursor-pointer">Cancel</button>
+      <button onclick="closeReviewModal()" class="btn-outline flex-1 py-3 rounded-lg text-xs font-bold cursor-pointer">Cancel</button>
     </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     MODAL: PHYSICAL BARCODE & QR TAG
+     MODAL: PHYSICAL ASSET BARCODE & QR TAG
 ══════════════════════════════════════════════════════ -->
-<div id="assetModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);">
-  <div class="glass-primary rounded-2xl p-8 max-w-lg w-full space-y-5">
+<div id="assetModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+  <div class="pro-card p-8 max-w-lg w-full space-y-5 bg-[#141418] border border-[#3F3F46]">
     <div class="flex items-center justify-between">
-      <h3 class="text-base font-bold tracking-tight" style="color:var(--white);">Physical Asset Barcode &amp; QR Tag</h3>
-      <button onclick="closeAssetModal()" class="w-8 h-8 rounded-lg glass-secondary flex items-center justify-center cursor-pointer" aria-label="Close">
-        <i class="fa-solid fa-xmark text-xs" style="color:var(--muted);"></i>
+      <h3 class="text-base font-bold text-white">Physical Asset Barcode &amp; QR Tag</h3>
+      <button onclick="closeAssetModal()" class="w-8 h-8 rounded-lg bg-[#1E1E24] text-[#A1A1AA] hover:text-white flex items-center justify-center cursor-pointer" aria-label="Close">
+        <i class="fa-solid fa-xmark text-xs"></i>
       </button>
     </div>
-    <div class="text-sm font-semibold truncate" id="assetRoadTitle" style="color:var(--white);"></div>
-    <div class="text-xs font-mono px-3 py-2 rounded-xl glass-secondary" id="assetBarcodeCode" style="color:var(--green);"></div>
+    <div class="text-sm font-semibold text-white truncate" id="assetRoadTitle"></div>
+    <div class="text-xs font-mono px-3 py-2 rounded-lg bg-[#0A0A0D] border border-[#27272A] text-[#FF5A1F]" id="assetBarcodeCode"></div>
 
     <div class="grid grid-cols-2 gap-4">
       <div class="space-y-2">
-        <div class="text-xs font-mono uppercase" style="color:var(--muted);">Code-128 Barcode</div>
-        <div class="rounded-xl overflow-hidden p-3 flex items-center justify-center" style="background:#ffffff;min-height:100px;">
-          <img id="assetBarcodeImg" src="" alt="Code-128 Barcode" class="max-w-full max-h-24 object-contain">
+        <div class="text-xs font-mono uppercase text-[#A1A1AA]">Code-128 Barcode</div>
+        <div class="rounded-lg p-3 flex items-center justify-center bg-white min-h-[100px]">
+          <img id="assetBarcodeImg" src="" alt="Barcode" class="max-w-full max-h-24 object-contain">
         </div>
       </div>
       <div class="space-y-2">
-        <div class="text-xs font-mono uppercase" style="color:var(--muted);">Encrypted QR Tag</div>
-        <div class="rounded-xl overflow-hidden p-3 flex items-center justify-center" style="background:#ffffff;min-height:100px;">
-          <img id="assetQrImg" src="" alt="QR Tag" class="max-w-full max-h-24 object-contain">
+        <div class="text-xs font-mono uppercase text-[#A1A1AA]">Encrypted QR Tag</div>
+        <div class="rounded-lg p-3 flex items-center justify-center bg-white min-h-[100px]">
+          <img id="assetQrImg" src="" alt="QR" class="max-w-full max-h-24 object-contain">
         </div>
       </div>
     </div>
 
     <div class="flex gap-3">
-      <button onclick="printAssetTag()" class="btn-glass-cta flex-1 py-3 rounded-xl font-semibold text-xs cursor-pointer">
-        <i class="fa-solid fa-print mr-2"></i>Print Physical Signage Tag
+      <button onclick="printAssetTag()" class="btn-white flex-1 py-3 rounded-lg text-xs font-bold cursor-pointer">
+        <i class="fa-solid fa-print mr-1.5"></i>Print Signage Tag
       </button>
-      <button onclick="closeAssetModal()" class="btn-glass-ghost flex-1 py-3 rounded-xl font-semibold text-xs cursor-pointer">Close</button>
+      <button onclick="closeAssetModal()" class="btn-outline flex-1 py-3 rounded-lg text-xs font-bold cursor-pointer">Close</button>
     </div>
   </div>
 </div>
 
 
 <!-- ══════════════════════════════════════════════════════
-     ENGINEERING & MOTION JAVASCRIPT
+     ENGINEERING LOGIC & REVEAL SCRIPTS
 ══════════════════════════════════════════════════════ -->
 <script>
   const API_HOST = 'http://localhost:8000';
@@ -1933,13 +1356,11 @@
       const btn = document.getElementById('nav-' + id);
       if (!btn) return;
       if (id === tabId) {
-        btn.style.background = 'rgba(57, 219, 145, 0.15)';
-        btn.style.borderColor = 'rgba(57, 219, 145, 0.4)';
-        btn.style.color = 'var(--green)';
+        btn.classList.add('bg-[#1F1F24]', 'text-white', 'border-[#3F3F46]');
+        btn.classList.remove('text-[#71717A]', 'border-transparent');
       } else {
-        btn.style.background = '';
-        btn.style.borderColor = 'transparent';
-        btn.style.color = 'var(--muted)';
+        btn.classList.remove('bg-[#1F1F24]', 'text-white', 'border-[#3F3F46]');
+        btn.classList.add('text-[#71717A]', 'border-transparent');
       }
     });
 
@@ -1959,7 +1380,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ── Smooth In-Page Section Scrolling ──
   function smoothScrollTo(sectionId) {
     const el = document.getElementById(sectionId);
     if (el) {
@@ -1975,31 +1395,24 @@
     document.getElementById('mobileMenu').classList.toggle('hidden');
   }
 
-  // ── Sticky Nav Dynamic Blur ──
-  window.addEventListener('scroll', () => {
-    const nav = document.getElementById('main-nav');
-    if (nav) {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
-    }
-  }, { passive: true });
-
   // ── Toast Messaging ──
   function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
-    toast.className = 'pointer-events-auto px-4 py-3 rounded-2xl text-xs font-mono backdrop-blur-xl transition duration-500 shadow-2xl';
-    toast.style.cssText = type === 'success'
-      ? 'background:rgba(9, 36, 30, 0.92);border:1px solid rgba(57, 219, 145, 0.4);color:var(--green);box-shadow:0 15px 35px rgba(0,0,0,0.6);'
-      : 'background:rgba(30, 10, 10, 0.92);border:1px solid rgba(235, 166, 90, 0.4);color:var(--orange);box-shadow:0 15px 35px rgba(0,0,0,0.6);';
-    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-2"></i>${message}`;
+    toast.className = `pointer-events-auto px-4 py-3 rounded-lg text-xs font-mono shadow-2xl transition duration-500 border ${
+      type === 'success' 
+        ? 'bg-[#121215] border-[#27272A] text-white' 
+        : 'bg-[#180A0A] border-[#FF5A1F]/50 text-[#FF5A1F]'
+    }`;
+    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-[#10B981]' : 'fa-triangle-exclamation text-[#FF5A1F]'} mr-2"></i>${message}`;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 4500);
   }
 
-  // ── GPS Detection ──
+  // ── GPS Geolocation Capture ──
   function detectLocation() {
     if (!navigator.geolocation) {
-      showToast('Geolocation is not supported by your browser', 'error');
+      showToast('Geolocation not supported by device', 'error');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -2012,13 +1425,13 @@
     );
   }
 
-  // ── File Selection & Drag & Drop ──
+  // ── File Selection ──
   function onFileSelected(input) {
     if (input.files && input.files[0]) {
       selectedFile = input.files[0];
       const p = document.getElementById('fileUploadPrompt');
       p.textContent = `Selected: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
-      p.style.color = 'var(--green)';
+      p.style.color = '#FFFFFF';
     }
   }
 
@@ -2028,11 +1441,11 @@
       selectedFile = e.dataTransfer.files[0];
       const p = document.getElementById('fileUploadPrompt');
       p.textContent = `Attached: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
-      p.style.color = 'var(--green)';
+      p.style.color = '#FFFFFF';
     }
   }
 
-  // ── Form Submission ──
+  // ── Form Submission to FastAPI ──
   async function handleFormSubmit(e) {
     e.preventDefault();
     if (!selectedFile) {
@@ -2063,19 +1476,18 @@
       showToast(`Evidence ${data.id.substring(0,8)} verified and stored! Barcode generated.`);
       document.getElementById('evidenceForm').reset();
       selectedFile = null;
-      const promptEl = document.getElementById('fileUploadPrompt');
-      promptEl.textContent = 'Click or drag & drop field photograph to upload';
-      promptEl.style.color = 'var(--muted)';
+      document.getElementById('fileUploadPrompt').textContent = 'Click or drag & drop field photograph to upload';
+      document.getElementById('fileUploadPrompt').style.color = '#A1A1AA';
       switchTab('review');
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `<i class="fa-solid fa-upload text-xs mr-2"></i><span>Submit &amp; Generate Physical Barcode</span>`;
+      btn.innerHTML = `<i class="fa-solid fa-upload text-xs mr-2"></i><span>Submit &amp; Generate Barcode</span>`;
     }
   }
 
-  // ── Real-time Evidence Queue & Metrics ──
+  // ── Evidence Queue Refresh ──
   async function refreshEvidenceQueue() {
     try {
       const res = await fetch(`${API_HOST}/api/v1/evidence/list`);
@@ -2094,47 +1506,37 @@
       const tbody = document.getElementById('evidenceQueueBody');
       if (tbody) {
         if (list.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-xs font-mono" style="color:var(--muted);">No evidence records found in database.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-[#71717A]">No evidence records in ledger.</td></tr>`;
         } else {
           tbody.innerHTML = list.map(ev => `
-            <tr class="transition" style="border-bottom:1px solid rgba(190,255,215,0.06);"
-                onmouseover="this.style.background='rgba(57,219,145,0.04)'"
-                onmouseout="this.style.background=''">
-              <td class="py-3.5 px-4">
-                <span class="font-bold" style="color:var(--white);">${ev.original_filename}</span>
-                <span class="v-badge ml-1 text-[10px]">v${ev.version_number}</span><br>
-                <span class="text-[10px]" style="color:var(--muted);">${ev.id}</span>
-                ${ev.superseded_evidence_id ? `<div class="text-[10px] mt-0.5" style="color:var(--orange);">Corrects: ${ev.superseded_evidence_id.substring(0,8)}…</div>` : ''}
+            <tr class="border-b border-[#27272A] hover:bg-[#121216] transition">
+              <td class="py-3 px-4">
+                <span class="font-bold text-white">${ev.original_filename}</span>
+                <span class="badge-base badge-neutral text-[10px] ml-1">v${ev.version_number}</span><br>
+                <span class="text-[10px] text-[#71717A]">${ev.id}</span>
+                ${ev.superseded_evidence_id ? `<div class="text-[10px] text-[#FF5A1F] mt-0.5">Corrects: ${ev.superseded_evidence_id.substring(0,8)}…</div>` : ''}
               </td>
-              <td class="py-3.5 px-4 max-w-xs truncate" style="color:var(--muted);" title="${ev.sha256_hash}">${ev.sha256_hash}</td>
-              <td class="py-3.5 px-4">
-                <span class="v-badge ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'v-badge-green' : ''}">${ev.location_status}</span>
-                <div class="text-[10px] mt-1" style="color:var(--muted);">Quality: ${ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A'}</div>
+              <td class="py-3 px-4 max-w-xs truncate text-[#A1A1AA]" title="${ev.sha256_hash}">${ev.sha256_hash}</td>
+              <td class="py-3 px-4">
+                <span class="badge-base ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'badge-green' : 'badge-orange'}">${ev.location_status}</span>
+                <div class="text-[10px] text-[#71717A] mt-1">Quality: ${ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A'}</div>
               </td>
-              <td class="py-3.5 px-4">
-                <span class="v-badge ${ev.ai_recommendation === 'NORMAL_REVIEW' ? '' : 'v-badge-crimson'}">${ev.ai_recommendation || 'PROCESSING'}</span>
-                ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] mt-1 max-w-xs truncate" style="color:var(--orange);">${ev.ai_flags.join(', ')}</div>` : ''}
+              <td class="py-3 px-4">
+                <span class="badge-base ${ev.ai_recommendation === 'NORMAL_REVIEW' ? 'badge-neutral' : 'badge-orange'}">${ev.ai_recommendation || 'PROCESSING'}</span>
+                ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] text-[#FF5A1F] mt-1 max-w-xs truncate">${ev.ai_flags.join(', ')}</div>` : ''}
               </td>
-              <td class="py-3.5 px-4">
-                <span style="color:${ev.review_status === 'APPROVED' ? 'var(--green)' : ev.review_status === 'CORRECTION_REQUESTED' ? 'var(--orange)' : 'var(--muted)'}; font-weight:${ev.review_status !== 'PENDING' ? '700' : '400'}">
+              <td class="py-3 px-4">
+                <span class="font-bold ${ev.review_status === 'APPROVED' ? 'text-[#10B981]' : ev.review_status === 'CORRECTION_REQUESTED' ? 'text-[#FF5A1F]' : 'text-[#71717A]'}">
                   ${ev.review_status}
                 </span>
               </td>
-              <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" title="View Physical Barcode & QR"
-                  class="px-2.5 py-1 rounded-xl text-[11px] font-mono mr-1 cursor-pointer btn-glass-ghost"
-                  style="color:var(--green);">
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" class="px-2.5 py-1 rounded bg-[#18181C] hover:bg-[#222228] border border-[#3F3F46] text-[#FF5A1F] text-[11px] mr-1 cursor-pointer">
                   <i class="fa-solid fa-barcode mr-1"></i>Bar &amp; QR
                 </button>
-                <button onclick="openReviewModal('${ev.id}','APPROVED')"
-                  class="px-2.5 py-1 rounded-xl text-[10px] font-mono mr-1 cursor-pointer btn-glass-ghost"
-                  style="color:var(--green);">Approve</button>
-                <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')"
-                  class="px-2.5 py-1 rounded-xl text-[10px] font-mono mr-1 cursor-pointer btn-glass-ghost"
-                  style="color:var(--orange);">Correct</button>
-                <button onclick="openReviewModal('${ev.id}','REJECTED')"
-                  class="px-2.5 py-1 rounded-xl text-[10px] font-mono cursor-pointer btn-glass-ghost"
-                  style="color:#f87171;">Reject</button>
+                <button onclick="openReviewModal('${ev.id}','APPROVED')" class="px-2 py-1 rounded bg-[#18181C] hover:bg-[#1B2B20] text-[#10B981] border border-[#27272A] text-[10px] mr-1 cursor-pointer">Approve</button>
+                <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')" class="px-2 py-1 rounded bg-[#18181C] hover:bg-[#2E1810] text-[#FF5A1F] border border-[#27272A] text-[10px] mr-1 cursor-pointer">Correct</button>
+                <button onclick="openReviewModal('${ev.id}','REJECTED')" class="px-2 py-1 rounded bg-[#18181C] hover:bg-[#2A1010] text-[#EF4444] border border-[#27272A] text-[10px] cursor-pointer">Reject</button>
               </td>
             </tr>
           `).join('');
@@ -2144,28 +1546,28 @@
       const auditList = document.getElementById('auditLedgerTimeline');
       if (auditList) {
         auditList.innerHTML = list.map(ev => `
-          <div class="v-card p-4 flex items-start justify-between">
-            <div class="space-y-1 flex-1 min-w-0">
-              <div class="flex items-center gap-2 text-xs font-mono">
-                <span class="font-bold" style="color:var(--white);">${ev.original_filename}</span>
-                <span class="v-badge text-[10px]">v${ev.version_number}</span>
+          <div class="pro-card p-4 flex items-start justify-between">
+            <div class="space-y-1 flex-1 min-w-0 font-mono">
+              <div class="flex items-center gap-2 text-xs">
+                <span class="font-bold text-white">${ev.original_filename}</span>
+                <span class="badge-base badge-neutral text-[10px]">v${ev.version_number}</span>
               </div>
-              <div class="text-[11px] font-mono truncate" style="color:var(--green);">SHA-256: ${ev.sha256_hash}</div>
-              <div class="text-[10px] font-mono" style="color:rgba(164,185,174,0.6);">UUID: ${ev.id}</div>
-              <div class="text-[10px] font-mono" style="color:rgba(164,185,174,0.4);">Logged: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
+              <div class="text-[11px] text-[#A1A1AA] truncate">SHA-256: ${ev.sha256_hash}</div>
+              <div class="text-[10px] text-[#71717A]">UUID: ${ev.id}</div>
+              <div class="text-[10px] text-[#52525B]">Received: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
             </div>
-            <span class="v-badge ${ev.review_status === 'APPROVED' ? 'v-badge-green' : ''} flex-shrink-0 ml-3">
+            <span class="badge-base ${ev.review_status === 'APPROVED' ? 'badge-green' : 'badge-neutral'} flex-shrink-0 ml-3">
               ${ev.review_status}
             </span>
           </div>
         `).join('');
       }
     } catch (err) {
-      console.error('refreshEvidenceQueue error:', err);
+      console.error(err);
     }
   }
 
-  // ── Verification Engine Call ──
+  // ── Verification Engine Query ──
   async function executeVerification(directId = null) {
     const id = (directId || document.getElementById('verifyInputId').value).trim();
     if (!id) {
@@ -2175,43 +1577,40 @@
 
     const card = document.getElementById('verifyResultCard');
     card.classList.remove('hidden');
-    card.innerHTML = `<div class="text-center py-6 text-xs font-mono" style="color:var(--muted);"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Recalculating SHA-256 byte digest…</div>`;
+    card.innerHTML = `<div class="text-center py-6 text-xs font-mono text-[#71717A]"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Recalculating bytes…</div>`;
 
     try {
       const res = await fetch(`${API_HOST}/api/v1/evidence/verify/${id}`);
-      if (!res.ok) throw new Error('Verification record not located in byte ledger');
+      if (!res.ok) throw new Error('Verification record not located');
       const data = await res.json();
 
-      card.className = 'v-card p-6 space-y-3';
-      card.style.borderColor = data.is_valid ? 'rgba(57,219,145,0.45)' : 'rgba(235,166,90,0.45)';
+      card.className = `pro-card p-6 space-y-3 ${data.is_valid ? 'border-[#10B981]' : 'border-[#FF5A1F]'}`;
       card.innerHTML = `
-        <div class="flex items-center gap-2 font-mono text-sm" style="color:${data.is_valid ? 'var(--green)' : 'var(--orange)'};">
+        <div class="flex items-center gap-2 font-mono text-sm ${data.is_valid ? 'text-[#10B981]' : 'text-[#FF5A1F]'} font-bold">
           <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
-          <span class="font-bold">${data.status}</span>
+          <span>${data.status}</span>
         </div>
-        <p class="text-xs" style="color:var(--muted);">${data.message}</p>
-        <div class="rounded-xl p-3 font-mono text-xs space-y-1.5 glass-secondary" style="color:var(--white);">
-          <div><span style="color:var(--muted);">File:</span> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
-          <div class="truncate"><span style="color:var(--muted);">Ledger Digest:</span> ${data.recorded_sha256}</div>
-          <div class="truncate"><span style="color:var(--muted);">Computed Digest:</span> ${data.computed_sha256}</div>
-          <div><span style="color:var(--muted);">Review State:</span> <span class="font-bold">${data.review_status}</span></div>
+        <p class="text-xs text-[#A1A1AA]">${data.message}</p>
+        <div class="p-3 rounded-lg bg-[#0E0E12] border border-[#27272A] font-mono text-xs space-y-1.5 text-white">
+          <div><span class="text-[#71717A]">File:</span> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
+          <div class="truncate"><span class="text-[#71717A]">Recorded:</span> ${data.recorded_sha256}</div>
+          <div class="truncate"><span class="text-[#71717A]">Computed:</span> ${data.computed_sha256}</div>
+          <div><span class="text-[#71717A]">Review State:</span> <span class="font-bold text-white">${data.review_status}</span></div>
         </div>
-        <div class="pt-2 flex justify-end">
-          <button onclick="showAssetModal('${data.evidence_id}','${data.original_filename}')"
-            class="px-4 py-2 rounded-xl font-mono text-xs cursor-pointer btn-glass-ghost flex items-center gap-2">
-            <i class="fa-solid fa-barcode" style="color:var(--green);"></i>
-            <span>View Physical Barcode &amp; QR Tag</span>
+        <div class="pt-1 flex justify-end">
+          <button onclick="showAssetModal('${data.evidence_id}','${data.original_filename}')" class="btn-outline px-4 py-2 rounded-lg text-xs font-mono flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
+            <span>View Asset Barcode &amp; QR</span>
           </button>
         </div>
       `;
     } catch (err) {
-      card.className = 'v-card p-6';
-      card.style.borderColor = 'rgba(235,166,90,0.45)';
-      card.innerHTML = `<div class="font-mono text-xs" style="color:var(--orange);"><i class="fa-solid fa-triangle-exclamation mr-2"></i>${err.message}</div>`;
+      card.className = 'pro-card p-6 border-[#EF4444]';
+      card.innerHTML = `<div class="font-mono text-xs text-[#EF4444]"><i class="fa-solid fa-triangle-exclamation mr-2"></i>${err.message}</div>`;
     }
   }
 
-  // ── Asset Barcode Modals ──
+  // ── Asset Barcode & QR Modals ──
   function showAssetModal(evidenceId, filename) {
     document.getElementById('assetRoadTitle').textContent = filename;
     document.getElementById('assetBarcodeImg').src = `${API_HOST}/api/v1/evidence/barcode/${evidenceId}`;
@@ -2222,7 +1621,7 @@
   function closeAssetModal() { document.getElementById('assetModal').classList.add('hidden'); }
   function printAssetTag() { window.print(); }
 
-  // ── Review Decision Modal ──
+  // ── Review Modal Actions ──
   function openReviewModal(evidenceId, decision) {
     document.getElementById('modalEvidenceId').value = evidenceId;
     document.getElementById('modalDecision').value = decision;
@@ -2268,7 +1667,7 @@
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 250, height: 250 } },
       (decodedText) => {
-        showToast(`Scanned asset string: ${decodedText}`);
+        showToast(`Scanned code: ${decodedText}`);
         let targetId = decodedText;
         if (decodedText.includes('id=')) targetId = decodedText.split('id=')[1];
         document.getElementById('verifyInputId').value = targetId;
@@ -2277,7 +1676,7 @@
       },
       () => {}
     ).catch(() => {
-      showToast('Camera access denied or unavailable on this device', 'error');
+      showToast('Camera access denied or unavailable', 'error');
       stopQrScanner();
     });
   }
@@ -2292,60 +1691,23 @@
     }
   }
 
-  // ── Carousel Controls ──
   function carouselScroll(dir) {
     const c = document.getElementById('evidenceCarousel');
     if (c) c.scrollBy({ left: dir * 360, behavior: 'smooth' });
   }
 
-  // ── B. Hero 3D Tilt Microinteraction (GPU optimized) ──
-  const heroCard = document.getElementById('heroGlassCard');
-  if (heroCard && window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const heroWrapper = document.getElementById('heroCardWrapper');
-    let ticking = false;
-
-    heroWrapper.addEventListener('mousemove', (e) => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const rect = heroWrapper.getBoundingClientRect();
-          const x = e.clientX - rect.left - rect.width / 2;
-          const y = e.clientY - rect.top - rect.height / 2;
-          const tiltX = -(y / (rect.height / 2)) * 6; // Max 6 deg tilt
-          const tiltY = (x / (rect.width / 2)) * 6;
-          heroCard.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(10px)`;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
-
-    heroWrapper.addEventListener('mouseleave', () => {
-      heroCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-    });
-  }
-
-  // ── G. Viewport Scroll Triggered Reveal ──
-  const revealElements = document.querySelectorAll('.reveal-elem');
+  // ── Viewport Scroll Observer ──
+  const revealElements = document.querySelectorAll('.reveal-item');
   const scrollObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        
-        // Trigger connector path animations when workflow step grid becomes visible
-        if (entry.target.id === 'workflowStepsGrid' || entry.target.contains(document.getElementById('wfConnector1'))) {
-          setTimeout(() => {
-            document.querySelectorAll('.workflow-connector').forEach((path, idx) => {
-              setTimeout(() => path.classList.add('active'), idx * 250);
-            });
-          }, 300);
-        }
+        entry.target.classList.add('visible');
       }
     });
-  }, { threshold: 0.12 });
-
+  }, { threshold: 0.1 });
   revealElements.forEach(el => scrollObserver.observe(el));
 
-  // ── Startup Diagnostics ──
+  // ── Startup Check ──
   window.addEventListener('DOMContentLoaded', () => {
     refreshEvidenceQueue();
     fetch(`${API_HOST}/health`)
@@ -2358,7 +1720,7 @@
         const el = document.getElementById('engineStatusText');
         if (el) {
           el.textContent = 'API OFFLINE';
-          el.style.color = 'var(--orange)';
+          el.style.color = '#FF5A1F';
         }
       });
   });
