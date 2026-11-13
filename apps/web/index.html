@@ -321,48 +321,17 @@
       </button>
     </nav>
 
-    <!-- Role Switcher & Testing Environment Selector & Auth Buttons -->
-    <div class="flex items-center gap-3">
-      
-      <!-- Testing Mode Fast Role Switcher -->
-      <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl glass-card border border-white/15">
-        <i class="fa-solid fa-user-shield text-[11px] text-[#FF5A1F]"></i>
-        <div class="flex flex-col">
-          <span class="text-[9px] font-mono text-[#71717A] leading-tight">ACTIVE ROLE</span>
-          <select id="rbacRoleSelect" onchange="handleRoleSelectChange(this.value)" class="bg-transparent text-white font-mono font-bold text-xs outline-none cursor-pointer">
-            <option value="ADMIN" class="bg-[#121215]">Admin (Super Admin)</option>
-            <option value="WORKER" class="bg-[#121215]">Worker / Customer</option>
-            <option value="REVIEWER" class="bg-[#121215]">Reviewer (Moderator)</option>
-            <option value="AUDITOR" class="bg-[#121215]">Auditor (Audit Trails)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Testing Status Badge -->
-      <div class="hidden lg:flex items-center gap-2 text-[11px] font-mono px-3 py-1.5 rounded-xl glass-card">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
-        </span>
-        <span id="testingBadgeText" class="text-white">ROUTE: TESTING</span>
-      </div>
-
-      <!-- Real Auth User / Sign-In Trigger -->
-      <div id="authNavContainer" class="flex items-center gap-2">
-        <button onclick="openAuthModal('login')" id="navSignInBtn" class="btn-glass-subtle px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold text-white flex items-center gap-2 cursor-pointer">
-          <i class="fa-solid fa-right-to-bracket text-[#FF5A1F]"></i>
-          <span>Sign In</span>
-        </button>
-      </div>
-
-      <!-- Action Button (Filtered by role) -->
-      <div id="headerActionBtnContainer">
-        <button onclick="switchTab('submit')" class="btn-orange-glow px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
-          <i class="fa-solid fa-camera text-[11px]"></i>
-          <span>Submit</span>
-        </button>
-      </div>
-
+    <!-- Auth Buttons: Sign In + Register (logged out) | Avatar + Sign Out (logged in) -->
+    <div class="flex items-center gap-2.5" id="authNavContainer">
+      <!-- Rendered dynamically by updateNavAuthUI() -->
+      <button onclick="switchTab('login')" class="btn-glass-subtle px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold text-white flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-right-to-bracket text-[#FF5A1F]"></i>
+        <span>Sign In</span>
+      </button>
+      <button onclick="switchTab('register')" class="btn-orange-glow px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-user-plus text-[11px]"></i>
+        <span>Register</span>
+      </button>
     </div>
   </div>
 </header>
@@ -611,6 +580,198 @@
 ══════════════════════════════════════════════════════ -->
 
 <!-- ─── 2. SUBMIT EVIDENCE VIEW (Worker/Employee + Admin) ─── -->
+
+<!-- ══════════════════════════════════════════════════════
+     DEDICATED LOGIN PAGE
+══════════════════════════════════════════════════════ -->
+<div id="view-login" class="app-view pt-24 pb-16">
+  <div class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="w-full max-w-md space-y-6">
+
+      <!-- Header -->
+      <div class="text-center space-y-3">
+        <button onclick="switchTab('landing')" class="inline-flex items-center gap-2 cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black font-black text-sm group-hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 20 2 20"/></svg>
+          </div>
+          <span class="font-extrabold text-white text-lg tracking-tight">GroundTruth</span>
+        </button>
+        <div>
+          <h1 class="text-3xl font-black text-white tracking-tight mt-4">Welcome back</h1>
+          <p class="text-sm text-[#A1A1AA] mt-1 font-mono">Sign in to your infrastructure workspace</p>
+        </div>
+      </div>
+
+      <!-- Login Card -->
+      <div class="glass-card p-8 space-y-5">
+
+        <!-- Social Login Buttons -->
+        <div class="space-y-2.5">
+          <button type="button" onclick="handleSocialAuth('google')" class="w-full py-3 px-4 rounded-xl bg-white text-black font-bold text-sm flex items-center justify-center gap-3 hover:bg-[#E4E4E7] transition cursor-pointer shadow-md">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.2 7.5 23 12 23z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+          <button type="button" onclick="handleSocialAuth('facebook')" class="w-full py-3 px-4 rounded-xl bg-[#1877F2] text-white font-bold text-sm flex items-center justify-center gap-3 hover:bg-[#166FE5] transition cursor-pointer shadow-md">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>Continue with Facebook</span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 text-[11px] font-mono text-[#71717A]">
+          <div class="h-[1px] bg-white/10 flex-1"></div>
+          <span>OR CONTINUE WITH EMAIL</span>
+          <div class="h-[1px] bg-white/10 flex-1"></div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" class="gt-input" required placeholder="engineer@groundtruth.local" autocomplete="email">
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="gt-input" required placeholder="••••••••••••" autocomplete="current-password">
+          </div>
+          <button type="submit" id="loginSubmitBtn" class="btn-orange-glow w-full py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer mt-2">
+            <i class="fa-solid fa-right-to-bracket text-[11px]"></i>
+            <span id="loginSubmitText">Sign In</span>
+          </button>
+        </form>
+
+        <!-- Quick Test Accounts -->
+        <div class="p-3 rounded-xl bg-black/60 border border-white/10 space-y-2.5">
+          <div class="text-[10px] font-mono text-[#71717A] uppercase flex items-center justify-between">
+            <span>Test accounts (one-click fill):</span>
+            <span class="text-[#10B981]">TESTING MODE</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="quickLogin('worker@groundtruth.local','password123')" class="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-left cursor-pointer transition group">
+              <div class="text-[11px] font-bold text-white font-mono">Worker</div>
+              <div class="text-[10px] text-[#71717A] font-mono truncate">worker@groundtruth.local</div>
+            </button>
+            <button type="button" onclick="quickLogin('reviewer@groundtruth.local','password123')" class="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-left cursor-pointer transition">
+              <div class="text-[11px] font-bold text-[#10B981] font-mono">Reviewer</div>
+              <div class="text-[10px] text-[#71717A] font-mono truncate">reviewer@groundtruth.local</div>
+            </button>
+            <button type="button" onclick="quickLogin('auditor@groundtruth.local','password123')" class="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-left cursor-pointer transition">
+              <div class="text-[11px] font-bold text-[#FFA07A] font-mono">Auditor</div>
+              <div class="text-[10px] text-[#71717A] font-mono truncate">auditor@groundtruth.local</div>
+            </button>
+            <button type="button" onclick="quickLogin('admin@groundtruth.local','password123')" class="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-left cursor-pointer transition">
+              <div class="text-[11px] font-bold text-[#FF5A1F] font-mono">Admin</div>
+              <div class="text-[10px] text-[#71717A] font-mono truncate">admin@groundtruth.local</div>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer link -->
+      <p class="text-center text-sm text-[#A1A1AA] font-mono">
+        Don't have an account?
+        <button onclick="switchTab('register')" class="text-[#FF5A1F] font-bold ml-1 hover:underline cursor-pointer">Register here</button>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     DEDICATED REGISTER PAGE
+══════════════════════════════════════════════════════ -->
+<div id="view-register" class="app-view pt-24 pb-16">
+  <div class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="w-full max-w-md space-y-6">
+
+      <!-- Header -->
+      <div class="text-center space-y-3">
+        <button onclick="switchTab('landing')" class="inline-flex items-center gap-2 cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black font-black text-sm group-hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 20 2 20"/></svg>
+          </div>
+          <span class="font-extrabold text-white text-lg tracking-tight">GroundTruth</span>
+        </button>
+        <div>
+          <h1 class="text-3xl font-black text-white tracking-tight mt-4">Create account</h1>
+          <p class="text-sm text-[#A1A1AA] mt-1 font-mono">Join the infrastructure verification platform</p>
+        </div>
+      </div>
+
+      <!-- Register Card -->
+      <div class="glass-card p-8 space-y-5">
+
+        <!-- Social Signup Buttons -->
+        <div class="space-y-2.5">
+          <button type="button" onclick="handleSocialAuth('google')" class="w-full py-3 px-4 rounded-xl bg-white text-black font-bold text-sm flex items-center justify-center gap-3 hover:bg-[#E4E4E7] transition cursor-pointer shadow-md">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.2 7.5 23 12 23z"/>
+            </svg>
+            <span>Sign up with Google</span>
+          </button>
+          <button type="button" onclick="handleSocialAuth('facebook')" class="w-full py-3 px-4 rounded-xl bg-[#1877F2] text-white font-bold text-sm flex items-center justify-center gap-3 hover:bg-[#166FE5] transition cursor-pointer shadow-md">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>Sign up with Facebook</span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 text-[11px] font-mono text-[#71717A]">
+          <div class="h-[1px] bg-white/10 flex-1"></div>
+          <span>OR REGISTER WITH EMAIL</span>
+          <div class="h-[1px] bg-white/10 flex-1"></div>
+        </div>
+
+        <!-- Register Form -->
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="registerName">Full Name</label>
+            <input type="text" id="registerName" class="gt-input" required placeholder="e.g. Ramesh Kumar" autocomplete="name">
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="registerEmail">Email Address</label>
+            <input type="email" id="registerEmail" class="gt-input" required placeholder="engineer@groundtruth.local" autocomplete="email">
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="registerPassword">Password</label>
+            <input type="password" id="registerPassword" class="gt-input" required placeholder="Create a secure password" autocomplete="new-password" minlength="8">
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-mono uppercase text-[#A1A1AA]" for="registerRole">Your Role in Organisation</label>
+            <select id="registerRole" class="gt-input">
+              <option value="SUBMITTER">Worker / Field Employee / Customer</option>
+              <option value="REVIEWER">Reviewer / Moderator / Engineer</option>
+              <option value="AUDITOR">Senior Auditor</option>
+              <option value="ADMIN">System Administrator</option>
+            </select>
+          </div>
+          <button type="submit" id="registerSubmitBtn" class="btn-orange-glow w-full py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer mt-2">
+            <i class="fa-solid fa-user-plus text-[11px]"></i>
+            <span id="registerSubmitText">Create Account</span>
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Footer link -->
+      <p class="text-center text-sm text-[#A1A1AA] font-mono">
+        Already have an account?
+        <button onclick="switchTab('login')" class="text-[#FF5A1F] font-bold ml-1 hover:underline cursor-pointer">Sign in here</button>
+      </p>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- ══════════════════════════════════════════════════════
      DYNAMIC ROLE-BASED DASHBOARDS (ADMIN / WORKER / REVIEWER / AUDITOR)
@@ -1409,19 +1570,13 @@
         currentUser = JSON.parse(stored);
         currentRole = normalizeRole(currentUser.role);
       } else {
-        // Fallback default test admin
-        const savedRole = localStorage.getItem('groundtruth_role') || 'ADMIN';
-        currentRole = normalizeRole(savedRole);
-        currentUser = {
-          email: `${currentRole.toLowerCase()}@groundtruth.local`,
-          display_name: `${currentRole.charAt(0) + currentRole.slice(1).toLowerCase()} Operator`,
-          role: currentRole === 'WORKER' ? 'SUBMITTER' : currentRole,
-          access_token: 'demo-local-token'
-        };
+        // No stored session — user is logged out
+        currentUser = null;
+        currentRole = 'ADMIN';
       }
     } catch (e) {
+      currentUser = null;
       currentRole = 'ADMIN';
-      currentUser = { email: 'admin@groundtruth.local', display_name: 'System Admin', role: 'ADMIN' };
     }
     updateNavAuthUI();
     applyRbacPermissions();
@@ -1433,15 +1588,17 @@
     if (!navContainer) return;
 
     if (currentUser && currentUser.email) {
-      const initials = currentUser.display_name ? currentUser.display_name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'OP';
+      const initials = currentUser.display_name
+        ? currentUser.display_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+        : 'OP';
       navContainer.innerHTML = `
         <div class="flex items-center gap-2">
           <button onclick="switchTab('dashboard')" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 transition cursor-pointer text-left">
-            <div class="w-6 h-6 rounded-lg bg-[#FF5A1F] text-white flex items-center justify-center font-bold text-[10px]">
+            <div class="w-7 h-7 rounded-lg bg-[#FF5A1F] text-white flex items-center justify-center font-black text-[11px]">
               ${initials}
             </div>
-            <div class="hidden xl:flex flex-col">
-              <span class="text-xs font-bold text-white leading-tight truncate max-w-[110px]">${currentUser.display_name || currentUser.email}</span>
+            <div class="hidden xl:flex flex-col leading-tight">
+              <span class="text-xs font-bold text-white truncate max-w-[120px]">${currentUser.display_name || currentUser.email}</span>
               <span class="text-[9px] font-mono text-[#A1A1AA]">${currentRole}</span>
             </div>
           </button>
@@ -1451,10 +1608,15 @@
         </div>
       `;
     } else {
+      // Logged out: show Sign In + Register buttons
       navContainer.innerHTML = `
-        <button onclick="openAuthModal('login')" id="navSignInBtn" class="btn-glass-subtle px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold text-white flex items-center gap-2 cursor-pointer">
+        <button onclick="switchTab('login')" class="btn-glass-subtle px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold text-white flex items-center gap-2 cursor-pointer">
           <i class="fa-solid fa-right-to-bracket text-[#FF5A1F]"></i>
           <span>Sign In</span>
+        </button>
+        <button onclick="switchTab('register')" class="btn-orange-glow px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-user-plus text-[11px]"></i>
+          <span>Register</span>
         </button>
       `;
     }
@@ -1597,11 +1759,12 @@
   function logoutUser() {
     localStorage.removeItem('groundtruth_session');
     currentUser = null;
-    currentRole = 'ADMIN'; // Reset to test admin
-    localStorage.setItem('groundtruth_role', 'ADMIN');
-    initAuthSession();
-    showToast('Signed out of session');
-    switchTab('landing');
+    currentRole = 'ADMIN';
+    localStorage.removeItem('groundtruth_role');
+    updateNavAuthUI();
+    applyRbacPermissions();
+    showToast('Signed out successfully');
+    switchTab('login');
   }
 
   function handleRoleSelectChange(role) {
@@ -1835,9 +1998,93 @@
     });
   }
 
+  // ── Dedicated page login/register handlers ──
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginSubmitBtn');
+    const txt = document.getElementById('loginSubmitText');
+    btn.disabled = true;
+    if (txt) txt.textContent = 'Signing in…';
+
+    try {
+      const res = await fetch(`${API_HOST}/api/v1/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Invalid email or password');
+      }
+      const data = await res.json();
+      saveUserSession(data);
+      showToast(`Welcome back, ${data.display_name}!`);
+      document.getElementById('loginForm').reset();
+      switchTab('dashboard');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (txt) txt.textContent = 'Sign In';
+    }
+  }
+
+  async function handleRegisterSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const role = document.getElementById('registerRole').value;
+    const btn = document.getElementById('registerSubmitBtn');
+    const txt = document.getElementById('registerSubmitText');
+    btn.disabled = true;
+    if (txt) txt.textContent = 'Creating account…';
+
+    try {
+      const res = await fetch(`${API_HOST}/api/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, display_name: name, role })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Registration failed');
+      }
+      const data = await res.json();
+      saveUserSession(data);
+      showToast(`Account created! Welcome, ${data.display_name}`);
+      document.getElementById('registerForm').reset();
+      switchTab('dashboard');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (txt) txt.textContent = 'Create Account';
+    }
+  }
+
+  function quickLogin(email, password) {
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = password;
+    // Auto-submit
+    handleLoginSubmit({ preventDefault: () => {} });
+  }
+
   // ── Tab Navigation (Guarded by RBAC) ──
   function switchTab(tabId) {
-    // RBAC Security Check
+    // Login and register pages are always accessible (no auth required)
+    const publicTabs = ['landing', 'login', 'register'];
+    if (!publicTabs.includes(tabId)) {
+      // If not logged in and trying to access a protected tab, redirect to login
+      if (!currentUser || !currentUser.email) {
+        showToast('Please sign in to access this section', 'error');
+        _doSwitchTab('login');
+        return;
+      }
+    }
+    // RBAC Security Check (only for authenticated users on protected tabs)
     if (currentRole === 'WORKER' && (tabId === 'review' || tabId === 'audit')) {
       showToast(`Access Denied: Worker role is not authorized to access ${tabId}`, 'error');
       return;
@@ -1851,11 +2098,15 @@
       return;
     }
 
+    _doSwitchTab(tabId);
+  }
+
+  function _doSwitchTab(tabId) {
     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById('view-' + tabId);
     if (target) target.classList.add('active');
 
-    const navIds = ['landing', 'dashboard', 'submit', 'review', 'verify', 'audit'];
+    const navIds = ['landing', 'login', 'register', 'dashboard', 'submit', 'review', 'verify', 'audit'];
     navIds.forEach(id => {
       const btn = document.getElementById('nav-' + id);
       if (!btn) return;
@@ -2309,7 +2560,15 @@
   window.addEventListener('DOMContentLoaded', () => {
     initAuthSession();
     renderLatex();
-    refreshEvidenceQueue();
+
+    // If user is not logged in, land on the login page; otherwise show dashboard
+    if (!currentUser || !currentUser.email) {
+      _doSwitchTab('landing'); // Show landing/marketing page; login prompt appears on nav
+    } else {
+      _doSwitchTab('dashboard');
+      refreshEvidenceQueue();
+    }
+
     fetch(`${API_HOST}/health`)
       .then(r => r.json())
       .then(d => {
