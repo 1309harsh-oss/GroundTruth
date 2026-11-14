@@ -220,7 +220,8 @@ def verify_evidence_integrity(evidence_id: str, db: Session = Depends(get_db)):
         file_size_bytes=evidence.file_size_bytes,
         server_receipt_time=evidence.server_receipt_time,
         review_status=evidence.review_status,
-        message=message
+        message=message,
+        photo_url=f"/api/v1/evidence/photo/{evidence.id}"
     )
 
 @router.post("/review/{evidence_id}", response_model=ReviewResponse)

@@ -2585,23 +2585,52 @@
       if (!res.ok) throw new Error('Verification record not located');
       const data = await res.json();
 
-      card.className = `glass-card p-6 space-y-3 ${data.is_valid ? 'border-[#10B981]' : 'border-[#FF5A1F]'}`;
+      const isApproved = data.review_status === 'APPROVED';
+      const isRejected = data.review_status === 'REJECTED';
+      const statusColor = isApproved ? 'text-[#10B981]' : isRejected ? 'text-[#EF4444]' : 'text-[#FF5A1F]';
+      const borderColor = isApproved ? 'border-[#10B981]' : isRejected ? 'border-[#EF4444]' : 'border-[#FF5A1F]';
+
+      card.className = `glass-card p-6 space-y-4 ${borderColor}`;
       card.innerHTML = `
-        <div class="flex items-center gap-2 font-mono text-sm ${data.is_valid ? 'text-[#10B981]' : 'text-[#FF5A1F]'} font-bold">
-          <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
-          <span>${data.status}</span>
+        <div class="flex items-center justify-between pb-3 border-b border-white/10 font-mono">
+          <div class="flex items-center gap-2 text-sm ${data.is_valid ? 'text-[#10B981]' : 'text-[#FF5A1F]'} font-bold">
+            <i class="fa-solid ${data.is_valid ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+            <span>${data.status}</span>
+          </div>
+          <span class="chip ${isApproved ? 'chip-green' : 'chip-orange'} font-bold">
+            ${data.review_status === 'APPROVED' ? '✓ APPROVED' : data.review_status === 'REJECTED' ? '✕ REJECTED' : '⏳ ' + data.review_status}
+          </span>
         </div>
-        <p class="text-xs text-[#A1A1AA]">${data.message}</p>
+
+        <!-- Scanned Evidence Photo Inspection -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-mono text-[#A1A1AA] flex items-center justify-between">
+            <span>Captured Site Photograph (Decided Evidence)</span>
+            <span class="text-xs ${statusColor} font-bold">${data.review_status}</span>
+          </div>
+          <div class="rounded-xl overflow-hidden bg-black/80 border border-white/15 relative min-h-[220px] max-h-80 flex items-center justify-center">
+            <img src="${API_HOST}/api/v1/evidence/photo/${data.evidence_id}" alt="${data.original_filename}" class="w-full h-full object-contain max-h-80" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'160\'><rect fill=\'%23121215\' width=\'300\' height=\'160\'/><text fill=\'%2371717A\' font-family=\'monospace\' font-size=\'12\' x=\'50%\' y=\'50%\' text-anchor=\'middle\'>Photo processing on server</text></svg>'">
+            <div class="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-mono bg-black/80 ${statusColor} border border-white/20">
+              <i class="fa-solid fa-stamp mr-1"></i>DETERMINATION: ${data.review_status}
+            </div>
+            <a href="${API_HOST}/api/v1/evidence/photo/${data.evidence_id}" target="_blank" class="absolute bottom-2 right-2 px-2 py-1 rounded text-[10px] font-mono bg-black/85 text-white hover:text-[#FF5A1F] border border-white/20 flex items-center gap-1">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Full Res
+            </a>
+          </div>
+        </div>
+
+        <p class="text-xs text-[#A1A1AA] font-mono">${data.message}</p>
         <div class="p-3 rounded-xl bg-black/60 border border-white/10 font-mono text-xs space-y-1.5 text-white">
           <div><span class="text-[#71717A]">File:</span> ${data.original_filename} (${(data.file_size_bytes/1024).toFixed(1)} KB)</div>
-          <div class="truncate"><span class="text-[#71717A]">Recorded:</span> ${data.recorded_sha256}</div>
-          <div class="truncate"><span class="text-[#71717A]">Computed:</span> ${data.computed_sha256}</div>
-          <div><span class="text-[#71717A]">Review State:</span> <span class="font-bold text-white">${data.review_status}</span></div>
+          <div class="truncate"><span class="text-[#71717A]">Recorded SHA-256:</span> ${data.recorded_sha256}</div>
+          <div class="truncate"><span class="text-[#71717A]">Computed Digest:</span> <span class="text-[#10B981]">${data.computed_sha256}</span></div>
+          <div><span class="text-[#71717A]">Review Authority Decision:</span> <span class="font-bold ${statusColor}">${data.review_status}</span></div>
         </div>
-        <div class="pt-1 flex justify-end">
+
+        <div class="pt-1 flex justify-end gap-2">
           <button onclick="showAssetModal('${data.evidence_id}','${data.original_filename}')" class="btn-glass-subtle px-4 py-2 rounded-xl text-xs font-mono flex items-center gap-2 cursor-pointer">
             <i class="fa-solid fa-barcode text-[#FF5A1F]"></i>
-            <span>View Asset Barcode &amp; QR</span>
+            <span>Asset Barcode Tag</span>
           </button>
         </div>
       `;
@@ -2964,9 +2993,16 @@
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 250, height: 250 } },
       (decodedText) => {
-        showToast(`Scanned code: ${decodedText}`);
-        let targetId = decodedText;
-        if (decodedText.includes('id=')) targetId = decodedText.split('id=')[1];
+        showToast(`QR Code Scanned Successfully!`);
+        let targetId = decodedText.trim();
+        // Parse if full URL with id query parameter or fragment
+        if (targetId.includes('id=')) {
+          const parts = targetId.split('id=')[1];
+          targetId = parts.split('&')[0].split('#')[0];
+        } else if (targetId.includes('/')) {
+          const segments = targetId.split('/');
+          targetId = segments[segments.length - 1];
+        }
         document.getElementById('verifyInputId').value = targetId;
         stopQrScanner();
         executeVerification(targetId);
@@ -2993,9 +3029,21 @@
     initAuthSession();
     renderLatex();
 
-    // If user is not logged in, land on the login page; otherwise show dashboard
-    if (!currentUser || !currentUser.email) {
-      _doSwitchTab('landing'); // Show landing/marketing page; login prompt appears on nav
+    // Check if user arrived via QR Code Scan (e.g. ?id=UUID or #verify?id=UUID)
+    const urlParams = new URLSearchParams(window.location.search);
+    let qrParamId = urlParams.get('id');
+    if (!qrParamId && window.location.hash.includes('id=')) {
+      qrParamId = window.location.hash.split('id=')[1].split('&')[0];
+    }
+
+    if (qrParamId) {
+      _doSwitchTab('verify');
+      const inputEl = document.getElementById('verifyInputId');
+      if (inputEl) inputEl.value = qrParamId;
+      executeVerification(qrParamId);
+    } else if (!currentUser || !currentUser.email) {
+      // If user is not logged in, land on the login page; otherwise show dashboard
+      _doSwitchTab('landing');
     } else {
       _doSwitchTab('dashboard');
       refreshEvidenceQueue();

@@ -108,6 +108,7 @@ class EvidenceVerificationResponse(BaseModel):
     server_receipt_time: datetime
     review_status: str
     message: str
+    photo_url: Optional[str] = None
 
 # Review Schemas
 class ReviewDecisionCreate(BaseModel):
