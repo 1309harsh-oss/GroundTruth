@@ -1202,21 +1202,6 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Capture Latitude</label>
-            <input type="number" step="any" id="inputLat" class="gt-input font-mono" placeholder="28.614000" aria-label="Latitude">
-          </div>
-          <div>
-            <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Capture Longitude</label>
-            <input type="number" step="any" id="inputLon" class="gt-input font-mono" placeholder="77.209100" aria-label="Longitude">
-          </div>
-        </div>
-
-        <button type="button" onclick="detectLocation()" class="btn-glass-subtle text-xs font-mono px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer">
-          <i class="fa-solid fa-location-dot text-[#FF5A1F]"></i>
-          <span>Auto-detect GPS from Device</span>
-        </button>
 
         <div>
           <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Inspection Notes &amp; Invoice Reference</label>
@@ -2430,8 +2415,10 @@
       formData.append('milestone_id', 'seed');
       formData.append('category', document.getElementById('inputCategory').value);
       formData.append('notes', document.getElementById('inputNotes').value);
-      formData.append('capture_latitude', document.getElementById('inputLat').value);
-      formData.append('capture_longitude', document.getElementById('inputLon').value);
+      const latEl = document.getElementById('inputLat');
+      const lonEl = document.getElementById('inputLon');
+      if (latEl && latEl.value) formData.append('capture_latitude', latEl.value);
+      if (lonEl && lonEl.value) formData.append('capture_longitude', lonEl.value);
       const supersededId = document.getElementById('inputSupersededId').value.trim();
       if (supersededId) formData.append('superseded_evidence_id', supersededId);
 
