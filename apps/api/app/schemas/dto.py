@@ -90,6 +90,8 @@ class EvidenceResponse(BaseModel):
     ai_recommendation: Optional[str]
     ai_flags: Optional[List[str]] = []
     created_at: datetime
+    latest_review_reason: Optional[str] = None
+    latest_review_corrective: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -1437,8 +1437,13 @@
     <input type="hidden" id="modalEvidenceId">
     <input type="hidden" id="modalDecision">
     <div>
-      <label class="block text-xs font-mono uppercase mb-1.5 text-[#A1A1AA]">Reason for Decision (Required for Audit Ledger)</label>
-      <textarea id="modalReason" class="gt-input" rows="4" placeholder="Detail specifications checked, reason for sign-off or defect identified…"></textarea>
+      <div class="flex items-center justify-between mb-1.5">
+        <label class="block text-xs font-mono uppercase text-[#A1A1AA]">Reviewer Description / Reason</label>
+        <span class="text-[10px] font-mono text-[#FF5A1F] flex items-center gap-1">
+          <i class="fa-solid fa-user-shield"></i> Visible to Admin &amp; Reviewer Only
+        </span>
+      </div>
+      <textarea id="modalReason" class="gt-input" rows="4" placeholder="Enter comprehensive review description, engineering specifications verified, sign-off notes, or defect observations (restricted to Admin & Reviewer roles)…"></textarea>
     </div>
     <div id="modalCorrectionBox" class="hidden">
       <label class="block text-xs font-mono uppercase mb-1.5 text-[#FF5A1F]">Correction Instructions for Field Contractor</label>
@@ -1519,6 +1524,20 @@
     <div class="p-3 rounded-xl bg-black/60 border border-white/10 text-xs space-y-1">
       <div class="text-[10px] text-[#71717A] uppercase">AI Recommendation &amp; Inspection Flags</div>
       <div id="detailModalAiFlags" class="text-[#FFA07A] text-[11px]">-</div>
+    </div>
+
+    <!-- Reviewer Determination & Description (Confidential: Admin & Reviewer Only) -->
+    <div id="detailModalReviewerSection" class="p-3.5 rounded-xl bg-[#FF5A1F]/10 border border-[#FF5A1F]/30 text-xs space-y-1.5">
+      <div class="flex items-center justify-between text-[10px] font-mono">
+        <span class="text-[#FF5A1F] font-bold uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-lock"></i> Reviewer Sign-Off Description &amp; Reason
+        </span>
+        <span class="chip chip-orange text-[9px]">CONFIDENTIAL • ADMIN &amp; REVIEWER</span>
+      </div>
+      <div id="detailModalReviewerDescription" class="text-white text-[11px] leading-relaxed italic bg-black/40 p-2.5 rounded border border-white/10 select-text">-</div>
+      <div id="detailModalCorrectiveWrapper" class="hidden text-[11px] text-[#FFA07A] pt-1">
+        <span class="font-bold">Corrective Actions: </span><span id="detailModalCorrectiveText">-</span>
+      </div>
     </div>
 
     <!-- Raw JSON Inspector Drawer -->
@@ -2676,6 +2695,12 @@
           <span class="font-bold ${ev.review_status === 'APPROVED' ? 'text-[#10B981]' : ev.review_status === 'CORRECTION_REQUESTED' ? 'text-[#FF5A1F]' : 'text-[#71717A]'}">
             ${ev.review_status}
           </span>
+          ${(currentRole === 'REVIEWER' || currentRole === 'ADMIN') && ev.latest_review_reason ? `
+            <div class="mt-1 p-1.5 rounded bg-white/5 border border-white/10 text-[10px] text-[#A1A1AA] max-w-xs font-mono">
+              <span class="text-[#FF5A1F] font-bold"><i class="fa-solid fa-comment-dots mr-1"></i>Note:</span>
+              <span class="text-white italic">"${ev.latest_review_reason.length > 55 ? ev.latest_review_reason.substring(0, 52) + '…' : ev.latest_review_reason}"</span>
+            </div>
+          ` : ''}
         </td>
         <td class="py-3 px-4 text-right whitespace-nowrap">
           <button onclick="openEvidenceDetailModal('${ev.id}')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-white text-[10px] mr-1 cursor-pointer" title="Inspect Evidence Metadata">
@@ -2761,7 +2786,38 @@
     document.getElementById('detailModalHash').textContent = ev.sha256_hash;
     document.getElementById('detailModalCoords').textContent = `Latitude: ${ev.capture_latitude !== null ? ev.capture_latitude : 'Not recorded'} | Longitude: ${ev.capture_longitude !== null ? ev.capture_longitude : 'Not recorded'}`;
     document.getElementById('detailModalAiFlags').textContent = ev.ai_flags && ev.ai_flags.length ? ev.ai_flags.join(' • ') : 'No anomalies detected. Pass specification.';
-    document.getElementById('detailModalRawJson').textContent = JSON.stringify(ev, null, 2);
+
+    // STRICT RBAC PRIVACY: Reviewer reason/description is only visible to ADMIN and REVIEWER
+    const reviewerSection = document.getElementById('detailModalReviewerSection');
+    const reviewerDesc = document.getElementById('detailModalReviewerDescription');
+    const correctiveWrapper = document.getElementById('detailModalCorrectiveWrapper');
+    const correctiveText = document.getElementById('detailModalCorrectiveText');
+
+    if (reviewerSection) {
+      if ((currentRole === 'ADMIN' || currentRole === 'REVIEWER') && (ev.latest_review_reason || ev.latest_review_corrective)) {
+        reviewerSection.classList.remove('hidden');
+        if (reviewerDesc) reviewerDesc.textContent = ev.latest_review_reason ? `"${ev.latest_review_reason}"` : 'No written description recorded.';
+        if (correctiveWrapper) {
+          if (ev.latest_review_corrective) {
+            correctiveWrapper.classList.remove('hidden');
+            if (correctiveText) correctiveText.textContent = ev.latest_review_corrective;
+          } else {
+            correctiveWrapper.classList.add('hidden');
+          }
+        }
+      } else {
+        // Hide completely for Worker, Auditor, or when no review has occurred yet
+        reviewerSection.classList.add('hidden');
+      }
+    }
+
+    // Strip confidential review note from raw JSON if user is not Admin or Reviewer
+    let displayJson = { ...ev };
+    if (currentRole !== 'ADMIN' && currentRole !== 'REVIEWER') {
+      delete displayJson.latest_review_reason;
+      delete displayJson.latest_review_corrective;
+    }
+    document.getElementById('detailModalRawJson').textContent = JSON.stringify(displayJson, null, 2);
 
     const assetBtn = document.getElementById('detailModalAssetBtn');
     if (assetBtn) {

@@ -157,7 +157,24 @@ def list_evidence(
         query = query.filter(Evidence.milestone_id == milestone_id)
     if review_status:
         query = query.filter(Evidence.review_status == review_status)
-    return query.order_by(Evidence.server_receipt_time.desc()).all()
+    evidence_list = query.order_by(Evidence.server_receipt_time.desc()).all()
+    
+    # Attach latest review determination/reason dynamically
+    for ev in evidence_list:
+        latest_rev = (
+            db.query(EvidenceReview)
+            .filter(EvidenceReview.evidence_id == ev.id)
+            .order_by(EvidenceReview.created_at.desc())
+            .first()
+        )
+        if latest_rev:
+            ev.latest_review_reason = latest_rev.reason
+            ev.latest_review_corrective = latest_rev.corrective_actions
+        else:
+            ev.latest_review_reason = None
+            ev.latest_review_corrective = None
+
+    return evidence_list
 
 @router.get("/verify/{evidence_id}", response_model=EvidenceVerificationResponse)
 def verify_evidence_integrity(evidence_id: str, db: Session = Depends(get_db)):
