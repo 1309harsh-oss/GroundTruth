@@ -1240,6 +1240,32 @@
             <p class="text-sm font-medium text-white" id="fileUploadPrompt">Click or drag &amp; drop field photograph to upload</p>
             <p class="text-xs text-[#71717A] font-mono mt-1">JPEG, PNG, WEBP — up to 50MB</p>
           </div>
+
+          <!-- Interactive Instant File Preview & Pre-Upload Digest Card -->
+          <div id="uploadPreviewCard" class="hidden mt-3 p-4 rounded-xl bg-black/60 border border-[#FF5A1F]/40 space-y-3 font-mono">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10 text-xs">
+              <span class="text-[#FF5A1F] font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-eye"></i> Local Evidence Inspection
+              </span>
+              <button type="button" onclick="clearSelectedFile()" class="text-[#71717A] hover:text-[#EF4444] text-[10px] cursor-pointer">
+                <i class="fa-solid fa-trash mr-1"></i>Clear
+              </button>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+              <div class="relative w-full sm:w-36 h-28 rounded-lg overflow-hidden border border-white/20 bg-black/80 flex-shrink-0">
+                <img id="uploadImgThumb" src="" alt="Selected Preview" class="w-full h-full object-cover">
+                <div class="absolute bottom-1 right-1 bg-black/80 text-[9px] px-1.5 py-0.5 rounded text-[#10B981] border border-[#10B981]/30">PRE-UPLOAD</div>
+              </div>
+              <div class="flex-1 space-y-1.5 text-[11px] min-w-0 w-full">
+                <div class="text-white font-bold truncate" id="uploadPreviewFilename">-</div>
+                <div class="text-[#A1A1AA]">Size: <span id="uploadPreviewSize" class="text-white">-</span> | Type: <span id="uploadPreviewType" class="text-white">-</span></div>
+                <div class="text-[10px] text-[#A1A1AA] truncate">
+                  <span class="text-[#FF5A1F]">Client SHA-256 Digest:</span>
+                  <div id="uploadPreviewHash" class="text-[#10B981] truncate font-mono text-[10px] mt-0.5">Computing in browser…</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button type="submit" id="submitFormBtn" class="btn-orange-glow w-full py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer">
@@ -1254,7 +1280,7 @@
 <!-- ─── 3. REVIEW QUEUE VIEW (Reviewer/Moderator + Admin) ─── -->
 <div id="view-review" class="app-view pt-24 pb-16">
   <div class="max-w-7xl mx-auto px-6 space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2">
           <h2 class="text-2xl font-bold text-white tracking-tight">Review &amp; Asset Queue</h2>
@@ -1262,10 +1288,36 @@
         </div>
         <p class="text-xs text-[#A1A1AA] font-mono mt-1">Human review authority: Inspect submitted photos, approve, deny, or request corrections.</p>
       </div>
-      <button onclick="refreshEvidenceQueue()" class="btn-glass-subtle px-4 py-2 rounded-xl text-xs font-mono flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-rotate-right text-[#FF5A1F]"></i>
-        <span>Refresh Queue</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="exportEvidenceCSV()" class="btn-glass-subtle px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 cursor-pointer text-white hover:text-white" title="Export Evidence Ledger as CSV">
+          <i class="fa-solid fa-file-csv text-[#10B981]"></i>
+          <span>Export CSV</span>
+        </button>
+        <button onclick="refreshEvidenceQueue()" class="btn-glass-subtle px-4 py-2 rounded-xl text-xs font-mono flex items-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-rotate-right text-[#FF5A1F]"></i>
+          <span>Refresh Queue</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Interactive Filters & Search Controls -->
+    <div class="glass-card p-4 grid grid-cols-1 sm:grid-cols-12 gap-3 font-mono text-xs">
+      <div class="sm:col-span-5 relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-[#71717A]"></i>
+        <input type="text" id="queueSearchInput" oninput="applyQueueFilters()" class="gt-input pl-9 text-xs" placeholder="Search by filename, SHA-256 hash or UUID…">
+      </div>
+      <div class="sm:col-span-4">
+        <select id="queueStatusFilter" onchange="applyQueueFilters()" class="gt-input text-xs">
+          <option value="ALL">All Review Statuses (Any)</option>
+          <option value="PENDING_REVIEW">Pending Review Only</option>
+          <option value="APPROVED">Approved Only</option>
+          <option value="CORRECTION_REQUESTED">Correction Requested</option>
+          <option value="REJECTED">Rejected Only</option>
+        </select>
+      </div>
+      <div class="sm:col-span-3 flex items-center justify-end px-2 text-[#A1A1AA] text-[11px]">
+        <span>Showing: <strong id="queueCounterBadge" class="text-white font-bold">12</strong> records</span>
+      </div>
     </div>
 
     <div class="glass-card overflow-hidden">
@@ -1335,12 +1387,33 @@
 <!-- ─── 5. AUDIT LEDGER VIEW (Auditor + Admin) ─── -->
 <div id="view-audit" class="app-view pt-24 pb-16">
   <div class="max-w-4xl mx-auto px-6 space-y-6">
-    <div>
-      <div class="flex items-center gap-2">
-        <h2 class="text-2xl font-bold text-white tracking-tight">Audit Ledger &amp; Chain of Custody</h2>
-        <span class="chip chip-neutral text-[10px]">AUDITOR ROLE</span>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-2xl font-bold text-white tracking-tight">Audit Ledger &amp; Chain of Custody</h2>
+          <span class="chip chip-neutral text-[10px]">AUDITOR ROLE</span>
+        </div>
+        <p class="text-xs text-[#A1A1AA] font-mono mt-1">Immutable chronological sequence of all submissions, hash proofs, and engineer authorizations.</p>
       </div>
-      <p class="text-xs text-[#A1A1AA] font-mono mt-1">Immutable chronological sequence of all submissions, hash proofs, and engineer authorizations.</p>
+      <div class="flex items-center gap-2">
+        <button onclick="exportEvidenceCSV()" class="btn-glass-subtle px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 cursor-pointer text-white" title="Export Ledger">
+          <i class="fa-solid fa-download text-[#FF5A1F]"></i>
+          <span>Download Audit Log</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Audit Search & Quick Filter -->
+    <div class="glass-card p-3 flex flex-col sm:flex-row gap-3 items-center justify-between font-mono text-xs">
+      <div class="relative w-full sm:w-96">
+        <i class="fa-solid fa-filter absolute left-3 top-2.5 text-[#71717A] text-[11px]"></i>
+        <input type="text" id="auditSearchInput" oninput="applyAuditFilters()" class="gt-input pl-8 text-xs py-2" placeholder="Filter audit trail by file or hash…">
+      </div>
+      <div class="flex items-center gap-3 text-[11px] text-[#A1A1AA] w-full sm:w-auto justify-between sm:justify-end">
+        <span>Verified Blocks: <strong id="auditBlockCount" class="text-[#10B981]">12</strong></span>
+        <span>•</span>
+        <span class="text-[#10B981]"><i class="fa-solid fa-lock mr-1"></i>SHA-256 Locked</span>
+      </div>
     </div>
     <div class="space-y-3" id="auditLedgerTimeline">
       <div class="text-center py-10 text-xs font-mono text-[#71717A]">
@@ -1383,6 +1456,92 @@
 <!-- ══════════════════════════════════════════════════════
      MODAL: PHYSICAL ASSET BARCODE & QR TAG
 ══════════════════════════════════════════════════════ -->
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: EVIDENCE DEEP-INSPECTION & METADATA VAULT
+══════════════════════════════════════════════════════ -->
+<div id="evidenceDetailModal" class="hidden fixed inset-0 z-[115] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+  <div class="glass-card p-6 max-w-2xl w-full space-y-4 bg-[#141418] border border-white/20 shadow-2xl relative max-h-[90vh] overflow-y-auto font-mono">
+    <div class="flex items-center justify-between pb-3 border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-[#FF5A1F] text-white flex items-center justify-center text-xs font-bold">
+          <i class="fa-solid fa-fingerprint"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white" id="detailModalFilename">Evidence Metadata Inspector</h3>
+          <p class="text-[10px] text-[#71717A]" id="detailModalUuid">UUID</p>
+        </div>
+      </div>
+      <button onclick="closeEvidenceDetailModal()" class="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center cursor-pointer hover:bg-white/20 transition" aria-label="Close">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <!-- Detail Meta Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+      <div class="p-2.5 rounded-lg bg-black/60 border border-white/10 space-y-0.5">
+        <div class="text-[9px] text-[#71717A] uppercase">Review Status</div>
+        <div id="detailModalStatus" class="font-bold text-[#10B981]">-</div>
+      </div>
+      <div class="p-2.5 rounded-lg bg-black/60 border border-white/10 space-y-0.5">
+        <div class="text-[9px] text-[#71717A] uppercase">Location Geofence</div>
+        <div id="detailModalLocation" class="font-bold text-white text-[11px] truncate">-</div>
+      </div>
+      <div class="p-2.5 rounded-lg bg-black/60 border border-white/10 space-y-0.5">
+        <div class="text-[9px] text-[#71717A] uppercase">AI Confidence</div>
+        <div id="detailModalAiScore" class="font-bold text-[#FFA07A]">-</div>
+      </div>
+      <div class="p-2.5 rounded-lg bg-black/60 border border-white/10 space-y-0.5">
+        <div class="text-[9px] text-[#71717A] uppercase">File Size</div>
+        <div id="detailModalSize" class="font-bold text-white">-</div>
+      </div>
+    </div>
+
+    <!-- SHA-256 Digest Box with One-Click Copy -->
+    <div class="p-3 rounded-xl bg-black/80 border border-white/15 space-y-1.5 text-xs">
+      <div class="flex items-center justify-between text-[10px] text-[#A1A1AA]">
+        <span>SHA-256 Cryptographic Hash (Immutable)</span>
+        <button onclick="copyDetailHash()" class="text-[#FF5A1F] hover:underline flex items-center gap-1 cursor-pointer">
+          <i class="fa-solid fa-copy"></i>
+          <span id="copyHashLabel">Copy Hash</span>
+        </button>
+      </div>
+      <div id="detailModalHash" class="text-white text-[11px] break-all bg-white/5 p-2 rounded border border-white/10 select-all">-</div>
+    </div>
+
+    <!-- Geodetic Coordinates -->
+    <div class="p-3 rounded-xl bg-black/60 border border-white/10 text-xs space-y-1">
+      <div class="text-[10px] text-[#71717A] uppercase">Geodetic GPS Coordinates</div>
+      <div id="detailModalCoords" class="text-white text-[11px]">Latitude: - | Longitude: -</div>
+    </div>
+
+    <!-- AI Diagnostics and Flags -->
+    <div class="p-3 rounded-xl bg-black/60 border border-white/10 text-xs space-y-1">
+      <div class="text-[10px] text-[#71717A] uppercase">AI Recommendation &amp; Inspection Flags</div>
+      <div id="detailModalAiFlags" class="text-[#FFA07A] text-[11px]">-</div>
+    </div>
+
+    <!-- Raw JSON Inspector Drawer -->
+    <details class="text-xs group">
+      <summary class="cursor-pointer text-[#A1A1AA] hover:text-white flex items-center gap-1.5 text-[11px] py-1">
+        <i class="fa-solid fa-code text-[#FF5A1F]"></i>
+        <span>Show Raw JSON Record</span>
+      </summary>
+      <pre id="detailModalRawJson" class="mt-2 p-3 rounded-xl bg-black text-[#A1A1AA] text-[10px] overflow-x-auto border border-white/10 max-h-48"></pre>
+    </details>
+
+    <div class="flex gap-2 pt-2 border-t border-white/10">
+      <button id="detailModalAssetBtn" onclick="" class="btn-orange-glow flex-1 py-2.5 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-barcode"></i>
+        <span>Inspect Asset Barcode &amp; QR</span>
+      </button>
+      <button onclick="closeEvidenceDetailModal()" class="btn-glass-subtle px-6 py-2.5 rounded-xl text-xs font-bold cursor-pointer">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="assetModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
   <div class="glass-card p-8 max-w-lg w-full space-y-5 bg-[#141418] border border-white/20">
     <div class="flex items-center justify-between">
@@ -1540,6 +1699,7 @@
 <script>
   const API_HOST = 'http://localhost:8000';
   let selectedFile = null;
+  let cachedEvidenceList = []; // Global cache for instant searching, filtering & export
   let html5QrScanner = null;
   let currentAuthMode = 'login'; // 'login' or 'register'
 
@@ -2156,24 +2316,77 @@
     );
   }
 
-  // ── File Selection ──
+  // ── File Selection & Client-Side SHA-256 Digest Computation ──
   function onFileSelected(input) {
     if (input.files && input.files[0]) {
-      selectedFile = input.files[0];
-      const p = document.getElementById('fileUploadPrompt');
-      p.textContent = `Selected: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
-      p.style.color = '#FFFFFF';
+      processSelectedFile(input.files[0]);
     }
   }
 
   function onFileDrop(e) {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      selectedFile = e.dataTransfer.files[0];
-      const p = document.getElementById('fileUploadPrompt');
-      p.textContent = `Attached: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
+      processSelectedFile(e.dataTransfer.files[0]);
+    }
+  }
+
+  function processSelectedFile(file) {
+    selectedFile = file;
+    const p = document.getElementById('fileUploadPrompt');
+    if (p) {
+      p.textContent = `Attached: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
       p.style.color = '#FFFFFF';
     }
+
+    const previewCard = document.getElementById('uploadPreviewCard');
+    const thumb = document.getElementById('uploadImgThumb');
+    const nameEl = document.getElementById('uploadPreviewFilename');
+    const sizeEl = document.getElementById('uploadPreviewSize');
+    const typeEl = document.getElementById('uploadPreviewType');
+    const hashEl = document.getElementById('uploadPreviewHash');
+
+    if (previewCard) previewCard.classList.remove('hidden');
+    if (nameEl) nameEl.textContent = file.name;
+    if (sizeEl) sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+    if (typeEl) typeEl.textContent = file.type || 'image/unknown';
+    if (hashEl) hashEl.textContent = 'Computing browser SHA-256…';
+
+    // Show image thumbnail
+    if (thumb && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => { thumb.src = e.target.result; };
+      reader.readAsDataURL(file);
+    }
+
+    // Compute real SHA-256 client-side using Web Cryptography API
+    if (window.crypto && window.crypto.subtle) {
+      const hashReader = new FileReader();
+      hashReader.onload = async (e) => {
+        try {
+          const buffer = e.target.result;
+          const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+          if (hashEl) hashEl.textContent = hex;
+        } catch (err) {
+          if (hashEl) hashEl.textContent = 'Hardware crypto unavailable';
+        }
+      };
+      hashReader.readAsArrayBuffer(file);
+    }
+  }
+
+  function clearSelectedFile() {
+    selectedFile = null;
+    const input = document.getElementById('fileInput');
+    if (input) input.value = '';
+    const p = document.getElementById('fileUploadPrompt');
+    if (p) {
+      p.textContent = 'Click or drag & drop field photograph to upload';
+      p.style.color = '#FFFFFF';
+    }
+    const previewCard = document.getElementById('uploadPreviewCard');
+    if (previewCard) previewCard.classList.add('hidden');
   }
 
   // ── Form Submission to FastAPI (Worker + Admin) ──
@@ -2211,8 +2424,7 @@
       const data = await res.json();
       showToast(`Evidence ${data.id.substring(0,8)} stored! Barcode generated.`);
       document.getElementById('evidenceForm').reset();
-      selectedFile = null;
-      document.getElementById('fileUploadPrompt').textContent = 'Click or drag & drop field photograph to upload';
+      clearSelectedFile();
       document.getElementById('fileUploadPrompt').style.color = '#FFFFFF';
       
       switchTab('dashboard');
@@ -2230,6 +2442,7 @@
       const res = await fetch(`${API_HOST}/api/v1/evidence/list`);
       if (!res.ok) return;
       const list = await res.json();
+      cachedEvidenceList = list;
 
       // Update Dashboard Live Counts
       const totalCount = list.length;
@@ -2289,48 +2502,9 @@
         }
       }
 
-      // Render Review Queue Table (Action buttons guarded by role)
-      const tbody = document.getElementById('evidenceQueueBody');
-      if (tbody) {
-        if (list.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-[#71717A]">No evidence records in ledger.</td></tr>`;
-        } else {
-          tbody.innerHTML = list.map(ev => `
-            <tr class="border-b border-white/10 hover:bg-white/5 transition">
-              <td class="py-3 px-4">
-                <span class="font-bold text-white">${ev.original_filename}</span>
-                <span class="chip chip-neutral text-[10px] ml-1">v${ev.version_number}</span><br>
-                <span class="text-[10px] text-[#71717A]">${ev.id}</span>
-                ${ev.superseded_evidence_id ? `<div class="text-[10px] text-[#FF5A1F] mt-0.5">Corrects: ${ev.superseded_evidence_id.substring(0,8)}…</div>` : ''}
-              </td>
-              <td class="py-3 px-4 max-w-xs truncate text-[#A1A1AA]" title="${ev.sha256_hash}">${ev.sha256_hash}</td>
-              <td class="py-3 px-4">
-                <span class="chip ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'chip-green' : 'chip-orange'} text-[10px]">${ev.location_status}</span>
-                <div class="text-[10px] text-[#71717A] mt-1">Quality: ${ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A'}</div>
-              </td>
-              <td class="py-3 px-4">
-                <span class="chip ${ev.ai_recommendation === 'NORMAL_REVIEW' ? 'chip-neutral' : 'chip-orange'} text-[10px]">${ev.ai_recommendation || 'PROCESSING'}</span>
-                ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] text-[#FF5A1F] mt-1 max-w-xs truncate">${ev.ai_flags.join(', ')}</div>` : ''}
-              </td>
-              <td class="py-3 px-4">
-                <span class="font-bold ${ev.review_status === 'APPROVED' ? 'text-[#10B981]' : ev.review_status === 'CORRECTION_REQUESTED' ? 'text-[#FF5A1F]' : 'text-[#71717A]'}">
-                  ${ev.review_status}
-                </span>
-              </td>
-              <td class="py-3 px-4 text-right whitespace-nowrap">
-                <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-[#FF5A1F] text-[11px] mr-1 cursor-pointer">
-                  <i class="fa-solid fa-barcode mr-1"></i>Bar &amp; QR
-                </button>
-                ${(currentRole === 'REVIEWER' || currentRole === 'ADMIN') ? `
-                  <button onclick="openReviewModal('${ev.id}','APPROVED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#10B981]/20 text-[#10B981] border border-white/15 text-[10px] mr-1 cursor-pointer">Approve</button>
-                  <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#FF5A1F]/20 text-[#FF5A1F] border border-white/15 text-[10px] mr-1 cursor-pointer">Suggest</button>
-                  <button onclick="openReviewModal('${ev.id}','REJECTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-red-500/20 text-[#EF4444] border border-white/15 text-[10px] cursor-pointer">Deny</button>
-                ` : `<span class="text-[10px] text-[#52525B]">Read-Only</span>`}
-              </td>
-            </tr>
-          `).join('');
-        }
-      }
+      // Render Review Queue using live filter helper
+      applyQueueFilters();
+      applyAuditFilters();
 
       // Render Worker Dashboard Recent Activity List
       const workerList = document.getElementById('workerRecentList');
@@ -2373,26 +2547,7 @@
         }
       }
 
-      // Render Audit Ledger
-      const auditList = document.getElementById('auditLedgerTimeline');
-      if (auditList) {
-        auditList.innerHTML = list.map(ev => `
-          <div class="glass-card p-4 flex items-start justify-between">
-            <div class="space-y-1 flex-1 min-w-0 font-mono">
-              <div class="flex items-center gap-2 text-xs">
-                <span class="font-bold text-white">${ev.original_filename}</span>
-                <span class="chip chip-neutral text-[10px]">v${ev.version_number}</span>
-              </div>
-              <div class="text-[11px] text-[#A1A1AA] truncate">SHA-256: ${ev.sha256_hash}</div>
-              <div class="text-[10px] text-[#71717A]">UUID: ${ev.id}</div>
-              <div class="text-[10px] text-[#52525B]">Received: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
-            </div>
-            <span class="chip ${ev.review_status === 'APPROVED' ? 'chip-green' : 'chip-neutral'} text-[10px] flex-shrink-0 ml-3">
-              ${ev.review_status}
-            </span>
-          </div>
-        `).join('');
-      }
+
     } catch (err) {
       console.error(err);
     }
@@ -2469,6 +2624,203 @@
     } catch (err) {
       resBox.innerHTML = `<div class="p-3 rounded-xl bg-red-950/40 border border-red-500/50 text-[#EF4444] text-xs font-mono">${err.message}</div>`;
     }
+  }
+
+    // ── Feature: Interactive Review Queue Filtering & Search ──
+  function applyQueueFilters() {
+    const searchInput = document.getElementById('queueSearchInput');
+    const statusSelect = document.getElementById('queueStatusFilter');
+    const counterBadge = document.getElementById('queueCounterBadge');
+    const tbody = document.getElementById('evidenceQueueBody');
+    if (!tbody) return;
+
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    const statusFilter = statusSelect ? statusSelect.value : 'ALL';
+
+    const filtered = cachedEvidenceList.filter(ev => {
+      const matchSearch = !query ||
+        (ev.original_filename && ev.original_filename.toLowerCase().includes(query)) ||
+        (ev.sha256_hash && ev.sha256_hash.toLowerCase().includes(query)) ||
+        (ev.id && ev.id.toLowerCase().includes(query));
+      const matchStatus = statusFilter === 'ALL' || ev.review_status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+
+    if (counterBadge) counterBadge.textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-[#71717A]">No evidence records match the active filter.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(ev => `
+      <tr class="border-b border-white/10 hover:bg-white/5 transition">
+        <td class="py-3 px-4">
+          <button onclick="openEvidenceDetailModal('${ev.id}')" class="font-bold text-white hover:text-[#FF5A1F] text-left underline cursor-pointer truncate max-w-[200px] block" title="Inspect Full Metadata">${ev.original_filename}</button>
+          <span class="chip chip-neutral text-[10px] ml-0">v${ev.version_number}</span>
+          <span class="text-[10px] text-[#71717A] block">${ev.id.substring(0, 16)}…</span>
+          ${ev.superseded_evidence_id ? `<div class="text-[10px] text-[#FF5A1F] mt-0.5">Corrects: ${ev.superseded_evidence_id.substring(0,8)}…</div>` : ''}
+        </td>
+        <td class="py-3 px-4 max-w-xs truncate text-[#A1A1AA]">
+          <span class="cursor-pointer hover:text-white" onclick="navigator.clipboard.writeText('${ev.sha256_hash}'); showToast('SHA-256 copied!')" title="Click to copy full hash">${ev.sha256_hash}</span>
+        </td>
+        <td class="py-3 px-4">
+          <span class="chip ${ev.location_status === 'VERIFIED_IN_GEOFENCE' ? 'chip-green' : 'chip-orange'} text-[10px]">${ev.location_status}</span>
+          <div class="text-[10px] text-[#71717A] mt-1">Quality: ${ev.ai_quality_score ? (ev.ai_quality_score*100).toFixed(0)+'%' : 'N/A'}</div>
+        </td>
+        <td class="py-3 px-4">
+          <span class="chip ${ev.ai_recommendation === 'NORMAL_REVIEW' ? 'chip-neutral' : 'chip-orange'} text-[10px]">${ev.ai_recommendation || 'PROCESSING'}</span>
+          ${ev.ai_flags && ev.ai_flags.length ? `<div class="text-[10px] text-[#FF5A1F] mt-1 max-w-xs truncate">${ev.ai_flags.join(', ')}</div>` : ''}
+        </td>
+        <td class="py-3 px-4">
+          <span class="font-bold ${ev.review_status === 'APPROVED' ? 'text-[#10B981]' : ev.review_status === 'CORRECTION_REQUESTED' ? 'text-[#FF5A1F]' : 'text-[#71717A]'}">
+            ${ev.review_status}
+          </span>
+        </td>
+        <td class="py-3 px-4 text-right whitespace-nowrap">
+          <button onclick="openEvidenceDetailModal('${ev.id}')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-white text-[10px] mr-1 cursor-pointer" title="Inspect Evidence Metadata">
+            <i class="fa-solid fa-eye text-[#FF5A1F] mr-1"></i>Inspect
+          </button>
+          <button onclick="showAssetModal('${ev.id}','${ev.original_filename}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-[#FF5A1F] text-[10px] mr-1 cursor-pointer">
+            <i class="fa-solid fa-barcode mr-1"></i>Bar &amp; QR
+          </button>
+          ${(currentRole === 'REVIEWER' || currentRole === 'ADMIN') ? `
+            <button onclick="openReviewModal('${ev.id}','APPROVED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#10B981]/20 text-[#10B981] border border-white/15 text-[10px] mr-1 cursor-pointer">Approve</button>
+            <button onclick="openReviewModal('${ev.id}','CORRECTION_REQUESTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-[#FF5A1F]/20 text-[#FF5A1F] border border-white/15 text-[10px] mr-1 cursor-pointer">Suggest</button>
+            <button onclick="openReviewModal('${ev.id}','REJECTED')" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-red-500/20 text-[#EF4444] border border-white/15 text-[10px] cursor-pointer">Deny</button>
+          ` : `<span class="text-[10px] text-[#52525B]">Read-Only</span>`}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ── Feature: Interactive Audit Search & Timeline Filter ──
+  function applyAuditFilters() {
+    const input = document.getElementById('auditSearchInput');
+    const query = input ? input.value.trim().toLowerCase() : '';
+    const timeline = document.getElementById('auditLedgerTimeline');
+    const blockCount = document.getElementById('auditBlockCount');
+    if (!timeline) return;
+
+    const filtered = cachedEvidenceList.filter(ev => {
+      if (!query) return true;
+      return (ev.original_filename && ev.original_filename.toLowerCase().includes(query)) ||
+             (ev.sha256_hash && ev.sha256_hash.toLowerCase().includes(query)) ||
+             (ev.id && ev.id.toLowerCase().includes(query)) ||
+             (ev.review_status && ev.review_status.toLowerCase().includes(query));
+    });
+
+    if (blockCount) blockCount.textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      timeline.innerHTML = `<div class="text-center py-10 text-xs font-mono text-[#71717A]">No audit blocks matched query.</div>`;
+      return;
+    }
+
+    timeline.innerHTML = filtered.map(ev => `
+      <div class="glass-card p-4 flex items-start justify-between hover:border-white/20 transition">
+        <div class="space-y-1 flex-1 min-w-0 font-mono">
+          <div class="flex items-center gap-2 text-xs">
+            <span class="font-bold text-white cursor-pointer hover:text-[#FF5A1F]" onclick="openEvidenceDetailModal('${ev.id}')">${ev.original_filename}</span>
+            <span class="chip chip-neutral text-[10px]">v${ev.version_number}</span>
+          </div>
+          <div class="text-[11px] text-[#A1A1AA] truncate flex items-center gap-1.5">
+            <span class="text-[#FF5A1F]">SHA-256:</span>
+            <span class="text-white select-all">${ev.sha256_hash}</span>
+          </div>
+          <div class="text-[10px] text-[#71717A]">UUID: ${ev.id} | Timestamp: ${new Date(ev.server_receipt_time).toLocaleString()}</div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0 ml-3">
+          <button onclick="openEvidenceDetailModal('${ev.id}')" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 border border-white/15 text-[10px] font-mono text-white cursor-pointer" title="Inspect Full Record">
+            <i class="fa-solid fa-eye text-[#FF5A1F]"></i>
+          </button>
+          <span class="chip ${ev.review_status === 'APPROVED' ? 'chip-green' : 'chip-neutral'} text-[10px]">
+            ${ev.review_status}
+          </span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── Feature: Evidence Deep-Inspection Modal ──
+  let activeDetailEvidence = null;
+  function openEvidenceDetailModal(evidenceId) {
+    const ev = cachedEvidenceList.find(e => e.id === evidenceId);
+    if (!ev) {
+      showToast('Record not found in cache', 'error');
+      return;
+    }
+    activeDetailEvidence = ev;
+
+    document.getElementById('detailModalFilename').textContent = ev.original_filename;
+    document.getElementById('detailModalUuid').textContent = 'EVIDENCE UUID: ' + ev.id;
+    document.getElementById('detailModalStatus').textContent = ev.review_status;
+    document.getElementById('detailModalLocation').textContent = ev.location_status;
+    document.getElementById('detailModalAiScore').textContent = ev.ai_quality_score ? (ev.ai_quality_score * 100).toFixed(0) + '%' : 'N/A';
+    document.getElementById('detailModalSize').textContent = (ev.file_size_bytes / 1024).toFixed(1) + ' KB';
+    document.getElementById('detailModalHash').textContent = ev.sha256_hash;
+    document.getElementById('detailModalCoords').textContent = `Latitude: ${ev.capture_latitude !== null ? ev.capture_latitude : 'Not recorded'} | Longitude: ${ev.capture_longitude !== null ? ev.capture_longitude : 'Not recorded'}`;
+    document.getElementById('detailModalAiFlags').textContent = ev.ai_flags && ev.ai_flags.length ? ev.ai_flags.join(' • ') : 'No anomalies detected. Pass specification.';
+    document.getElementById('detailModalRawJson').textContent = JSON.stringify(ev, null, 2);
+
+    const assetBtn = document.getElementById('detailModalAssetBtn');
+    if (assetBtn) {
+      assetBtn.onclick = () => {
+        closeEvidenceDetailModal();
+        showAssetModal(ev.id, ev.original_filename);
+      };
+    }
+
+    document.getElementById('evidenceDetailModal').classList.remove('hidden');
+  }
+
+  function closeEvidenceDetailModal() {
+    document.getElementById('evidenceDetailModal').classList.add('hidden');
+  }
+
+  function copyDetailHash() {
+    if (activeDetailEvidence && activeDetailEvidence.sha256_hash) {
+      navigator.clipboard.writeText(activeDetailEvidence.sha256_hash);
+      const label = document.getElementById('copyHashLabel');
+      if (label) {
+        label.textContent = 'Copied!';
+        setTimeout(() => { label.textContent = 'Copy Hash'; }, 2000);
+      }
+      showToast('SHA-256 hash copied to clipboard');
+    }
+  }
+
+  // ── Feature: Evidence Ledger CSV Export ──
+  function exportEvidenceCSV() {
+    if (!cachedEvidenceList || cachedEvidenceList.length === 0) {
+      showToast('No evidence records to export', 'error');
+      return;
+    }
+
+    const headers = ['UUID', 'Filename', 'Version', 'SHA256_Digest', 'Review_Status', 'Location_Status', 'File_Size_Bytes', 'AI_Quality_Score', 'Receipt_Timestamp'];
+    const rows = cachedEvidenceList.map(ev => [
+      ev.id,
+      `"${(ev.original_filename || '').replace(/"/g, '""')}"`,
+      ev.version_number,
+      ev.sha256_hash,
+      ev.review_status,
+      ev.location_status,
+      ev.file_size_bytes,
+      ev.ai_quality_score || '',
+      ev.server_receipt_time
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `groundtruth_evidence_ledger_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${cachedEvidenceList.length} evidence records to CSV`);
   }
 
   // ── Barcode & QR Modals ──
