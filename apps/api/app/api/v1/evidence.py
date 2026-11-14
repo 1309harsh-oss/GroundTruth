@@ -319,6 +319,35 @@ def generate_asset_road_barcode(evidence_id: str, db: Session = Depends(get_db))
     buf.seek(0)
 
     return Response(content=buf.getvalue(), media_type="image/png")
+
+@router.get("/photo/{evidence_id}")
+def get_evidence_photo(evidence_id: str, db: Session = Depends(get_db)):
+    """
+    Streams the exact physical photo file bytes stored on server disk.
+    Allows reviewers, admins, and auditors to inspect the actual field photograph.
+    """
+    evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+    if not evidence:
+        raise HTTPException(status_code=404, detail="Evidence not found")
+
+    target_path = storage_service.originals_dir / evidence.storage_key
+    if not target_path.exists():
+        raise HTTPException(status_code=404, detail="Photo file not found on disk")
+
+    with open(target_path, "rb") as f:
+        file_bytes = f.read()
+
+    media_type = evidence.mime_type or "image/jpeg"
+    return Response(
+        content=file_bytes,
+        media_type=media_type,
+        headers={
+            "Content-Disposition": f'inline; filename="{evidence.original_filename}"',
+            "Cache-Control": "public, max-age=86400"
+        }
+    )
+
+@router.get("/detail/{evidence_id}", response_model=EvidenceDetailResponse)
 def get_evidence_detail(
     evidence_id: str,
     db: Session = Depends(get_db)
