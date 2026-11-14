@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    },
+    {
+      "src": "apps/web/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)",       "destination": "/api/index.py" },
+    { "source": "/health",         "destination": "/api/index.py" },
+    { "source": "/docs",           "destination": "/api/index.py" },
+    { "source": "/redoc",          "destination": "/api/index.py" },
+    { "source": "/openapi.json",   "destination": "/api/index.py" },
+    { "source": "/(.*)",           "destination": "/apps/web/$1"  }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
+  ]
+}

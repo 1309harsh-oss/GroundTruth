@@ -1696,7 +1696,9 @@
      ENGINEERING JAVASCRIPT: RBAC CONTROLLER & PARALLAX
 ══════════════════════════════════════════════════════ -->
 <script>
-  const API_HOST = 'http://localhost:8000';
+  const API_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '3000'
+    ? 'http://localhost:8000'
+    : '';
   let selectedFile = null;
   let cachedEvidenceList = []; // Global cache for instant searching, filtering & export
   let html5QrScanner = null;
