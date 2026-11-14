@@ -43,3 +43,9 @@ data/storage/derivatives/*
 .DS_Store
 Thumbs.db
 
+# Secrets & Service Accounts
+serviceAccountKey.json
+*.json.key
+secrets/
+
+
