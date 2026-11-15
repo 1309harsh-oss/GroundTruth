@@ -5,8 +5,13 @@ from apps.api.app.core.database import engine, Base
 from apps.api.app.api.v1.auth import router as auth_router
 from apps.api.app.api.v1.evidence import router as evidence_router
 
-# Initialize database schema tables
+# Initialize database schema tables & seed default milestones/projects if empty
 Base.metadata.create_all(bind=engine)
+try:
+    from apps.api.app.seed import seed_db
+    seed_db()
+except Exception as e:
+    print(f"Seed DB warning: {e}")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

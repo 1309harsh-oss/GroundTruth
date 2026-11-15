@@ -43,6 +43,13 @@ async def submit_evidence(
         # Default fallback to first milestone in DB if demo/seed ID
         milestone = db.query(Milestone).first()
         if not milestone:
+            try:
+                from apps.api.app.seed import seed_db
+                seed_db()
+                milestone = db.query(Milestone).first()
+            except Exception as e:
+                print(f"Auto-seed error: {e}")
+        if not milestone:
             raise HTTPException(status_code=404, detail="Milestone not found")
 
     # Fetch submitter identity
